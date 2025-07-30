@@ -1,0 +1,15 @@
+import React from 'react';
+import Navbar from '@/components/Navbar';
+import Hero from '@/components/Hero';
+import Footer from '@/components/Footer';
+
+export default function LandingPageLayout({ children }) {
+  return (
+    <div className="flex flex-col min-h-screen bg-white">
+      <Navbar />
+      <Hero />
+      <main className="flex-grow bg-white">{children}</main>
+      <Footer />
+    </div>
+  );
+}
