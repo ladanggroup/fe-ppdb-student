@@ -1,61 +1,78 @@
 // src/middleware/authGuard.jsx
-// import { useEffect } from "react";
-// import { Navigate, Outlet, useLocation } from "react-router";
-// import useAuthStore from "@/store/authStore";
-
-// const AuthGuard = ({
-//   allowedAbilities = [],
-// }) => {
-//   const { isAuthenticated, abilities, restoreAuth } = useAuthStore.getState();
-//   const location = useLocation();
-
-//   useEffect(() => {
-//     // Restore token dan auth jika refresh
-//     if (!isAuthenticated) {
-//       restoreAuth();
-//     }
-//   }, [isAuthenticated, restoreAuth]);
-
-//   if (!isAuthenticated) {
-//     return <Navigate to="/" state={{ from: location }} replace />;
-//   }
-
-//   // Jika abilities tidak cocok
-//   const allowed = allowedAbilities.includes(abilities);
-
-//   if (!allowed) {
-//     return <Navigate to="/unauthorized" replace />;
-//   }
-
-//   return <Outlet />;
-// };
-
-// export default AuthGuard;
-
+import { useEffect, useState } from "react";
 import { Navigate, Outlet, useLocation } from "react-router";
 import useAuthStore from "@/store/authStore";
-import { useEffect } from "react";
 
-export default function AuthGuard(allowedAbilities = []) {
-  return function GuardComponent() {
-    const location = useLocation();
-    const { isAuthenticated, abilities, restoreAuth } = useAuthStore();
+const AuthGuard = ({
+  allowedAbilities = ["admin", "kepala_sekolah", "admin_sekolah"],
+}) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const {
+    isAuthenticated,
+    abilities,
+    restoreAuth,
+    user, // Gunakan user langsung dari store
+    meSchool,
+  } = useAuthStore.getState();
+  const location = useLocation();
 
-    useEffect(() => {
-      if (!isAuthenticated) {
-        restoreAuth();
+  // Periksa apakah user adalah admin
+  const isAdmin = Array.isArray(abilities)
+    ? abilities.includes("admin")
+    : abilities === "admin";
+
+  useEffect(() => {
+    const checkAuthAndUser = async () => {
+      try {
+        // Restore auth jika belum authenticated
+        if (!isAuthenticated) {
+          await restoreAuth();
+        }
+
+        if (!isAdmin && !user?.school) {
+          await meSchool();
+        }
+      } catch (error) {
+        console.error("Auth check failed:", error);
+      } finally {
+        setIsLoading(false);
       }
-    }, [isAuthenticated, restoreAuth]);
+    };
 
-    if (!isAuthenticated) {
-      return <Navigate to="/" state={{ from: location }} replace />;
-    }
+    checkAuthAndUser();
+  }, [isAuthenticated, restoreAuth, abilities, meSchool, user, isAdmin]);
 
-    const allowed = allowedAbilities.includes(abilities);
-    if (!allowed) {
-      return <Navigate to="/unauthorized" replace />;
-    }
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p>Memeriksa otentikasi...</p>
+      </div>
+    );
+  }
 
-    return <Outlet />;
-  };
-}
+  if (!isAuthenticated) {
+    return <Navigate to="/" state={{ from: location }} replace />;
+  }
+
+  // Jika abilities tidak cocok
+  let allowed = false;
+
+  if (Array.isArray(abilities)) {
+    allowed = abilities.some((ab) => allowedAbilities.includes(ab));
+  } else {
+    allowed = allowedAbilities.includes(abilities);
+  }
+
+  if (!allowed) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
+  // Periksa status sekolah untuk non-admin
+  if (!isAdmin && user?.status !== "active") {
+    return <Navigate to="/complete-registration/school" replace />;
+  }
+
+  return <Outlet />;
+};
+
+export default AuthGuard;

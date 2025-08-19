@@ -33,10 +33,9 @@ export default function PortalDialog({ onClose }) {
               : "border-gray-200 hover:border-orange-soft"
           }`}
         >
-          <div className="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16" />
           <div className="ml-4">
             <h3 className="font-bold text-lg text-gray-800">Sekolah</h3>
-            <p className="text-gray-600 mt-1">Admin sekolah dan operator</p>
+            <p className="text-gray-600 mt-1">Kepala Atau Admin Sekolah</p>
           </div>
         </Link>
 
@@ -50,26 +49,11 @@ export default function PortalDialog({ onClose }) {
               : "border-gray-200 hover:border-orange-soft"
           }`}
         >
-          <div className="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16" />
           <div className="ml-4">
             <h3 className="font-bold text-lg text-gray-800">Siswa</h3>
             <p className="text-gray-600 mt-1">Calon peserta didik baru</p>
           </div>
         </Link>
-        {/* <div
-          className={`flex items-center p-4 rounded-lg border-2 cursor-pointer transition-all ${
-            selectedOption === "siswa"
-              ? "border-orange-soft-700 bg-orange-soft-100"
-              : "border-gray-200 hover:border-orange-soft"
-          }`}
-          onClick={() => handleOptionSelect("siswa")}
-        >
-          <div className="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16" />
-          <div className="ml-4">
-            <h3 className="font-bold text-lg text-gray-800">Siswa</h3>
-            <p className="text-gray-600 mt-1">Calon peserta didik baru</p>
-          </div>
-        </div> */}
       </div>
 
       {/* Loading Indicator */}

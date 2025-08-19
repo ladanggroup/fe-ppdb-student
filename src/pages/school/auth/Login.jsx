@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router";
 import useAuthStore from "@/store/authStore";
-import { Link, useNavigate } from "react-router";
 import { Input } from "@/components/ui/input";
 import {
   Card,
@@ -13,7 +13,6 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import LoadingOverlay from "@/components/LoadingOverlay";
 import ErrorLabel from "@/components/ErrorLabel";
-import { useEffect } from "react";
 import PasswordField from "@/components/PasswordField";
 
 const Login = () => {
@@ -22,13 +21,13 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const { loginSchool, errors, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
+  const location = useLocation();
 
-// Tambahkan useEffect untuk mengecek isAuthenticated
-useEffect(() => {
-  if (isAuthenticated) {
-    navigate("/school/dashboard", { replace: true });
-  }
-}, [isAuthenticated, navigate]);
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/school/dashboard", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -37,23 +36,48 @@ useEffect(() => {
     setIsLoading(false);
   };
 
-
   return (
     <>
       <LoadingOverlay isLoading={isLoading} />
-      <div className="flex h-screen items-center px-4">
-        <Card className="mx-auto w-full max-w-md">
-          <CardHeader>
-            <CardTitle>Portal Sekolah</CardTitle>
-            <CardDescription>Masuk untuk melanjutkan</CardDescription>
+      <div className="flex h-screen items-center justify-center px-4">
+        <Card className="w-full max-w-md shadow-lg rounded-xl">
+          <CardHeader className="items-center">
+            <img
+              src="/logo.png" // Ganti dengan logo siswa jika perlu
+              alt="Logo PPDB"
+              className="h-10 mb-2"
+            />
+            <div className="flex border rounded-full overflow-hidden mb-4 w-full">
+              <Link
+                to="/login/school"
+                className={`w-1/2 py-2 text-center font-semibold text-sm border-r hover:bg-orange-300 ${
+                  location.pathname === "/login/school"
+                    ? "bg-orange-400 text-white"
+                    : "bg-gray-100 text-gray-500"
+                }`}
+              >
+                Masuk
+              </Link>
+              <Link
+                to="/register/school"
+                className={`w-1/2 py-2 text-center font-semibold text-sm hover:bg-orange-300 ${
+                  location.pathname === "/register/school"
+                    ? "bg-orange-400 text-white"
+                    : "bg-gray-100 text-gray-500"
+                }`}
+              >
+                Daftar
+              </Link>
+            </div>
+            <CardTitle className="text-center">Portal Sekolah</CardTitle>
+            <CardDescription className="text-center">
+              Masuk untuk melanjutkan
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-4">
-              <div className="mb-6">
-                <Label
-                  htmlFor="email"
-                  className="block text-left mb-2 required"
-                >
+              <div>
+                <Label htmlFor="email" className="mb-1 block text-left">
                   Email
                 </Label>
                 <Input
@@ -62,20 +86,42 @@ useEffect(() => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  className="bg-blue-50"
                 />
-                {errors?.email && <ErrorLabel message={errors?.email[0]} />}
+                {errors?.email && <ErrorLabel message={errors.email[0]} />}
               </div>
+
               <PasswordField
                 label="Password"
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                error={errors?.password && errors?.password[0]}
+                error={errors?.password && errors.password[0]}
                 required
+                className="bg-blue-50"
               />
-              <div className="flex items-center justify-between">
-                <Link to="/school/auth/forgot-password">Lupa Password?</Link>
-                <Button type="submit">Masuk</Button>
+
+              <div className="text-right">
+                <Link
+                  to="/student/auth/forgot-password"
+                  className="text-sm text-[#2F80ED] hover:underline"
+                >
+                  Lupa Password?
+                </Link>
+              </div>
+
+              <div className="flex flex-col gap-2 mt-4">
+                <Button
+                  type="submit"
+                >
+                  Masuk
+                </Button>
+                <Link
+                  to="/"
+                  className="w-full text-center bg-gray-400 hover:bg-gray-500 text-white py-2 rounded-md font-semibold"
+                >
+                  Kembali
+                </Link>
               </div>
             </form>
           </CardContent>

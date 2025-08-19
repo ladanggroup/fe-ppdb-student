@@ -28,7 +28,7 @@ export default function Navbar() {
         <Link to="/" className="text-xl font-bold text-gray-800">
           PPDB Online
         </Link>
-        <nav className="hidden md:flex space-x-8">
+        <nav className="hidden md:flex space-x-8 items-center">
           {menuItems.map((item) => (
             <Link
               key={item}

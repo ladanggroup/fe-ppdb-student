@@ -1,6 +1,27 @@
-@tailwind base;
+/* @tailwind base;
 @tailwind components;
-@tailwind utilities;
+@tailwind utilities; */
+
+@import "tailwindcss";
+@theme {
+  --color-orange-soft: #ffb347;
+  --color-orange-soft-100: #fff5e6;
+  --color-orange-soft-200: #ffe8c2;
+  --color-orange-soft-300: #ffdb9e;
+  --color-orange-soft-400: #ffce7a;
+  --color-orange-soft-500: #ffb347;
+  --color-orange-soft-600: #ff9e1f;
+  --color-orange-soft-700: #e6860c;
+  --color-orange-soft-800: #b36809;
+  --color-orange-soft-900: #804b06;
+
+  --color-ppdb-orange: #ffa500;
+  --color-ppdb-soft: #ffe8d1;
+  --color-ppdb-orange-light: #fff5e6;
+  --color-ppdb-orange-dark: #cc8400;
+  --color-ppdb-gray-dark: #1f2937;
+  --color-ppdb-gray-light: #f9fafb;
+}
 
 /* :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;

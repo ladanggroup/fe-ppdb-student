@@ -36,7 +36,7 @@ export default function DashboardLayout({ children }) {
             <span>Dashboard</span>
           </Link>
           <Link
-            to="/school/settings"
+            to="/school/setting"
             className="flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2"
           >
             <Wrench className="w-5 h-5" />
@@ -119,7 +119,7 @@ export default function DashboardLayout({ children }) {
                 },
                 {
                   label: "Settings",
-                  onSelect: () => navigate("/school/settings"),
+                  onSelect: () => navigate("/school/setting"),
                 },
                 { separator: true },
                 {

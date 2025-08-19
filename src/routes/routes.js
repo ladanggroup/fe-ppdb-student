@@ -1,18 +1,7 @@
-import { lazy, useState } from "react";
-import authGuard from "@/middleware/AuthGuard";
+import { lazy } from "react";
 
 const LandingPage = lazy(() => import("@/pages/LandingPage"));
-const Login = lazy(() => import("@/pages/school/auth/Login"));
-const SchoolDashboard = lazy(() => import("@/pages/school/Dashboard"));
-// const [guardStudent, setGuardStudent] = useState(
-//   authGuard({
-//     allowedAbilities: ["siswa"],
-//   })
-// );
-// const guardStudent = authGuard({
-//   allowedAbilities: ["siswa"],
-// });
-// const Register = lazy(() => import('@/pages/Register'));
+const dashboardSchool = lazy(() => import("@/pages/school/Dashboard"));
 
 const routes = [
   {
@@ -29,11 +18,15 @@ const routes = [
   // School Routes
   {
     path: "/school",
-    element: authGuard(["admin_sekolah", "kepala_sekolah"]),
+    element: lazy(() => import("@/middleware/AuthGuard")),
     children: [
       {
         path: "dashboard",
-        element: SchoolDashboard,
+        element: dashboardSchool,
+      },
+      {
+        path: "setting",
+        element: lazy(() => import("@/pages/school/Setting")),
       },
     ],
   },
@@ -41,7 +34,7 @@ const routes = [
   // Student Routes
   {
     path: "/student",
-    element: authGuard(["siswa"]),
+    element: lazy(() => import("@/middleware/AuthGuardStudent")),
     children: [
       {
         path: "dashboard",
@@ -49,28 +42,70 @@ const routes = [
       },
     ],
   },
+
+  //admin routes
   {
-    path: "/unauthorized",
-    element: lazy(() => import("@/pages/Unauthorized")),
+    path: "/admin",
+    element: lazy(() => import("@/middleware/AuthGuard")),
+    children: [
+      {
+        path: "dashboard",
+        element: lazy(() => import("@/pages/admin/Dashboard")),
+      },
+      // {
+      //   path: "setting",
+      //   element: lazy(() => import("@/pages/admin/Setting")),
+      // },
+      {
+        path: "product",
+        children: [
+          {
+            index: true,
+            element: lazy(() => import("@/pages/admin/Product/List")),
+          },
+          {
+            path: "create",
+            element: lazy(() => import("@/pages/admin/Product/Create")),
+          },
+          {
+            path: ":id/edit",
+            element: lazy(() => import("@/pages/admin/Product/Edit")),
+          },
+        ],
+      },
+      // {
+      //   path: "product/create",
+      //   element: lazy(() => import("@/pages/admin/Product/Create")),
+      // },
+    ],
   },
 
   /* auth */
-  // {
-  //   path: "/login/admin",
-  //   element: lazy(() => import("@/pages/admin/auth/Login")),
-  // },
+  {
+    path: "/login/admin",
+    element: lazy(() => import("@/pages/admin/auth/Login")),
+  },
   {
     path: "/login/student",
-    element: lazy(() => import('@/pages/student/auth/Login')),
+    element: lazy(() => import("@/pages/student/auth/Login")),
   },
   {
     path: "/login/school",
     element: lazy(() => import("@/pages/school/auth/Login")),
   },
-  //   {
-  //     path: '/register',
-  //     element: <Register />,
-  //   },
+  {
+    path: "/register/school",
+    element: lazy(() => import("@/pages/school/auth/Register")),
+  },
+  {
+    path: "/complete-registration/school",
+    element: lazy(() => import("@/pages/school/auth/CompleteRegistration")),
+  },
+
+  {
+    path: "/unauthorized",
+    element: lazy(() => import("@/pages/Unauthorized")),
+  },
 ];
 
 export default routes;

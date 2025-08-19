@@ -9,6 +9,3 @@ const useErrorStore = create((set) => ({
 }));
 
 export default useErrorStore;
-
-// import { create } from 'zustand';
-// import apiClient from '@/api/apiClient';
