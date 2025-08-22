@@ -59,6 +59,16 @@ const useBankStore = create((set) => ({
     }
   },
 
+  fetchListBankAdmin: async (page, search) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await apiClient.get('/api/admin/bank?page=' + page + '&search=' + search);
+      set({ banksAdmin: response.data, loading: false });
+    } catch (error) {
+      set({ error: error.response?.data?.message || 'Failed to fetch banks', loading: false });
+    }
+  },
+
   createBankAdmin: async (bankData) => {
     set({ loading: true, error: null });
     try {
@@ -71,14 +81,38 @@ const useBankStore = create((set) => ({
     }
   },
 
-  updateBankAdmin: async (bankData) => {
+  updateBankAdmin: async (bankId, bankData) => {
     set({ loading: true, error: null });
     try {
-      await apiClient.put('/api/admin/bank', bankData);
+      await apiClient.put(`/api/admin/bank/update/${bankId}`, bankData);
       set({ loading: false });
       return true;
     } catch (error) {
       set({ error: error.response?.data?.message || 'Failed to update bank', loading: false });
+      return false;
+    }
+  },
+
+  destroyBankAdmin: async (bankId) => {
+    set({ loading: true, error: null });
+    try {
+      await apiClient.delete(`/api/admin/bank/delete/${bankId}`);
+      set({ loading: false });
+      return true;
+    } catch (error) {
+      set({ error: error.response?.data?.message || 'Failed to delete bank', loading: false });
+      return false;
+    }
+  },
+
+  showBankAdmin: async (bankId) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await apiClient.get(`/api/admin/bank/show/${bankId}`);
+      set({ loading: false });
+      return response.data.data;
+    } catch (error) {
+      set({ error: error.response?.data?.message || 'Failed to show bank', loading: false });
       return false;
     }
   },

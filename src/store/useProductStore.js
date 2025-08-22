@@ -38,10 +38,10 @@ const useProductStore = create((set) => ({
       throw error;
     }
   },
-  list: async (page=1) => {
+  list: async (page=1, search) => {
     set({ loading: true, error: null });
     try {
-      const response = await apiClient.get(`/api/admin/product?page=${page}`);
+      const response = await apiClient.get(`/api/admin/product?page=${page}&search=${search}`);
       set({ products: response.data, loading: false });
       return response.data;
     } catch (error) {

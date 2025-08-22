@@ -3,6 +3,7 @@ import apiClient from "@/api/apiClient";
 
 const useSubscriptionStore = create((set) => ({
   subscriptions: [], // Untuk menyimpan daftar langganan sekolah
+  subscriptionsAdmin: null,
   loading: false,
   error: null,
 
@@ -51,7 +52,52 @@ const useSubscriptionStore = create((set) => ({
     }
   },
 
-  // Anda bisa menambahkan fungsi lain di sini jika ada kebutuhan (misal: update, cancel subscription)
+  listAdmin: async (page=1, status) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await apiClient.get(`/api/admin/subscription?page=${page}&search=${status}`);
+      set({ subscriptionsAdmin: response.data, loading: false });
+      return response.data;
+    } catch (error) {
+      set({ loading: false, error: error.response?.data?.errors || error.response?.data?.message || 'Gagal mengambil langganan' });
+      throw error;
+    }
+  },
+
+  showAdmin: async (subscriptionId) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await apiClient.get(`/api/admin/subscription/show/${subscriptionId}`);
+      set({ loading: false });
+      return response.data.data;
+    } catch (error) {
+      set({ loading: false, error: error.response?.data?.errors || error.response?.data?.message || 'Gagal menampilkan langganan' });
+      throw error;
+    }
+  },
+
+  verifyAdmin: async (subscriptionId) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await apiClient.post(`/api/admin/subscription/verify/${subscriptionId}`);
+      set({ loading: false });
+      return response.data;
+    } catch (error) {
+      set({ loading: false, error: error.response?.data?.errors || error.response?.data?.message || 'Gagal memverifikasi langganan' });
+      throw error;
+    }
+  },
+  rejectAdmin: async (subscriptionId, note) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await apiClient.post(`/api/admin/subscription/reject/${subscriptionId}`, { note });
+      set({ loading: false });
+      return response.data;
+    } catch (error) {
+      set({ loading: false, error: error.response?.data?.errors || error.response?.data?.message || 'Gagal menolak langganan' });
+      throw error;
+    }
+  }
 }));
 
 export default useSubscriptionStore;

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import useSchoolStore from "@/store/useSchoolStore";
 import useRegionStore from "@/store/regionStore";
 import useProductStore from "@/store/useProductStore";
-import useBankStore from "@/store/bankStore";
+import useBankStore from "@/store/useBankStore";
 import useSubscriptionStore from "@/store/useSubscriptionStore";
 import usePaymentStore from "@/store/usePaymentStore";
 import useDocumentStore from "@/store/useDocumentStore";
@@ -329,7 +329,6 @@ const CompleteRegistration = () => {
       const paymentData = {
         payment_date: formData.payment_date,
         price: getProductPrice(),
-        payer_type: "school",
         payer_id: user?.school?.id,
         bank_id: formData.selected_bank_id,
         document_id: paymentProofDocumentId,

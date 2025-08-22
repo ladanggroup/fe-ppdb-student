@@ -14,20 +14,10 @@ function LazyWrapper({ element }) {
 function wrapRoutesWithLazy(routes) {
   return routes.map((route) => ({
     ...route,
-    element: route.element && (
-      <LazyWrapper element={React.createElement(route.element)} />
-    ),
+    element: route.element && <LazyWrapper element={<route.element />} />,
     children: route.children ? wrapRoutesWithLazy(route.children) : [],
   }));
 }
-
-// function wrapRoutesWithLazy(routes) {
-//   return routes.map((route) => ({
-//     ...route,
-//     element: route.element && <LazyWrapper element={<route.element />} />,
-//     children: route.children ? wrapRoutesWithLazy(route.children) : [],
-//   }));
-// }
 
 function AppRoutes() {
   const element = useRoutes(wrapRoutesWithLazy(routes));

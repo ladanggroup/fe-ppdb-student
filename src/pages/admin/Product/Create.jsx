@@ -48,7 +48,7 @@ const Create = () => {
       setPrice("");
       setStatus("");
       setFeatures([{ featureName: "" }]); // Reset fitur
-      navigate("/product");
+      navigate("/admin/product");
     } catch (err) {
       console.error(err); // Menangani error jika ada
     }
@@ -116,7 +116,7 @@ const Create = () => {
             className="border border-teal-300 p-2 rounded w-full"
           />
           {price && 
-            <p className="text-gray-600 text-left">Harga: {formatIdr(price)}</p>
+            <p className="text-gray-600 dark:text-gray-200 text-left">Harga: {formatIdr(price)}</p>
           }
         </div>
         <div className="md:col-span-2">
@@ -129,7 +129,7 @@ const Create = () => {
             required
             className="border border-teal-300 p-2 rounded w-full"
           >
-            <SelectTrigger className="border border-teal-300 bg-white p-2 rounded w-full">
+            <SelectTrigger className="border border-teal-300 bg-white text-black p-2 rounded w-full">
               <SelectValue placeholder="Pilih Status" />
             </SelectTrigger>
             <SelectContent className="bg-white text-black dark:bg-[#1f2d3a] dark:text-white">

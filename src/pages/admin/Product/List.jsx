@@ -1,49 +1,72 @@
 // src/pages/admin/Produk/List.jsx
-import React, { useEffect } from "react";
-import { Link, useSearchParams, Outlet } from "react-router"; // Import Link dari react-router-dom
+import React, { useEffect, useState } from "react";
+import { Link, useSearchParams, Outlet } from "react-router";
 import useProducts from "@/store/useProductStore";
 import DashboardLayout from "@/layouts/admin/DashboardLayout";
 import Pagination from "@/components/Pagination";
 import Button from "@/components/ui/button";
+import formatIdr from "@/utils/formatIdr";
+import { Input } from "@/components/ui/input";
+import LoadingOverlay from "@/components/LoadingOverlay";
 
 const List = () => {
   const { products, loading, error, list, destroy } = useProducts();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [search, setSearch] = useState(searchParams.get("search") || "");
 
-  // ambil page dari URL, default 1
   const page = Number(searchParams.get("page")) || 1;
 
   useEffect(() => {
-    list(page);
-  }, [list, page]);
+    const timeout = setTimeout(() => {
+      list(page, search);
+    }, 500); // debounce 500ms
+
+    return () => clearTimeout(timeout);
+  }, [list, page, search]);
 
   const handlePageChange = (newPage) => {
-    setSearchParams({ page: newPage });
+    setSearchParams({ page: newPage, search });
   };
 
   const handleDelete = (productId) => {
     if (window.confirm("Anda yakin ingin menghapus produk ini?")) {
       destroy(productId);
-      list(page);
+      list(page, search);
     }
   };
 
-  if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
+
   return (
     <DashboardLayout>
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold mb-4">Daftar Produk</h1>
+      {/* overlay loading */}
+      {loading && <LoadingOverlay />}
+
+      <div className="flex justify-between items-center mb-4 gap-4">
+        <h1 className="text-2xl font-bold">Daftar Produk</h1>
+        {/* Search tanpa tombol */}
+        <Input
+          type="text"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setSearchParams({ search: e.target.value, page: 1 });
+          }}
+          placeholder="Cari produk..."
+          className="w-2/3 py-2 px-4 border border-gray-300 rounded-lg"
+        />
         <Link
           to="/admin/product/create"
-          className="bg-teal-500 text-white px-4 py-2 rounded-lg mb-4 inline-block"
+          className="bg-teal-500 text-white px-4 py-2 rounded-lg"
         >
           Buat Produk
         </Link>
       </div>
+
       <table className="min-w-full border-collapse border border-gray-200">
         <thead>
           <tr>
+            <th className="border border-gray-300 p-2">No</th>
             <th className="border border-gray-300 p-2">Nama</th>
             <th className="border border-gray-300 p-2">Durasi</th>
             <th className="border border-gray-300 p-2">Harga</th>
@@ -53,11 +76,16 @@ const List = () => {
           </tr>
         </thead>
         <tbody>
-          {products.data?.map((product) => (
+          {products.data?.map((product, index) => (
             <tr key={product.id}>
+              <td className="border border-gray-300 p-2">
+                {products.from + index}
+              </td>
               <td className="border border-gray-300 p-2">{product.name}</td>
               <td className="border border-gray-300 p-2">{product.duration}</td>
-              <td className="border border-gray-300 p-2">{product.price}</td>
+              <td className="border border-gray-300 p-2">
+                {formatIdr(product.price)}
+              </td>
               <td className="border border-gray-300 p-2">{product.status}</td>
               <td className="border border-gray-300 p-2">
                 {product.features && product.features.length > 0 ? (
@@ -66,7 +94,6 @@ const List = () => {
                       <React.Fragment key={i}>
                         {f.name}
                         {i < product.features.length - 1 && ", "}
-                        {/* Break setiap 2 fitur */}
                         {(i + 1) % 2 === 0 && <br />}
                       </React.Fragment>
                     ))}
@@ -78,13 +105,13 @@ const List = () => {
               <td className="border border-gray-300 p-2">
                 <Link
                   to={`/admin/product/${product.id}/edit`}
-                  className="bg-teal-500 text-white px-4 py-2 rounded-lg mr-2"
+                  className="bg-teal-500 text-white hover:bg-teal-600 px-4 py-2 rounded-lg mr-2"
                 >
                   Edit
                 </Link>
                 <Button
                   onClick={() => handleDelete(product.id)}
-                  className="bg-red-500 text-white px-4 py-2 rounded-lg"
+                  className="bg-red-500 text-white hover:bg-red-600 px-4 py-2 rounded-lg"
                 >
                   Hapus
                 </Button>
@@ -93,6 +120,7 @@ const List = () => {
           ))}
         </tbody>
       </table>
+
       <Pagination pagination={products} onPageChange={handlePageChange} />
       <Outlet />
     </DashboardLayout>

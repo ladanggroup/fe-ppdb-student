@@ -73,10 +73,23 @@ const routes = [
           },
         ],
       },
-      // {
-      //   path: "product/create",
-      //   element: lazy(() => import("@/pages/admin/Product/Create")),
-      // },
+      {
+        path: "bank",
+        element: lazy(() => import("@/pages/admin/Bank/List")),
+      },
+      {
+        path: "subscription",
+        children: [
+          {
+            index: true,
+            element: lazy(() => import("@/pages/admin/Subscription/List")),
+          },
+          {
+            path: ":id/verify",
+            element: lazy(() => import("@/pages/admin/Subscription/Verification")),
+          },
+        ],
+      },
     ],
   },
 

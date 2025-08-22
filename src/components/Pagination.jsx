@@ -17,7 +17,7 @@ export default function Pagination({ pagination, onPageChange }) {
       <button
         onClick={() => goToPage(current_page - 1)}
         disabled={current_page === 1}
-        className="flex items-center px-3 py-1 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-teal-300 bg-teal-200"
+        className="flex items-center px-3 py-1 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-teal-400 bg-teal-300"
       >
         <ChevronLeft size={16} />
         <span className="ml-1">Sebelumnya</span>
@@ -32,7 +32,7 @@ export default function Pagination({ pagination, onPageChange }) {
       <button
         onClick={() => goToPage(current_page + 1)}
         disabled={current_page === last_page}
-        className="flex items-center px-3 py-1 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed bg-teal-200 hover:bg-teal-300"
+        className="flex items-center px-3 py-1 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed bg-teal-300 hover:bg-teal-400"
       >
         <span className="mr-1">Selanjutnya</span>
         <ChevronRight size={16} />

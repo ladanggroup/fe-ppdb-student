@@ -14,6 +14,7 @@ import {
 import SelectModalUrl from "./SelectModalUrl";
 import useFile from "@/hooks/useFile";
 import ErrorLabel from "./ErrorLabel";
+import { Link } from "react-router";
 
 const SchoolDetails = ({
   setFormData,
@@ -223,14 +224,14 @@ const SchoolDetails = ({
           <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
             <div className="text-center">
               {uploadedUrl || formData?.school_document_file ? (
-                <a
-                  href={uploadedUrl || formData?.school_document_file}
+                <Link
+                  to={uploadedUrl || formData?.school_document_file}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-500 hover:underline"
                 >
                   Lihat Dokumen
-                </a>
+                </Link>
               ) : (
                 <svg
                   className="mx-auto h-12 w-12 text-gray-300"
