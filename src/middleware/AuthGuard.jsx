@@ -13,7 +13,7 @@ const AuthGuard = ({
     restoreAuth,
     user, // Gunakan user langsung dari store
     meSchool,
-  } = useAuthStore.getState();
+  } = useAuthStore();
   const location = useLocation();
 
   // Periksa apakah user adalah admin
@@ -65,6 +65,10 @@ const AuthGuard = ({
 
   if (!allowed) {
     return <Navigate to="/unauthorized" replace />;
+  }
+
+  if(isAdmin && user?.email_verified_at === null) { 
+    return <Navigate to="/admin/resend-email" replace />;
   }
 
   // Periksa status sekolah untuk non-admin

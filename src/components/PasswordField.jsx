@@ -10,13 +10,14 @@ const PasswordField = ({
     value,
     onChange,
     error,
+    placeholder = "Masukkan password",
     id = "password",
     required,
 }) => {
     const [showPassword, setShowPassword] = useState(false);
 
     return (
-        <div className="mb-6">
+        <div className="mb-2">
             <Label htmlFor={id} className="block text-left mb-2 required">
                 {label}
             </Label>
@@ -27,6 +28,7 @@ const PasswordField = ({
                     value={value}
                     onChange={onChange}
                     required={required}
+                    placeholder={placeholder}
                     className="pr-10"
                 />
                 <button

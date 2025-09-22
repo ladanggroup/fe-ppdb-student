@@ -7,6 +7,8 @@ import useAuthStore from "@/store/authStore";
 import { House, Wrench, Package, Archive, Landmark } from "lucide-react";
 import { ModeToggle } from "@/components/mode-toggle";
 import { NotificationDropdown } from "@/components/NotificationDropdown";
+import { Users } from "lucide-react";
+import { UserPlus } from "lucide-react";
 
 export default function DashboardLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -63,6 +65,13 @@ export default function DashboardLayout({ children }) {
             <Package className="w-5 h-5" />
             <span>Langganan</span>
           </Link>
+          <Link
+            to="/admin/user"
+            className="flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2"
+          >
+            <Users className="w-5 h-5" />
+            <span>Daftar Pengguna</span>
+          </Link>
         </nav>
       </aside>
 
@@ -85,13 +94,6 @@ export default function DashboardLayout({ children }) {
             >
               Dashboard
             </Link>
-            {/* <Link
-              to="/admin/settings"
-              className="hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2"
-              onClick={() => setSidebarOpen(false)}
-            >
-              Settings
-            </Link> */}
             <Link
               to="/admin/product"
               className="hover:bg-s-teal-200 dark:hover:bg-white/10 rounded px-3 py-2"
@@ -112,6 +114,13 @@ export default function DashboardLayout({ children }) {
               onClick={() => setSidebarOpen(false)}
             >
               Langganan
+            </Link>
+            <Link
+              to="/admin/user"
+              className="hover:bg-s-teal-200 dark:hover:bg-white/10 rounded px-3 py-2"
+              onClick={() => setSidebarOpen(false)}
+            >
+              Pengguna
             </Link>
           </nav>
         </aside>
@@ -159,11 +168,10 @@ export default function DashboardLayout({ children }) {
                   label: "Dashboard",
                   onSelect: () => navigate("/admin/dashboard"),
                 },
-                // {
-                //   label: "Settings",
-                //   onSelect: () => navigate("/admin/setting"),
-                // },
-                { separator: true },
+                {
+                  label: "Settings",
+                  onSelect: () => navigate("/admin/setting"),
+                },
                 {
                   label: "Sign out",
                   onSelect: () => {

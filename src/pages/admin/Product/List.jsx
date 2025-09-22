@@ -4,7 +4,7 @@ import { Link, useSearchParams, Outlet } from "react-router";
 import useProducts from "@/store/useProductStore";
 import DashboardLayout from "@/layouts/admin/DashboardLayout";
 import Pagination from "@/components/Pagination";
-import Button from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import formatIdr from "@/utils/formatIdr";
 import { Input } from "@/components/ui/input";
 import LoadingOverlay from "@/components/LoadingOverlay";

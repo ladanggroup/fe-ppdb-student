@@ -18,9 +18,9 @@ const Dashboard = () => {
         authStore.abilities.includes("kepala_sekolah"))
     ) {
       authStore.meSchool();
-      schoolStore.fetchRegisteredStudents();
+      // schoolStore?.fetchStudents();
     }
-  }, [authStore.isAuthenticated, authStore.abilities]);
+  }, [authStore.isAuthenticated, authStore.abilities, schoolStore.school]);
 
   if (!authStore.isAuthenticated) {
     return <div>Silakan login terlebih dahulu</div>;
@@ -33,16 +33,16 @@ const Dashboard = () => {
         </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white p-4 rounded shadow">
+          <div className="p-4 rounded shadow">
             <h3 className="font-semibold">Total Pendaftar</h3>
-            <p className="text-3xl mt-2">{students.length}</p>
+            <p className="text-3xl mt-2">{students?.length}</p>
           </div>
 
-          <div className="bg-white p-4 rounded shadow">
+          <div className="p-4 rounded shadow">
             <h3 className="font-semibold">Gelombang Aktif</h3>
             <p className="text-3xl mt-2">
               {
-                schoolStore.waves.filter(
+                schoolStore.waves?.filter(
                   (w) =>
                     new Date(w.start_date) <= new Date() &&
                     new Date(w.end_date) >= new Date()
@@ -51,15 +51,15 @@ const Dashboard = () => {
             </p>
           </div>
 
-          <div className="bg-white p-4 rounded shadow">
+          <div className="p-4 rounded shadow">
             <h3 className="font-semibold">Kuota Tersedia</h3>
             <p className="text-3xl mt-2">
-              {schoolStore.waves.reduce((sum, wave) => sum + wave.quota, 0)}
+              {schoolStore.waves?.reduce((sum, wave) => sum + wave.quota, 0)}
             </p>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded shadow">
+        <div className="p-6 rounded shadow">
           <h2 className="text-xl font-semibold mb-4">Pendaftar Terbaru</h2>
           <table className="w-full">
             <thead>
@@ -71,7 +71,7 @@ const Dashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {students.slice(0, 5).map((student) => (
+              {students?.slice(0, 5).map((student) => (
                 <tr key={student.id}>
                   <td>{student.name}</td>
                   <td>{student.school_origin}</td>

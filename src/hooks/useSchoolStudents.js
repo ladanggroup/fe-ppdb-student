@@ -1,6 +1,6 @@
 // hooks/useSchoolStudents.js
 import { useState, useEffect } from 'react';
-import useSchoolStore from '../store/useSchoolStore';
+import useSchoolStudent from '@/store/useSchoolStudent';
 
 export default function useSchoolStudents() {
   const [filters, setFilters] = useState({
@@ -12,22 +12,22 @@ export default function useSchoolStudents() {
   
   const {
     students,
-    fetchRegisteredStudents,
-    verifyStudentRegistration,
+    fetchStudents,
+    verifyRegistration,
     loading,
     errors
-  } = useSchoolStore();
+  } = useSchoolStudent();
   
   useEffect(() => {
-    fetchRegisteredStudents();
-  }, [fetchRegisteredStudents]);
+    fetchStudents(filters?.page, filters?.search);
+  }, [fetchStudents, filters?.page, filters?.search]);
 
   const handleVerify = async (studentId, status) => {
-    await verifyStudentRegistration(studentId, status);
+    await verifyRegistration(studentId, status);
   };
 
-  const filteredStudents = students.filter(student => {
-    if (filters.status !== 'all' && student.selection_status !== filters.status) {
+  const filteredStudents = students?.filter(student => {
+    if (filters.status !== 'all' && student.status !== filters.status) {
       return false;
     }
     if (filters.search && !student.name.toLowerCase().includes(filters.search.toLowerCase())) {

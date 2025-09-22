@@ -20,7 +20,13 @@ const AuthGuardStudent = ({
   }
 
   // Jika abilities tidak cocok
-  const allowed = allowedAbilities.includes(abilities);
+  let allowed = false;
+
+  if (Array.isArray(abilities)) {
+    allowed = abilities.some((ab) => allowedAbilities.includes(ab));
+  } else {
+    allowed = allowedAbilities.includes(abilities);
+  }
 
   if (!allowed) {
     return <Navigate to="/unauthorized" replace />;

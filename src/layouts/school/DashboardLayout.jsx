@@ -1,10 +1,18 @@
 // Layout.jsx
 import { Dropdown } from "@/components/ui/dropdown";
-import { Menu } from "lucide-react";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router";
 import useAuthStore from "@/store/authStore";
-import { House, Wrench, Bell } from "lucide-react";
+import {
+  House,
+  Wrench,
+  Waves,
+  Users2,
+  Landmark,
+  Menu,
+  Package,
+  UserRoundPlus,
+} from "lucide-react";
 import { ModeToggle } from "@/components/mode-toggle";
 import { NotificationDropdown } from "@/components/NotificationDropdown";
 
@@ -22,6 +30,8 @@ export default function DashboardLayout({ children }) {
     },
     { id: 2, title: "Rekap harian tersedia", time: "hari ini", unread: false },
   ];
+  console.log(user);
+
   return (
     <div className="flex min-h-screen w-full bg-blue-50 text-slate-800 dark:bg-[#2c3e50] dark:text-white overflow-hidden">
       {/* Sidebar Desktop */}
@@ -35,6 +45,43 @@ export default function DashboardLayout({ children }) {
             <House className="w-5 h-5" />
             <span>Dashboard</span>
           </Link>
+          <Link
+            to="/school/student"
+            className="flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2"
+          >
+            <Users2 className="w-5 h-5" />
+            <span>Daftar Siswa</span>
+          </Link>
+          <Link
+            to="/school/bank"
+            className="flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2"
+          >
+            <Landmark className="w-5 h-5" />
+            <span>Bank</span>
+          </Link>
+          <Link
+            to="/school/wave"
+            className="flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-2.5 py-2"
+          >
+            <Waves className="w-5 h-5" />
+            <span>Gelombang Pendaftaran</span>
+          </Link>
+          <Link
+            to="/school/subscription"
+            className="flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2"
+          >
+            <Package className="w-5 h-5" />
+            <span>Langganan</span>
+          </Link>
+          {user.roles === "kepala_sekolah" && (
+            <Link
+              to="/school/user"
+              className="flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2"
+            >
+              <UserRoundPlus className="w-5 h-5" />
+              <span>Pengguna</span>
+            </Link>
+          )}
           <Link
             to="/school/setting"
             className="flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2"
@@ -64,6 +111,43 @@ export default function DashboardLayout({ children }) {
             >
               Dashboard
             </Link>
+            <Link
+              to="/school/student"
+              className="hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2"
+              onClick={() => setSidebarOpen(false)}
+            >
+              Daftar Siswa
+            </Link>
+            <Link
+              to="/school/bank"
+              className="hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2"
+              onClick={() => setSidebarOpen(false)}
+            >
+              Bank
+            </Link>
+            <Link
+              to="/school/wave"
+              className="hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2"
+              onClick={() => setSidebarOpen(false)}
+            >
+              Gelombang Pendaftaran
+            </Link>
+            <Link
+              to="/school/subscription"
+              className="hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2"
+              onClick={() => setSidebarOpen(false)}
+            >
+              Langganan
+            </Link>
+            {user.roles === "kepala_sekolah" && (
+              <Link
+                to="/school/user"
+                className="hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2"
+                onClick={() => setSidebarOpen(false)}
+              >
+                Pengguna
+              </Link>
+            )}
             <Link
               to="/school/settings"
               className="hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2"
@@ -119,9 +203,8 @@ export default function DashboardLayout({ children }) {
                 },
                 {
                   label: "Settings",
-                  onSelect: () => navigate("/school/setting"),
+                  onSelect: () => navigate("/school/user/" + user.id + "/edit"),
                 },
-                { separator: true },
                 {
                   label: "Sign out",
                   onSelect: () => {

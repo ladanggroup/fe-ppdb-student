@@ -58,20 +58,15 @@ export default function RejectDialog({
             placeholder="Masukkan catatan penolakan..."
             required
           />
-          {/* <textarea
-            className="w-full mt-1 p-2 border rounded-md bg-background"
-            rows={4}
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-          /> */}
         </div>
 
         <DialogFooter className="mt-4">
-          <Button variant="outline" onClick={() => setOpen(false)}>
+          <Button 
+            onClick={() => setOpen(false)}>
             Batal
           </Button>
           <Button
-            variant="destructive"
+            className="bg-red-500 text-white hover:bg-red-400"
             onClick={handleConfirm}
             disabled={!note.trim()}
           >

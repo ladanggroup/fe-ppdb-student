@@ -108,6 +108,8 @@ const useAuthStore = create((set) => ({
       } else {
         set({ errors: error.response?.data });
       }
+      console.log(error);
+      
       return false;
     }
   },
@@ -174,9 +176,9 @@ const useAuthStore = create((set) => ({
       return true;
     } catch (error) {
       if (error.response?.status === 422) {
-        set({ errors: error.response?.data.errors });
+        set({ errors: error.response.data.errors });
       } else {
-        set({ errors: error.response?.data });
+        set({ errors: error.response.data.message });
       }
       return false;
     }

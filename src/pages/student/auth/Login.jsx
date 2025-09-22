@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import LoadingOverlay from "@/components/LoadingOverlay";
 import ErrorLabel from "@/components/ErrorLabel";
 import PasswordField from "@/components/PasswordField";
+import { showError, showSuccess } from "@/components/ui/toastSonner";
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -32,7 +33,12 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    await loginStudent({ email, password });
+    const response = await loginStudent({ email, password });
+    if (response) {
+      showSuccess("Login berhasil");
+    } else {
+      showError(errors || "Login gagal");
+    }
     setIsLoading(false);
   };
 
@@ -49,7 +55,7 @@ const Login = () => {
             />
             <div className="flex border rounded-full overflow-hidden mb-4 w-full">
               <Link
-                to="/login/school"
+                to="/login/student"
                 className={`w-1/2 py-2 text-center font-semibold text-sm border-r hover:bg-orange-300 ${
                   location.pathname === "/login/school"
                     ? "bg-orange-400 text-white"
@@ -59,7 +65,7 @@ const Login = () => {
                 Masuk
               </Link>
               <Link
-                to="/school/auth/register"
+                to="/register/student"
                 className={`w-1/2 py-2 text-center font-semibold text-sm hover:bg-orange-300 ${
                   location.pathname === "/school/auth/register"
                     ? "bg-orange-400 text-white"
@@ -69,7 +75,7 @@ const Login = () => {
                 Daftar
               </Link>
             </div>
-            <CardTitle className="text-center">Portal Sekolah</CardTitle>
+            <CardTitle className="text-center">Portal Siswa</CardTitle>
             <CardDescription className="text-center">
               Masuk untuk melanjutkan
             </CardDescription>
@@ -85,6 +91,7 @@ const Login = () => {
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Masukkan Email"
                   required
                   className="bg-blue-50"
                 />

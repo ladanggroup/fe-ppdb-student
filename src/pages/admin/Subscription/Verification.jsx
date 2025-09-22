@@ -7,6 +7,7 @@ import { Loader2 } from "lucide-react";
 import formatIdr from "@/utils/formatIdr";
 import DashboardLayout from "@/layouts/admin/DashboardLayout";
 import RejectDialog from "@/components/RejectDialog";
+import { confirmToast } from "@/components/ui/confirmToast";
 
 const Verification = () => {
   const { id } = useParams();
@@ -43,8 +44,16 @@ const Verification = () => {
   }, [id, showAdmin]);
 
   const handleVerify = async () => {
-    await verifyAdmin(id);
-    navigate("/admin/subscription");
+    confirmToast({
+      message: "Apakah Anda yakin?",
+      onConfirm: async () => {
+        await verifyAdmin(id);
+        navigate("/admin/subscription");
+      },
+      onCancel: () => {
+        console.log("cancel");
+      },
+    })
   };
 
   const handleReject = async (note) => {
@@ -86,7 +95,7 @@ const Verification = () => {
               >
                 Verifikasi
               </Button>
-              <RejectDialog onConfirm={handleReject} />
+              <RejectDialog onConfirm={(note) => handleReject(note)} />
             </>
           )}
 

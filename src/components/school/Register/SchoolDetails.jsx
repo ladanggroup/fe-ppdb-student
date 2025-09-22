@@ -1,7 +1,7 @@
 import React from "react";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
-import { Textarea } from "./ui/textarea";
+import { Input } from "../../ui/input";
+import { Label } from "../../ui/label";
+import { Textarea } from "../../ui/textarea";
 import {
   Select,
   SelectGroup,
@@ -10,10 +10,10 @@ import {
   SelectContent,
   SelectLabel,
   SelectItem,
-} from "./ui/select";
-import SelectModalUrl from "./SelectModalUrl";
+} from "../../ui/select";
+import SelectModalUrl from "../../SelectModalUrl";
 import useFile from "@/hooks/useFile";
-import ErrorLabel from "./ErrorLabel";
+import ErrorLabel from "../../ErrorLabel";
 import { Link } from "react-router";
 
 const SchoolDetails = ({
@@ -172,7 +172,7 @@ const SchoolDetails = ({
               provinces.find((province) => province.id === formData.province_id)
                 ?.name || "Pilih Provinsi"
             }
-            apiUrl={"/api/regions/provinces"}
+            apiUrl={"/regions/provinces"}
             onSelect={(id) =>
               handleChange({ target: { name: "province_id", value: id } })
             }
@@ -189,7 +189,7 @@ const SchoolDetails = ({
               cities.find((city) => city.id === formData.city_id)?.name ||
               "Pilih Kota/Kabupaten"
             }
-            apiUrl={`/api/regions/cities?province_id=${formData.province_id}`}
+            apiUrl={`/regions/cities?province_id=${formData.province_id}`}
             onSelect={(id) =>
               handleChange({ target: { name: "city_id", value: id } })
             }
@@ -204,7 +204,7 @@ const SchoolDetails = ({
               districts.find((district) => district.id === formData.district_id)
                 ?.name || "Pilih Kecamatan"
             }
-            apiUrl={`/api/regions/districts?city_id=${formData.city_id}`}
+            apiUrl={`/regions/districts?city_id=${formData.city_id}`}
             onSelect={(id) =>
               handleChange({ target: { name: "district_id", value: id } })
             }

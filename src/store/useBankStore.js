@@ -1,4 +1,4 @@
-// src/stores/bankStore.js
+// src/store/bankStore.js
 import { create } from 'zustand';
 import apiClient from '@/api/apiClient';
 
@@ -10,11 +10,23 @@ const useBankStore = create((set) => ({
   error: null,
 
   // Get banks list
-  fetchBanks: async (schoolId, name = '') => {
+  fetchBanks: async (schoolId) => { // for school to student
+    set({ loading: true, error: null });
+    try {
+      const response = await apiClient.get('/api/banks/school', {
+        params: { school_id: schoolId }
+      });
+      set({ banks: response.data.data, loading: false });
+      return response.data.data;
+    } catch (error) {
+      set({ error: error.response?.data?.message || 'Failed to fetch banks', loading: false });
+    }
+  },
+  fetchListBanks: async (page, search = '', schoolId) => {
     set({ loading: true, error: null });
     try {
       const response = await apiClient.get('/api/school/bank', {
-        params: { school_id: schoolId, name }
+        params: { school_id: schoolId, name: search, page: page },
       });
       set({ banks: response.data, loading: false });
     } catch (error) {
@@ -36,10 +48,10 @@ const useBankStore = create((set) => ({
   },
 
   // Update bank
-  updateBank: async (bankData) => {
+  updateBank: async (bankId, bankData) => {
     set({ loading: true, error: null });
     try {
-      await apiClient.put('/api/school/bank', bankData);
+      await apiClient.put(`/api/school/bank/${bankId}`, bankData);
       set({ loading: false });
       return true;
     } catch (error) {
@@ -48,11 +60,34 @@ const useBankStore = create((set) => ({
     }
   },
 
-  //admin
-  fetchBanksAdmin: async () => {
+  showBank: async (bankId) => {
     set({ loading: true, error: null });
     try {
-      const response = await apiClient.get('/api/bank');
+      const response = await apiClient.get(`/api/school/bank/${bankId}`);
+      set({ currentBank: response.data.data, loading: false });
+      return response.data.data;
+    } catch (error) {
+      set({ error: error.response?.data?.message || 'Failed to show bank', loading: false });
+    }
+  },
+
+  destroyBank: async (bankId) => {
+    set({ loading: true, error: null });
+    try {
+      await apiClient.delete(`/api/school/bank/${bankId}`);
+      set({ loading: false });
+      return true;
+    } catch (error) {
+      set({ error: error.response?.data?.message || 'Failed to delete bank', loading: false });
+      return false;
+    }
+  },
+
+  //admin
+  fetchBanksAdmin: async () => { // list bank by admin to school
+    set({ loading: true, error: null });
+    try {
+      const response = await apiClient.get('/api/banks/admin'); // list bank by admin to school
       set({ banksAdmin: response.data.data, loading: false });
     } catch (error) {
       set({ error: error.response?.data?.message || 'Failed to fetch banks', loading: false });

@@ -22,13 +22,13 @@ import { showSuccess, showError } from "@/components/ui/toastSonner";
 const BankModal = ({
   title = "",
   formData,
-  setFormData,
   handleChange,
   update = false,
   onSubmit,
   open,
   setOpen,
   loading,
+  classNameSelectItem = "",
 }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -99,17 +99,26 @@ const BankModal = ({
                   <Select
                     id="is_active"
                     name="is_active"
-                    value={formData?.is_active || ""}
+                    value={String(formData?.is_active)} // pastikan jadi string
                     onValueChange={(value) =>
-                      setFormData({ ...formData, is_active: value })
+                      handleChange({
+                        target: {
+                          name: "is_active",
+                          value: value === "true" ? true : false,
+                        },
+                      })
                     }
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Pilih Status" />
                     </SelectTrigger>
                     <SelectContent className="bg-white">
-                      <SelectItem value={true}>Aktif</SelectItem>
-                      <SelectItem value={false}>Tidak Aktif</SelectItem>
+                      <SelectItem className={classNameSelectItem} value="true">
+                        Aktif
+                      </SelectItem>
+                      <SelectItem className={classNameSelectItem} value="false">
+                        Tidak Aktif
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </SelectGroup>
@@ -119,7 +128,7 @@ const BankModal = ({
             <DialogFooter>
               <Button
                 type="button"
-                variant="outline"
+                variant="primary"
                 onClick={() => setOpen(false)}
               >
                 Batal

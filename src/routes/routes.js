@@ -14,6 +14,22 @@ const routes = [
     //   },
     // ],
   },
+  {
+    path: "/about",
+    element: lazy(() => import("@/components/landingPage/About")),
+  },
+  {
+    path: "/features",
+    element: lazy(() => import("@/components/landingPage/Feature")),
+  },
+  {
+    path: "/pricing",
+    element: lazy(() => import("@/components/landingPage/Price")),
+  },
+  {
+    path: "/announcement",
+    element: lazy(() => import("@/components/landingPage/Announcement")),
+  },
 
   // School Routes
   {
@@ -28,6 +44,61 @@ const routes = [
         path: "setting",
         element: lazy(() => import("@/pages/school/Setting")),
       },
+      {
+        path: "student",
+        children: [
+          {
+            index: true,
+            element: lazy(() => import("@/pages/school/Student/List")),
+          },
+          {
+            path: ":id/show",
+            element: lazy(() => import("@/pages/school/Student/Show")),
+          },
+          {
+            path: ":id/edit",
+            element: lazy(() => import("@/pages/school/Student/Edit")),
+          },
+        ],
+      },
+      {
+        path: "bank",
+        element: lazy(() => import("@/pages/school/Bank/List")),
+      },
+      {
+        path: "wave",
+        element: lazy(() => import("@/pages/school/Wave/List")),
+      },
+      {
+        path: "subscription",
+        children: [
+          {
+            index: true,
+            element: lazy(() => import("@/pages/school/Subscription/List")),
+          },
+          {
+            path: "create",
+            element: lazy(() => import("@/pages/school/Subscription/Create")),
+          },
+          {
+            path: ":id/show",
+            element: lazy(() => import("@/pages/school/Subscription/Show")),
+          },
+        ]
+      },
+      {
+        path: "user",
+        children: [
+          {
+            index: true,
+            element: lazy(() => import("@/pages/school/User/List")),
+          },
+          {
+            path: ":id/edit",
+            element: lazy(() => import("@/pages/school/User/Edit")),
+          },
+        ]
+      }
     ],
   },
 
@@ -39,6 +110,12 @@ const routes = [
       {
         path: "dashboard",
         element: lazy(() => import("@/pages/student/Dashboard")),
+      },
+      {
+        path: "complete-registration",
+        element: lazy(() =>
+          import("@/pages/student/auth/CompleteRegistration")
+        ),
       },
     ],
   },
@@ -52,10 +129,10 @@ const routes = [
         path: "dashboard",
         element: lazy(() => import("@/pages/admin/Dashboard")),
       },
-      // {
-      //   path: "setting",
-      //   element: lazy(() => import("@/pages/admin/Setting")),
-      // },
+      {
+        path: "setting",
+        element: lazy(() => import("@/pages/admin/Setting")),
+      },
       {
         path: "product",
         children: [
@@ -86,7 +163,18 @@ const routes = [
           },
           {
             path: ":id/verify",
-            element: lazy(() => import("@/pages/admin/Subscription/Verification")),
+            element: lazy(() =>
+              import("@/pages/admin/Subscription/Verification")
+            ),
+          },
+        ],
+      },
+      {
+        path: "user",
+        children: [
+          {
+            index: true,
+            element: lazy(() => import("@/pages/admin/User/List")),
           },
         ],
       },
@@ -99,9 +187,23 @@ const routes = [
     element: lazy(() => import("@/pages/admin/auth/Login")),
   },
   {
+    path: "/admin/email/verify/:id/:hash",
+    element: lazy(() => import("@/pages/admin/auth/VerifyEmail")),
+  },
+  {
+    path: "/admin/resend-email",
+    element: lazy(() => import("@/pages/admin/auth/ResendEmail")),
+  },
+  // student
+  {
     path: "/login/student",
     element: lazy(() => import("@/pages/student/auth/Login")),
   },
+  {
+    path: "/register/student",
+    element: lazy(() => import("@/pages/student/auth/Register")),
+  },
+  // school
   {
     path: "/login/school",
     element: lazy(() => import("@/pages/school/auth/Login")),

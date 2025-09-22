@@ -6,8 +6,21 @@ import { NotificationDropdown } from "@/components/NotificationDropdown";
 export default function Navbar() {
   const { logoutStudent } = useAuthStore();
   const navigate = useNavigate();
-  // const { user } = useAuthStore((state) => state);
-  const menuItems = ["Home", "Pendaftaran", "Harga Pendaftaran"];
+  const { user } = useAuthStore((state) => state);
+  const menuItems = [
+    {
+      name: "Home",
+      href: "/student/dashboard",
+    },
+    {
+      name: "Pendaftaran",
+      href: "/student/complete-registration",
+    },
+    {
+      name: "Harga Pendaftaran",
+      href: "/student/harga-pendaftaran",
+    }
+  ];
   const siswaNotifikasi = [
     {
       id: 1,
@@ -23,21 +36,23 @@ export default function Navbar() {
     },
   ];
   return (
-    <header className="bg-orange-soft-300 shadow sticky top-100 z-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-        <Link to="/" className="text-xl font-bold text-gray-800">
+    <header className="bg-orange-soft-300 dark:bg-[#1f2d3a] shadow top-100 z-10">
+      <div className="px-4 sm:px-6 lg:px-8 flex items-center h-16">
+        <Link to="/" className="text-xl font-bold text-gray-800 dark:text-gray-200">
           PPDB Online
         </Link>
-        <nav className="hidden md:flex space-x-8 items-center">
+        <nav className="hidden md:flex space-x-8 items-center justify-center flex-1">
           {menuItems.map((item) => (
             <Link
-              key={item}
-              to={item === "Home" ? "/" : `/${item.toLowerCase()}`}
-              className="text-gray-700 hover:text-orange-soft-700 font-medium"
+              key={item.name}
+              to={item.href}
+              className="text-gray-700 dark:text-gray-200 hover:text-orange-soft-700 font-medium"
             >
-              {item}
+              {item.name}
             </Link>
           ))}
+        </nav>
+        <div className="flex items-center">
           <NotificationDropdown
             notifications={siswaNotifikasi}
             onClickNotification={(notif) => {
@@ -46,7 +61,7 @@ export default function Navbar() {
             onClickViewAll={() => {
               // Navigasi ke halaman /sekolah/notifikasi
             }}
-            className="ml-4"
+            className="ml-4 mr-4"
             theme={{
               bg: "bg-orange-50",
               text: "text-orange-900",
@@ -58,17 +73,22 @@ export default function Navbar() {
           />
           <Dropdown
             theme={{
-              bg: "bg-orange-soft-100",
-              text: "text-orange-900",
-              border: "border-orange-200",
-              hover: "hover:bg-orange-100",
-              label: "text-orange-500",
-              shortcut: "text-orange-400",
+              bg: "bg-orange-soft-100 dark:bg-[#1f2d3a]",
+              text: "text-orange-900 dark:text-gray-200",
+              border: "border-orange-200 dark:border-gray-700",
+              hover: "hover:bg-orange-100 dark:hover:bg-gray-700",
+              label: "text-orange-500 dark:text-gray-200",
+              shortcut: "text-orange-400 dark:text-gray-200",
               shadow: "shadow-xl",
             }}
             trigger={
-              <button className="text-gray-700 hover:text-orange-soft-700 font-medium">
-                Akun
+              <button className="flex items-center space-x-2 text-gray-700 hover:text-orange-soft-700 dark:text-gray-200 font-medium">
+                <img
+                  className="w-8 h-8 rounded-full"
+                  src={user.avatar}
+                  alt=""
+                />
+                <span className="">{user.name}</span>
               </button>
             }
             items={[
@@ -89,7 +109,7 @@ export default function Navbar() {
               },
             ]}
           />
-        </nav>
+        </div>
       </div>
     </header>
   );

@@ -6,6 +6,7 @@ const useProductStore = create((set) => ({
   loading: false,
   error: null,
 
+  // public product
   fetchProducts: async () => {
     set({ loading: true, error: null });
     try {
@@ -16,6 +17,8 @@ const useProductStore = create((set) => ({
       console.error("Error fetching products:", error);
     }
   },
+  
+  // admin
   store: async (productData) => {
     set({ loading: true, error: null });
     try {

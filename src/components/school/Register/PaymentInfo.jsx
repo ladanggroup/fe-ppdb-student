@@ -7,11 +7,11 @@ import {
   SelectContent,
   SelectLabel,
   SelectItem,
-} from "./ui/select";
-import ErrorLabel from "./ErrorLabel";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
-import BankSelectedCard from "./BankSelectedCard";
+} from "../../ui/select";
+import ErrorLabel from "../../ErrorLabel";
+import { Input } from "../../ui/input";
+import { Label } from "../../ui/label";
+import BankSelectedCard from "../../BankSelectedCard";
 import useFile from "@/hooks/useFile";
 import { Link } from "react-router";
 

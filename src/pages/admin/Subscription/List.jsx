@@ -18,6 +18,7 @@ import DashboardLayout from "@/layouts/admin/DashboardLayout";
 import LoadingOverlay from "@/components/LoadingOverlay";
 import { CheckCircle, Eye, Ban } from "lucide-react";
 import RejectDialog from "@/components/RejectDialog";
+import { confirmToast } from "@/components/ui/confirmToast";
 
 export default function List() {
   const {
@@ -34,12 +35,20 @@ export default function List() {
   const page = Number(searchParams.get("page")) || 1;
 
   const handleVerify = async (id) => {
-    await verifyAdmin(id);
-    listAdmin(page, status);
+    confirmToast({
+      message: "Apakah Anda yakin?",
+      onConfirm: async () => {
+        await verifyAdmin(id);
+        listAdmin(page, status);
+      },
+      onCancel: () => {
+        console.log("cancel");
+      },
+    })
   };
 
-  const handleReject = async (id) => {
-    await rejectAdmin(id);
+  const handleReject = async (id, note) => {
+    await rejectAdmin(id, note);
     listAdmin(page, status);
   };
 
@@ -64,7 +73,7 @@ export default function List() {
     return () => clearTimeout(timeout);
   }, [page, status, listAdmin]);
 
-  console.log(subscriptionsAdmin);
+  // console.log(subscriptionsAdmin);
 
   return (
     <DashboardLayout>
@@ -192,7 +201,7 @@ export default function List() {
                           </Button>
                           {/* Tolak */}
                           <RejectDialog
-                            onConfirm={handleReject}
+                            onConfirm={(note) => handleReject(sub.id, note)}
                             triggerLabel={<Ban className="w-4 h-4" />}
                           />
                         </>

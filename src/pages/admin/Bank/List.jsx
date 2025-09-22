@@ -1,12 +1,11 @@
 // src/pages/admin/Bank/BankList.jsx
 import React, { useEffect, useState } from "react";
-import { Link, useSearchParams, Outlet } from "react-router"; // Import Link dari react-router
+import { useSearchParams, Outlet } from "react-router"; // Import Link dari react-router
 import DashboardLayout from "@/layouts/admin/DashboardLayout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import BankModal from "@/components/AddBankModal";
-// import axios from "axios";
 import useBankStore from "@/store/useBankStore";
 import Pagination from "@/components/Pagination";
 import LoadingOverlay from "@/components/LoadingOverlay";
@@ -72,38 +71,37 @@ const BankList = () => {
   };
 
   const handleShow = async (bankId) => {
-      const data = await showBankAdmin(bankId); // asumsi ini return detail
-      console.log(data);
-  if (data) {
-    setFormData({
-      bank_name: data.name,
-      account_number: data.account_number,
-      account_name: data.account_name,
-      is_active: data.is_active,
-    });
-  }
+    const data = await showBankAdmin(bankId); // asumsi ini return detail
+    if (data) {
+      setFormData({
+        bank_name: data.name,
+        account_number: data.account_number,
+        account_name: data.account_name,
+        is_active: data.is_active,
+      });
+    }
   };
 
-const handleOpen = async (edit = false, bankId = null) => {
-  if (edit === true && bankId !== null) {
-    setUpdate(true);
-    await handleShow(bankId); // ini akan isi formData
-    setOpen(true);
-    // setOpenUpdate(true); // buka modal setelah state terisi
-  } else if (edit === false && bankId === null) {
+  const handleOpen = async (edit = false, bankId = null) => {
+    if (edit === true && bankId !== null) {
+      setUpdate(true);
+      await handleShow(bankId); // ini akan isi formData
+      setOpen(true);
+      // setOpenUpdate(true); // buka modal setelah state terisi
+    } else if (edit === false && bankId === null) {
+      setUpdate(false);
+      reset();
+      // setOpenCreate(true);
+      setOpen(true);
+    }
+  };
+
+  const handleClose = () => {
+    setOpen(false);
     setUpdate(false);
     reset();
-    // setOpenCreate(true);
-    setOpen(true);
-  }
-};
-
-const handleClose = () => {
-  setOpen(false);
-  setUpdate(false);
-  reset();
-  fetchListBankAdmin(page, search);
-};
+    fetchListBankAdmin(page, search);
+  };
 
   useEffect(() => {
     fetchListBankAdmin(page, search);
@@ -133,18 +131,18 @@ const handleClose = () => {
         >
           Tambah Bank Baru
         </Button>
-      {update !== true &&
-        <BankModal
-          title="Tambah Data Bank"
-          onSubmit={handleCreate}
-          handleChange={handleChange}
-          formData={formData}
-          open={open}
-          setOpen={handleClose}
-          loading={loading}
-          update={update}
-        />
-      }
+        {update !== true && (
+          <BankModal
+            title="Tambah Data Bank"
+            onSubmit={handleCreate}
+            handleChange={handleChange}
+            formData={formData}
+            open={open}
+            setOpen={handleClose}
+            loading={loading}
+            update={update}
+          />
+        )}
       </div>
 
       {loading ? (
@@ -178,18 +176,19 @@ const handleClose = () => {
                 >
                   Edit
                 </Button>
-              {update !== false && (
-                <BankModal
-                  title="Edit Data Bank"
-                  onSubmit={() => handleUpdate(bank.id)}
-                  handleChange={handleChange}
-                  formData={formData}
-                  setFormData={setFormData}
-                  setOpen={handleClose}
-                  open={open}
-                  update={update}
-                  loading={loading}
-                />
+                {update !== false && (
+                  <BankModal
+                    title="Edit Data Bank"
+                    onSubmit={() => handleUpdate(bank.id)}
+                    handleChange={handleChange}
+                    formData={formData}
+                    setFormData={setFormData}
+                    setOpen={handleClose}
+                    open={open}
+                    update={update}
+                    loading={loading}
+                    classNameSelectItem="hover:bg-sky-200 dark:hover:bg-gray-300"
+                  />
                 )}
                 {/* Tombol Hapus */}
                 <Button

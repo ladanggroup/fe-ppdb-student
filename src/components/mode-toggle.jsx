@@ -1,27 +1,24 @@
-import { Moon, Sun } from "lucide-react";
-import { Dropdown } from "@/components/ui/dropdown";
-import { useTheme } from "@/components/theme-provider";
+import { Sun, Moon } from "lucide-react";
+import { useTheme } from "./theme-provider";
 
 export function ModeToggle() {
-  const { setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
 
-  const items = [
-    { label: "Light", onSelect: () => setTheme("light") },
-    { label: "Dark", onSelect: () => setTheme("dark") },
-    { label: "System", onSelect: () => setTheme("system") },
-  ];
+  const toggleTheme = () => {
+    if (theme === "light") setTheme("dark");
+    else setTheme("light");
+  };
 
   return (
-    <Dropdown
-      trigger={
-        <button className="w-9 h-9 rounded-full flex items-center justify-center bg-white/10">
-          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-          <span className="sr-only">Toggle theme</span>
-        </button>
-      }
-      items={items}
-      align="end"
-    />
+    <button
+      onClick={toggleTheme}
+      className="hidden md:flex items-center justify-center p-2 rounded-full bg-white transition"
+    >
+      {theme === "light" ? (
+        <Moon className="h-5 w-5 text-gray-900" />
+      ) : (
+        <Sun className="h-5 w-5 text-yellow-400" />
+      )}
+    </button>
   );
 }

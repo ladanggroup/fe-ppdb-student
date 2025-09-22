@@ -5,9 +5,9 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 
-export default function BankSelectedCard({ bank }) {
+export default function BankSelectedCard({ bank, className }) {
   return (
-    <Card>
+    <Card className={className}>
       <CardHeader>
         {!bank ? (
           <>

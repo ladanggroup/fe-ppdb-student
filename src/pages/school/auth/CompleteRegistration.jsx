@@ -9,9 +9,9 @@ import useDocumentStore from "@/store/useDocumentStore";
 import useAuthStore from "@/store/authStore";
 
 // Import Step Components
-import SchoolDetails from "@/components/SchoolDetails";
-import SubscriptionPackage from "@/components/SubscriptionPackage";
-import PaymentInfo from "@/components/PaymentInfo";
+import SchoolDetails from "@/components/school/Register/SchoolDetails";
+import SubscriptionPackage from "@/components/school/Register/SubscriptionPackage";
+import PaymentInfo from "@/components/school/Register/PaymentInfo";
 import FormNavigation from "@/components/FormNavigation";
 
 const CompleteRegistration = () => {
@@ -109,7 +109,7 @@ const CompleteRegistration = () => {
     if (user) {
       setFormData((prev) => ({
         ...prev,
-        npsn: user?.npsn || "",
+        npsn: user?.school?.npsn || "",
         school_name: user?.school?.name || "",
         school_email: user?.school?.email || "",
         phone: user?.school?.phone || "",
@@ -119,24 +119,19 @@ const CompleteRegistration = () => {
         city_id: user?.school?.city_id || "",
         district_id: user?.school?.district_id || "",
         school_document_file: documents?.[0]?.file || null,
-        selected_product_id: products?.find((p) => p.name === subscriptions?.[0]?.name)?.id || null,
+        selected_product_id:
+          products?.find((p) => p.name === subscriptions?.[0]?.name)?.id ||
+          null,
         selected_bank_id: payments?.[0]?.bank_id || null,
         payment_date: payments?.[0]?.payment_date || null,
         payment_proof_file: payments?.[0]?.document?.file || null,
       }));
     }
-    if (Array.isArray(subscriptions) && subscriptions.length > 0) {
-      if (subscriptions[0].status === "menunggu_verifikasi") {
-        setSuccessMessage(
-          "Pendaftaran sekolah, dokumen, langganan, dan pembayaran berhasil diproses! Silakan tunggu verifikasi."
-        );
-      }
-    }
-    
   }, [user, documents, payments, subscriptions, products]);
 
   const [formErrors, setFormErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [currentStep, setCurrentStep] = useState(1);
 
   // Fetch initial data
@@ -185,52 +180,52 @@ const CompleteRegistration = () => {
     return product ? product.price : 0;
   };
 
-  // const validateStep = (step) => {
-  //   let newErrors = {};
-  //   let isValid = true;
+  const validateStep = (step) => {
+    let newErrors = {};
+    let isValid = true;
 
-  //   if (step === 1) {
-  //     if (!formData.npsn) newErrors.npsn = "NPSN wajib diisi.";
-  //     if (!formData.school_name)
-  //       newErrors.school_name = "Nama sekolah wajib diisi.";
-  //     if (!formData.school_email)
-  //       newErrors.school_email = "Email sekolah wajib diisi.";
-  //     if (!formData.phone)
-  //       newErrors.phone = "Nomor telepon sekolah wajib diisi.";
-  //     if (!formData.address) newErrors.address = "Alamat sekolah wajib diisi.";
-  //     if (!formData.education_level)
-  //       newErrors.education_level = "Jenjang pendidikan wajib dipilih.";
-  //     if (!formData.province_id)
-  //       newErrors.province_id = "Provinsi wajib dipilih.";
-  //     if (!formData.city_id)
-  //       newErrors.city_id = "Kota/Kabupaten wajib dipilih.";
-  //     if (!formData.district_id)
-  //       newErrors.district_id = "Kecamatan wajib dipilih.";
-  //     if (!formData.school_document_file)
-  //       newErrors.school_document_file =
-  //         "Dokumen bukti sekolah wajib diunggah."; // Ganti validasi
-  //   } else if (step === 2) {
-  //     if (!formData.selected_product_id)
-  //       newErrors.selected_product_id = "Produk/Paket langganan wajib dipilih.";
-  //   } else if (step === 3) {
-  //     // Payment details and proof
-  //     if (!formData.payment_date)
-  //       newErrors.payment_date = "Tanggal pembayaran wajib diisi.";
-  //     if (!formData.selected_bank_id)
-  //       newErrors.selected_bank_id = "Bank tujuan wajib dipilih.";
-  //     if (!formData.payment_proof_file)
-  //       newErrors.payment_proof_file = "Bukti pembayaran wajib diunggah.";
-  //   }
+    if (step === 1) {
+      if (!formData.npsn) newErrors.npsn = "NPSN wajib diisi.";
+      if (!formData.school_name)
+        newErrors.school_name = "Nama sekolah wajib diisi.";
+      if (!formData.school_email)
+        newErrors.school_email = "Email sekolah wajib diisi.";
+      if (!formData.phone)
+        newErrors.phone = "Nomor telepon sekolah wajib diisi.";
+      if (!formData.address) newErrors.address = "Alamat sekolah wajib diisi.";
+      if (!formData.education_level)
+        newErrors.education_level = "Jenjang pendidikan wajib dipilih.";
+      if (!formData.province_id)
+        newErrors.province_id = "Provinsi wajib dipilih.";
+      if (!formData.city_id)
+        newErrors.city_id = "Kota/Kabupaten wajib dipilih.";
+      if (!formData.district_id)
+        newErrors.district_id = "Kecamatan wajib dipilih.";
+      if (!formData.school_document_file)
+        newErrors.school_document_file =
+          "Dokumen bukti sekolah wajib diunggah."; // Ganti validasi
+    } else if (step === 2) {
+      if (!formData.selected_product_id)
+        newErrors.selected_product_id = "Produk/Paket langganan wajib dipilih.";
+    } else if (step === 3) {
+      // Payment details and proof
+      if (!formData.payment_date)
+        newErrors.payment_date = "Tanggal pembayaran wajib diisi.";
+      if (!formData.selected_bank_id)
+        newErrors.selected_bank_id = "Bank tujuan wajib dipilih.";
+      if (!formData.payment_proof_file)
+        newErrors.payment_proof_file = "Bukti pembayaran wajib diunggah.";
+    }
 
-  //   setFormErrors(newErrors);
-  //   isValid = Object.keys(newErrors).length === 0;
-  //   return isValid;
-  // };
+    setFormErrors(newErrors);
+    isValid = Object.keys(newErrors).length === 0;
+    return isValid;
+  };
 
   const handleNextStep = () => {
-    // if (validateStep(currentStep)) {
+    if (validateStep(currentStep)) {
       setCurrentStep((prev) => prev + 1);
-    // }
+    }
   };
 
   const handlePrevStep = () => {
@@ -242,10 +237,10 @@ const CompleteRegistration = () => {
     setFormErrors({});
     setSuccessMessage("");
 
-    // if (!validateStep(currentStep)) {
-    //   // Validate final step
-    //   return;
-    // }
+    if (!validateStep(currentStep)) {
+      // Validate final step
+      return;
+    }
 
     try {
       // 1. Register School
@@ -278,7 +273,7 @@ const CompleteRegistration = () => {
           doc_name: `Dokumen Sekolah ${formData.school_name}`, // Nama dokumen
           path: formData.school_document_file,
           school_id: user?.school?.id, // Link ke sekolah yang baru terdaftar
-          is_payment: "false",
+          is_payment: false,
         };
 
         try {
@@ -301,7 +296,7 @@ const CompleteRegistration = () => {
           doc_name: `Bukti Pembayaran ${formData.school_name} - ${formData.payment_date}`,
           path: formData.payment_proof_file,
           school_id: user?.school?.id, // Link ke sekolah yang baru terdaftar
-          is_payment: "true",
+          is_payment: true,
         };
         try {
           const documentResponse = await addDocument(documentDataPayment);
@@ -369,7 +364,22 @@ const CompleteRegistration = () => {
       });
     }
   };
-
+  useEffect(() => {
+    if (user?.school?.subscriptions?.length > 0) {
+      const subscription = user?.school?.subscriptions[0];
+      if (subscription.status === "rejected") {
+        setErrorMessage(
+          "Pendaftaran sekolah, dokumen, langganan, dan pembayaran gagal diproses. Silakan cek kembali formulir pendaftaran."
+        );
+        setSuccessMessage("");
+      } else {
+        setSuccessMessage(
+          "Pendaftaran sekolah, dokumen, langganan, dan pembayaran berhasil diproses! Silakan tunggu verifikasi."
+        );
+        setErrorMessage("");
+      }
+    }
+  }, [user?.school?.subscriptions]);
   const isLoading =
     schoolLoading ||
     productLoading ||
@@ -388,7 +398,7 @@ const CompleteRegistration = () => {
           <div className="flex justify-between items-center">
             <div
               className={`flex-1 text-center py-2 border-b-2 ${
-                currentStep >= 1
+                currentStep == 1
                   ? "border-ppdb-orange text-ppdb-orange"
                   : "border-gray-300 text-gray-500"
               }`}
@@ -397,7 +407,7 @@ const CompleteRegistration = () => {
             </div>
             <div
               className={`flex-1 text-center py-2 border-b-2 ${
-                currentStep >= 2
+                currentStep == 2
                   ? "border-ppdb-orange text-ppdb-orange"
                   : "border-gray-300 text-gray-500"
               }`}
@@ -406,7 +416,7 @@ const CompleteRegistration = () => {
             </div>
             <div
               className={`flex-1 text-center py-2 border-b-2 ${
-                currentStep >= 3
+                currentStep == 3
                   ? "border-ppdb-orange text-ppdb-orange"
                   : "border-gray-300 text-gray-500"
               }`}
@@ -435,6 +445,21 @@ const CompleteRegistration = () => {
             <span className="block sm:inline">
               {" "}
               {schoolErrors || formErrors.general}
+            </span>
+          </div>
+        )}
+
+        {errorMessage && (
+          <div
+            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
+            role="alert"
+          >
+            <strong className="font-bold">Error!</strong>
+            <span className="block sm:inline">
+              {" "}
+              {errorMessage}
+              <br />
+              {user?.school?.subscriptions?.[0]?.note}
             </span>
           </div>
         )}

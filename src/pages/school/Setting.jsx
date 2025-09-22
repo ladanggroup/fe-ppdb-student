@@ -18,25 +18,47 @@ import {
   SelectLabel,
   SelectItem,
 } from "@/components/ui/select";
+import { showError, showSuccess } from "@/components/ui/toastSonner";
 
 const Setting = () => {
   const { user } = useAuthStore((state) => state);
   const { updateSchoolProfile } = useSchoolStore();
   const [form, setForm] = useState({
-    name: user?.name || "",
-    email: user?.school?.email || "",
-    phone: user?.school?.phone || "",
-    address: user?.school?.address || "",
-    npsn: user?.npsn || "",
-    education_level: user?.school?.education_level || "",
-    roles: user?.roles || "",
-    school_name: user?.school?.name || "",
-    province_id: user?.school?.province_id || "",
-    city_id: user?.school?.city_id || "",
-    district_id: user?.school?.district_id || "",
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    npsn: "",
+    education_level: user?.school?.education_level ?? "",
+    roles: "",
+    school_name: "",
+    school_email: "",
+    province_id: "",
+    city_id: "",
+    district_id: "",
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setForm((prev) => ({
+        ...prev,
+        name: user.name ?? "",
+        email: user.email ?? "",
+        phone: user.school?.phone ?? "",
+        address: user.school?.address ?? "",
+        npsn: user.school?.npsn ?? "",
+        education_level: user?.school?.education_level ?? "",
+        roles: user.roles ?? "",
+        school_name: user.school?.name ?? "",
+        school_email: user.school?.email ?? "",
+        province_id: user.school?.province_id ?? "",
+        city_id: user.school?.city_id ?? "",
+        district_id: user.school?.district_id ?? "",
+      }));
+    }
+  }, [user]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -47,12 +69,14 @@ const Setting = () => {
     setIsSubmitting(true);
     setErrors({});
     try {
-      await updateSchoolProfile(user.id, form);
+      const response = await updateSchoolProfile(user.id, form);
+      showSuccess(response.message || "Profil berhasil diperbarui.");
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     } catch (err) {
       if (err.response?.data?.errors) {
         setErrors(err.response.data.errors);
       } else {
-        alert("Gagal memperbarui profil.");
+        showError(err.response?.data?.message || "Terjadi kesalahan.");
       }
     } finally {
       setIsSubmitting(false);
@@ -75,6 +99,8 @@ const Setting = () => {
       value: "sma/ma/smk/mak",
     },
   ];
+
+
   return (
     <DashboardLayout>
       <div className="p-6 max-w-4xl mx-auto">
@@ -83,9 +109,7 @@ const Setting = () => {
         </h2>
         <Card className="bg-blue-100 dark:bg-[#1f2d3a] border border-slate-300 dark:border-white/10">
           <CardHeader className="border-slate-300 dark:border-white/10 border-b mb-3">
-            <CardTitle className="text-blue-500 dark:text-blue-50">
-              Data Sekolah
-            </CardTitle>
+            <CardTitle>Data Sekolah</CardTitle>
           </CardHeader>
           <CardContent className="bg-blue-100 dark:bg-[#1f2d3a] text-slate-800 dark:text-white">
             <form
@@ -95,31 +119,33 @@ const Setting = () => {
               <div className="md:col-span-1">
                 <Label className="mb-2 block text-left">Nama Sekolah</Label>
                 <Input
-                 value={user?.school?.name}
-                 className="bg-slate-300 dark:bg-[#1f2d3a] text-slate-800 dark:text-white"
+                  value={user?.school?.name}
+                  className="bg-blue-100 dark:bg-[#1f2d3a] text-slate-800 dark:text-white"
                 />
               </div>
               <div>
                 <Label className="mb-2 block text-left">
                   Nama Penanggung Jawab
                 </Label>
-                <Input 
-                name="name"
-                value={form.name}
-                onChange={handleChange}
-                className="bg-slate-300 dark:bg-[#1f2d3a] text-slate-800 dark:text-white"
+                <Input
+                  name="name"
+                  value={form.name}
+                  onChange={handleChange}
+                  className="bg-blue-100 dark:bg-[#1f2d3a] text-slate-800 dark:text-white"
                 />
                 {errors.name && <ErrorLabel message={errors.name[0]} />}
               </div>
               <div>
                 <Label className="mb-2 block text-left">Email Sekolah</Label>
                 <Input
-                  name="email"
-                  value={form.email}
+                  name="school_email"
+                  value={form.school_email}
                   onChange={handleChange}
-                  className="bg-slate-300 dark:bg-[#1f2d3a] text-slate-800 dark:text-white"
+                  className="bg-blue-100 dark:bg-[#1f2d3a] text-slate-800 dark:text-white"
                 />
-                {errors.email && <ErrorLabel message={errors.email[0]} />}
+                {errors.school_email && (
+                  <ErrorLabel message={errors.school_email[0]} />
+                )}
               </div>
               <div>
                 <Label className="mb-2 block text-left">Telepon Sekolah</Label>
@@ -127,16 +153,17 @@ const Setting = () => {
                   name="phone"
                   value={form.phone}
                   onChange={handleChange}
-                  className="bg-slate-300 dark:bg-[#1f2d3a] text-slate-800 dark:text-white"
+                  className="bg-blue-100 dark:bg-[#1f2d3a] text-slate-800 dark:text-white"
                 />
                 {errors.phone && <ErrorLabel message={errors.phone[0]} />}
               </div>
               <div>
                 <Label className="mb-2 block text-left">NPSN</Label>
-                <Input name="npsn"
-                value={form.npsn}
-                onChange={handleChange}
-                className="bg-slate-300 dark:bg-[#1f2d3a] text-slate-800 dark:text-white"
+                <Input
+                  name="npsn"
+                  value={form.npsn}
+                  onChange={handleChange}
+                  className="bg-blue-100 dark:bg-[#1f2d3a] text-slate-800 dark:text-white"
                 />
                 {errors.npsn && <ErrorLabel message={errors.npsn[0]} />}
               </div>
@@ -152,12 +179,16 @@ const Setting = () => {
                     handleChange({ target: { name: "education_level", value } })
                   }
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-blue-100 dark:bg-[#1f2d3a] text-slate-800 dark:text-white">
                     <SelectValue placeholder="Pilih Jenjang" />
                   </SelectTrigger>
-                  <SelectContent className="bg-slate-300 dark:bg-[#1f2d3a] text-slate-800 dark:text-white">
+                  <SelectContent className="bg-blue-100 dark:bg-[#1f2d3a] text-slate-800 dark:text-white">
                     {optionEducationLevel?.map((level) => (
-                      <SelectItem key={level.id} value={level.value}>
+                      <SelectItem
+                        className="hover:bg-blue-200 dark:hover:bg-gray-700 text-slate-800 dark:text-white"
+                        key={level.id}
+                        value={level.value}
+                      >
                         {level.name}
                       </SelectItem>
                     ))}
@@ -174,7 +205,7 @@ const Setting = () => {
                   id="address"
                   value={form.address}
                   onChange={handleChange}
-                  className="block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
+                  className="block w-full bg-blue-100 dark:bg-[#1f2d3a] text-slate-800 dark:text-white rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
                 />
                 {errors.address && <ErrorLabel message={errors.address[0]} />}
               </div>
@@ -191,7 +222,7 @@ const Setting = () => {
                       province_id: value,
                     })
                   }
-                  classDialogTrigger="bg-slate-300 dark:bg-[#1f2d3a] text-slate-800 dark:text-white"
+                  classDialogTrigger="bg-blue-100 dark:bg-[#1f2d3a] text-slate-800 dark:text-white"
                 />
                 {errors.province_id && (
                   <ErrorLabel message={errors.province_id[0]} />
@@ -210,7 +241,7 @@ const Setting = () => {
                       city_id: value,
                     })
                   }
-                  classDialogTrigger="bg-slate-300 dark:bg-[#1f2d3a] text-slate-800 dark:text-white"
+                  classDialogTrigger="bg-blue-100 dark:bg-[#1f2d3a] text-slate-800 dark:text-white"
                 />
                 {errors.city_id && <ErrorLabel message={errors.city_id[0]} />}
               </div>
@@ -227,17 +258,21 @@ const Setting = () => {
                       district_id: value,
                     })
                   }
-                  classDialogTrigger="bg-slate-300 dark:bg-[#1f2d3a] text-slate-800 dark:text-white"
+                  classDialogTrigger="bg-blue-100 dark:bg-[#1f2d3a] text-slate-800 dark:text-white"
                 />
                 {errors.district_id && (
                   <ErrorLabel message={errors.district_id[0]} />
                 )}
               </div>
 
-              <div className="md:col-span-2">
-                <Button type="submit" disabled={isSubmitting}>
+              <div className="md:col-span-2 text-right mt-4">
+                <button
+                  className="bg-blue-300 dark:bg-gray-500 text-slate-800 dark:text-white hover:bg-blue-400 dark:hover:bg-gray-600 border border-blue-300 dark:border-gray-500 rounded-lg px-4 py-2"
+                  type="submit"
+                  disabled={isSubmitting}
+                >
                   {isSubmitting ? "Menyimpan..." : "Simpan Perubahan"}
-                </Button>
+                </button>
               </div>
             </form>
           </CardContent>

@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import LoadingOverlay from "@/components/LoadingOverlay";
 import ErrorLabel from "@/components/ErrorLabel";
 import PasswordField from "@/components/PasswordField";
+import { showError, showSuccess } from "@/components/ui/toastSonner";
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -32,7 +33,12 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    await loginSchool({ email, password });
+    const response = await loginSchool({ email, password });
+    if (response) {
+      showSuccess("Login berhasil");
+    } else {
+      showError(response?.message || "Login gagal");
+    }
     setIsLoading(false);
   };
 
@@ -85,6 +91,7 @@ const Login = () => {
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Masukkan Email"
                   required
                   className="bg-blue-50"
                 />

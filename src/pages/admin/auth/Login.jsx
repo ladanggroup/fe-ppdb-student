@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router";
+import { useNavigate } from "react-router";
 import useAuthStore from "@/store/authStore";
 import { Input } from "@/components/ui/input";
 import {
@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import LoadingOverlay from "@/components/LoadingOverlay";
 import ErrorLabel from "@/components/ErrorLabel";
 import PasswordField from "@/components/PasswordField";
+import { showError, showSuccess } from "@/components/ui/toastSonner";
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -21,7 +22,6 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const { loginAdmin, errors, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -32,7 +32,12 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    await loginAdmin({ email, password });
+    const response = await loginAdmin({ email, password });
+    if (response) {
+      showSuccess("Login berhasil");
+    } else {
+      showError(errors || "Login gagal");
+    }
     setIsLoading(false);
   };
 
@@ -47,18 +52,6 @@ const Login = () => {
               alt="Logo PPDB"
               className="h-10 mb-2"
             />
-            {/* <div className="flex border rounded-full overflow-hidden mb-4 w-full">
-              <Link
-                to="/login/admin"
-                className={`w-1/2 py-2 text-center font-semibold text-sm border-r hover:bg-orange-300 ${
-                  location.pathname === "/login/school"
-                    ? "bg-orange-400 text-white"
-                    : "bg-gray-100 text-gray-500"
-                }`}
-              >
-                Masuk
-              </Link>
-            </div> */}
             <CardTitle className="text-center">Portal Admin</CardTitle>
             <CardDescription className="text-center">
               Masuk untuk melanjutkan
@@ -75,6 +68,7 @@ const Login = () => {
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Masukkan Email"
                   required
                   className="bg-blue-50"
                 />

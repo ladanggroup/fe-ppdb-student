@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate, Link } from "react-router";
 import ErrorLabel from "@/components/ErrorLabel";
 import PasswordField from "@/components/PasswordField";
-// import useAuthStore from "@/store/authStore";
 import useSchoolStore from "@/store/useSchoolStore";
 
 const RegisterSchool = () => {
@@ -16,6 +15,7 @@ const RegisterSchool = () => {
     password: "",
     password_confirmation: "",
     npsn: "",
+    nip: "",
     school_name: "",
     roles: "kepala_sekolah",
   });
@@ -23,7 +23,6 @@ const RegisterSchool = () => {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
-  // const { registerSchool } = useAuthStore();
   const { registerSchool } = useSchoolStore();
 
   const handleChange = (e) => {
@@ -71,6 +70,7 @@ const RegisterSchool = () => {
                   name="name"
                   value={form.name}
                   onChange={handleChange}
+                  placeholder="Nama Penanggung Jawab"
                   required
                 />
                 {errors.name && <ErrorLabel message={errors.name[0]} />}
@@ -85,6 +85,7 @@ const RegisterSchool = () => {
                   name="email"
                   value={form.email}
                   onChange={handleChange}
+                  placeholder="Email Penanggung Jawab"
                   required
                 />
                 {errors.email && <ErrorLabel message={errors.email[0]} />}
@@ -97,6 +98,7 @@ const RegisterSchool = () => {
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
                 error={errors?.password && errors.password[0]}
+                placeholder="Password Penanggung Jawab"
                 required
                 className="bg-blue-50"
               />
@@ -106,6 +108,7 @@ const RegisterSchool = () => {
                 label="Konfirmasi Password"
                 id="password_confirmation"
                 value={form.password_confirmation}
+                placeholder="Konfirmasi Password Penanggung Jawab"
                 onChange={(e) =>
                   setForm({ ...form, password_confirmation: e.target.value })
                 }
@@ -125,6 +128,7 @@ const RegisterSchool = () => {
                   name="school_name"
                   value={form.school_name}
                   onChange={handleChange}
+                  placeholder="Nama Sekolah"
                   required
                 />
                 {errors.school_name && (
@@ -140,25 +144,42 @@ const RegisterSchool = () => {
                   name="npsn"
                   value={form.npsn}
                   onChange={handleChange}
+                  placeholder="NPSN Sekolah"
                   required
                 />
                 {errors.npsn && <ErrorLabel message={errors.npsn[0]} />}
               </div>
 
               {/* Role */}
-              <div className="md:col-span-2">
-                <Label htmlFor="roles">Peran</Label>
+              <div className="">
+                <Label className="mb-2 block text-left"  htmlFor="roles">Peran</Label>
                 <select
                   id="roles"
                   name="roles"
                   value={form.roles}
                   onChange={handleChange}
-                  className="w-full border rounded-md p-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Peran"
+                  className="w-full border rounded-md py-1.5 px-3 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="admin_sekolah">Admin / Operator Sekolah</option>
                   <option value="kepala_sekolah">Kepala Sekolah</option>
                 </select>
                 {errors.roles && <ErrorLabel message={errors.roles[0]} />}
+              </div>
+
+              <div className="">
+                <Label className="mb-2 block text-left" htmlFor="nip">
+                  NIP
+                </Label>
+                <Input
+                  id="nip"
+                  name="nip"
+                  value={form.nip}
+                  onChange={handleChange}
+                  placeholder="NIP Penanggung Jawab"
+                  required
+                />
+                {errors.nip && <ErrorLabel message={errors.nip[0]} />}
               </div>
             </div>
 
