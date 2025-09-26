@@ -44,10 +44,10 @@ const PaymentInfo = ({
   };
   return (
     <div className="border-b border-gray-900/10 pb-6">
-      <h3 className="text-lg font-semibold leading-7 text-gray-900">
+      <h3 className="text-lg font-semibold leading-7 text-gray-900 text-center">
         3. Informasi Pembayaran & Unggah Bukti
       </h3>
-      <p className="mt-1 text-sm leading-6 text-gray-600">
+      <p className="mt-1 text-sm leading-6 text-gray-600 text-center">
         Lakukan pembayaran dan unggah bukti transfer.
       </p>
 
@@ -99,7 +99,7 @@ const PaymentInfo = ({
                 <SelectItem disabled>Memuat bank...</SelectItem>
               ) : banksAdmin.length > 0 ? (
                 banksAdmin?.map((bank) => (
-                  <SelectItem key={bank.id} value={String(bank.id)}>
+                  <SelectItem className="hover:bg-orange-soft-200" key={bank.id} value={String(bank.id)}>
                     {bank.name} - {bank.account_number} ({bank.account_name})
                   </SelectItem>
                 ))

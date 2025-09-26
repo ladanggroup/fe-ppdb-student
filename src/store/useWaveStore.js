@@ -13,11 +13,12 @@ export const useWaveStore = create((set) => ({
     city_id,
     district_id,
     education_level,
-    page
+    page,
+    search
   ) => {
     set({ loading: true, error: null });
     try {
-      const res = await apiClient.get('/api/waves', { params: { province_id, city_id, district_id, education_level, page } });
+      const res = await apiClient.get('/api/waves', { params: { province_id, city_id, district_id, education_level, page, search } });
       set({ waves: res.data.data, loading: false });
       return res.data.data;
     } catch (err) {

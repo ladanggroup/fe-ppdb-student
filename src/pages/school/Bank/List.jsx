@@ -1,6 +1,6 @@
 // src/pages/admin/Bank/BankList.jsx
 import React, { useEffect, useState } from "react";
-import { useSearchParams, Outlet } from "react-router"; // Import Link dari react-router
+import { useSearchParams, Outlet } from "react-router";
 import DashboardLayout from "@/layouts/school/DashboardLayout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";

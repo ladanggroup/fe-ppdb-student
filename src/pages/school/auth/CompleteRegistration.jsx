@@ -1,3 +1,4 @@
+// src/pages/school/auth/CompleteRegistration.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import useSchoolStore from "@/store/useSchoolStore";
 import useRegionStore from "@/store/regionStore";
@@ -22,7 +23,7 @@ const CompleteRegistration = () => {
   const schoolLoading = useSchoolStore((state) => state.loading);
   const schoolErrors = useSchoolStore((state) => state.errors);
 
-  const { user } = useAuthStore((state) => state);
+  const { user, meSchool } = useAuthStore();
 
   const {
     provinces,
@@ -95,7 +96,10 @@ const CompleteRegistration = () => {
     province_id: "",
     city_id: "",
     district_id: "",
+    postal_code: "",
     school_document_file: null,
+    school_logo: null,
+    school_logo_url: null,
     // Bagian 2: Produk/Paket Langganan
     selected_product_id: "",
 
@@ -118,17 +122,23 @@ const CompleteRegistration = () => {
         province_id: user?.school?.province_id || "",
         city_id: user?.school?.city_id || "",
         district_id: user?.school?.district_id || "",
+        postal_code: user?.school?.postal_code || "",
         school_document_file: documents?.[0]?.file || null,
+        school_logo: user?.school?.logo || null,
+        school_logo_url: user?.school?.logo_url || null,
         selected_product_id:
-          products?.find((p) => p.name === subscriptions?.[0]?.name)?.id ||
-          null,
+          products?.find(
+            (p) =>
+              p.name === subscriptions?.data?.[0]?.name &&
+              p.duration === subscriptions?.data?.[0]?.duration
+          )?.id || null,
         selected_bank_id: payments?.[0]?.bank_id || null,
         payment_date: payments?.[0]?.payment_date || null,
         payment_proof_file: payments?.[0]?.document?.file || null,
       }));
     }
   }, [user, documents, payments, subscriptions, products]);
-
+  
   const [formErrors, setFormErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -245,6 +255,7 @@ const CompleteRegistration = () => {
     try {
       // 1. Register School
       const registrationData = {
+        logo: formData.school_logo,
         name: user?.name,
         email: user?.email,
         npsn: formData.npsn,
@@ -256,6 +267,7 @@ const CompleteRegistration = () => {
         province_id: formData.province_id,
         city_id: formData.city_id,
         district_id: formData.district_id,
+        postal_code: formData.postal_code,
         roles: user?.roles || [],
       };
       const schoolRegistrationResponse = await updateSchoolProfile(
@@ -333,26 +345,10 @@ const CompleteRegistration = () => {
         throw new Error("Gagal menyimpan data pembayaran.");
       }
 
+      await meSchool();
       setSuccessMessage(
         "Pendaftaran sekolah, dokumen, langganan, dan pembayaran berhasil diproses! Silakan tunggu verifikasi."
       );
-      // Reset form
-      setFormData({
-        npsn: "",
-        school_name: "",
-        school_email: "",
-        phone: "",
-        address: "",
-        education_level: "",
-        province_id: "",
-        city_id: "",
-        district_id: "",
-        school_document_file: null,
-        selected_product_id: "",
-        payment_date: "",
-        selected_bank_id: "",
-        payment_proof_file: null,
-      });
       setFormErrors({});
       setCurrentStep(1);
     } catch (error) {

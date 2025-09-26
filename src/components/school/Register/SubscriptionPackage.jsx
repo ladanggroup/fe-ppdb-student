@@ -7,12 +7,13 @@ const SubscriptionPackage = ({
   products,
   productLoading,
 }) => {
+  
   return (
     <div className="border-b border-gray-900/10 pb-6">
-      <h3 className="text-lg font-semibold leading-7 text-gray-900">
+      <h3 className="text-lg font-semibold leading-7 text-gray-900 text-center">
         2. Pilih Produk/Paket Langganan
       </h3>
-      <p className="mt-1 text-sm leading-6 text-gray-600">
+      <p className="mt-1 text-sm leading-6 text-gray-600 text-center">
         Pilih paket langganan yang sesuai untuk sekolah Anda.
       </p>
 
@@ -27,7 +28,7 @@ const SubscriptionPackage = ({
                 value={formData.selected_product_id}
                 className={`border rounded-lg p-4 cursor-pointer ${
                   formData.selected_product_id === product.id
-                    ? "border-indigo-600 ring-2 ring-indigo-600"
+                    ? "border-orange-soft-300 ring-2 ring-orange-soft-300"
                     : "border-gray-300"
                 }`}
                 onClick={() =>
@@ -40,7 +41,7 @@ const SubscriptionPackage = ({
                 <p className="text-gray-600 text-left">
                   Durasi: {product.duration} bulan
                 </p>
-                <p className="text-xl font-bold text-indigo-700 text-left">
+                <p className="text-xl font-bold text-orange-soft text-left">
                   Rp {product.price.toLocaleString("id-ID")}
                 </p>
                 <p className="text-gray-600 text-left">Fitur:</p>

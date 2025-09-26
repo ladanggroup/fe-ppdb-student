@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { useSearchParams } from "react-router";
+import { Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -113,7 +113,6 @@ const Wave = () => {
       console.error(error);
     }
   };
-  console.log(waves);
 
   return (
     <DashboardLayout>
@@ -123,32 +122,36 @@ const Wave = () => {
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button variant="secondary" onClick={resetForm}>
-                <Plus className="justify-self-center" />
                 Tambah Gelombang
               </Button>
             </DialogTrigger>
 
-            <DialogContent className="bg-sky-100 dark:bg-[#1f2d3a] border border-sky-300 dark:border-white/10">
+            <DialogContent
+              className="max-w-lg w-full max-h-[99vh] overflow-y-auto 
+             bg-sky-100 dark:bg-[#1f2d3a] border border-sky-300 dark:border-white/10 rounded-lg"
+            >
               <DialogHeader>
-                <DialogTitle className="text-center border-b pb-4">
+                <DialogTitle className="text-center dark:text-white border-b pb-4">
                   {formData.id ? "Edit Gelombang" : "Tambah Gelombang"}
                 </DialogTitle>
               </DialogHeader>
 
               <form onSubmit={handleSubmit} className="space-y-4 mt-4">
                 <div>
-                  <Label className="block text-left mb-2">Nama Gelombang</Label>
+                  <Label className="block text-left dark:text-white mb-2">
+                    Nama Gelombang
+                  </Label>
                   <Input
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    placeholder="Masukkan nama gelombang"
+                    placeholder="Contoh: Gelombang 1"
                     required
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <Label className="block text-left mb-2">
+                    <Label className="block text-left dark:text-white mb-2">
                       Tanggal Mulai
                     </Label>
                     <Input
@@ -161,7 +164,7 @@ const Wave = () => {
                     />
                   </div>
                   <div>
-                    <Label className="block text-left mb-2">
+                    <Label className="block text-left dark:text-white mb-2">
                       Tanggal Selesai
                     </Label>
                     <Input
@@ -175,7 +178,9 @@ const Wave = () => {
                   </div>
                 </div>
                 <div>
-                  <Label className="block text-left mb-2">Kuota</Label>
+                  <Label className="block text-left dark:text-white mb-2">
+                    Kuota
+                  </Label>
                   <Input
                     type="number"
                     name="quota"
@@ -186,7 +191,9 @@ const Wave = () => {
                   />
                 </div>
                 <div>
-                  <Label className="block text-left mb-2">Harga</Label>
+                  <Label className="block text-left dark:text-white mb-2">
+                    Harga
+                  </Label>
                   <Input
                     type="number"
                     name="price"
@@ -203,7 +210,9 @@ const Wave = () => {
                   </p>
                 </div>
                 <div>
-                  <Label className="block text-left mb-2">Deskripsi</Label>
+                  <Label className="block text-left dark:text-white mb-2">
+                    Keterangan
+                  </Label>
                   <Textarea
                     name="description"
                     value={formData.description}
@@ -244,9 +253,19 @@ const Wave = () => {
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   {wave.start_date} - {wave.end_date}
                 </p>
-                <p className="text-sm mt-2">Quota: {wave.quota}</p>
-                <p className="text-sm">Harga: {formatIdr(wave.price)}</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <div className="grid grid-cols-2 mt-3">
+                  <div>
+                    <p className="text-sm">Kuota:</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{wave.quota}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm ml-auto">Harga:</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{formatIdr(wave.price)}</p>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-3">
+                  <span className="text-gray-800 dark:text-white">Keterangan:</span>
+                  <br />
                   {wave.description}
                 </p>
                 <div className="flex space-x-2 mt-3 justify-end">
@@ -270,7 +289,11 @@ const Wave = () => {
           </div>
         )}
       </div>
-      <Pagination className="bg-sky-200 dark:bg-sky-900 hover:bg-sky-300 dark:hover:bg-sky-700" pagination={waves} onPageChange={handlePageChange} />
+      <Pagination
+        className="bg-sky-200 dark:bg-sky-900 hover:bg-sky-300 dark:hover:bg-sky-700"
+        pagination={waves}
+        onPageChange={handlePageChange}
+      />
     </DashboardLayout>
   );
 };

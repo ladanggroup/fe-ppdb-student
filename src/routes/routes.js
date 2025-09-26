@@ -70,6 +70,10 @@ const routes = [
         element: lazy(() => import("@/pages/school/Wave/List")),
       },
       {
+        path: "document-requirement",
+        element: lazy(() => import("@/pages/school/DocumentRequirement/List")),
+      },
+      {
         path: "subscription",
         children: [
           {
@@ -109,7 +113,7 @@ const routes = [
     children: [
       {
         path: "dashboard",
-        element: lazy(() => import("@/pages/student/Dashboard")),
+        element: lazy(() => import("@/pages/student/Home/Dashboard")),
       },
       {
         path: "complete-registration",

@@ -1,4 +1,4 @@
-// src/store/bankStore.js
+// src/store/useBankStore.js
 import { create } from 'zustand';
 import apiClient from '@/api/apiClient';
 

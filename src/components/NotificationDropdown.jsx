@@ -23,11 +23,11 @@ export const NotificationDropdown = ({
       <DropdownMenu.Trigger asChild>
         <button
           className={cn(
-            "relative p-2 rounded-full bg-gray-800 hover:bg-gray-700",
+            "relative p-2 rounded-full bg-gray-50 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700",
             className
           )}
         >
-          <Bell className="w-5 h-5 text-white" />
+          <Bell className="w-5 h-5 text-black dark:text-white" />
           {hasUnread && (
             <span className={cn(
               "absolute top-1.5 right-1.5 w-2 h-2 rounded-full",

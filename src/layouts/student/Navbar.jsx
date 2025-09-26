@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router";
+import { NavLink, Link, useNavigate } from "react-router";
 import useAuthStore from "@/store/authStore";
 import { Dropdown } from "../../components/ui/dropDown";
 import { NotificationDropdown } from "@/components/NotificationDropdown";
@@ -19,7 +19,7 @@ export default function Navbar() {
     {
       name: "Harga Pendaftaran",
       href: "/student/harga-pendaftaran",
-    }
+    },
   ];
   const siswaNotifikasi = [
     {
@@ -36,13 +36,32 @@ export default function Navbar() {
     },
   ];
   return (
-    <header className="bg-orange-soft-300 dark:bg-[#1f2d3a] shadow top-100 z-10">
+    <header className="bg-white dark:bg-gray-700 shadow top-100 z-10">
       <div className="px-4 sm:px-6 lg:px-8 flex items-center h-16">
-        <Link to="/" className="text-xl font-bold text-gray-800 dark:text-gray-200">
+        <Link
+          to="/"
+          className="text-xl font-bold text-ppdb-orange dark:text-gray-200"
+        >
           PPDB Online
         </Link>
         <nav className="hidden md:flex space-x-8 items-center justify-center flex-1">
           {menuItems.map((item) => (
+            <NavLink
+              key={item.name}
+              to={item.href}
+              className={({ isActive }) =>
+                `font-medium px-2 py-1 rounded ${
+                  isActive
+                    ? "text-orange-soft-700"
+                    : "text-gray-700 dark:text-gray-200 hover:text-orange-soft-700"
+                }`
+              }
+            >
+              {item.name}
+            </NavLink>
+          ))}
+
+          {/* {menuItems.map((item) => (
             <Link
               key={item.name}
               to={item.href}
@@ -50,7 +69,7 @@ export default function Navbar() {
             >
               {item.name}
             </Link>
-          ))}
+          ))} */}
         </nav>
         <div className="flex items-center">
           <NotificationDropdown
@@ -63,7 +82,7 @@ export default function Navbar() {
             }}
             className="ml-4 mr-4"
             theme={{
-              bg: "bg-orange-50",
+              bg: "bg-orange-soft-100",
               text: "text-orange-900",
               secondaryText: "text-orange-500",
               hover: "hover:bg-orange-100",
@@ -84,11 +103,11 @@ export default function Navbar() {
             trigger={
               <button className="flex items-center space-x-2 text-gray-700 hover:text-orange-soft-700 dark:text-gray-200 font-medium">
                 <img
-                  className="w-8 h-8 rounded-full"
-                  src={user.avatar}
+                  className="w-6 h-6 rounded-full"
+                  src={user?.avatar}
                   alt=""
                 />
-                <span className="">{user.name}</span>
+                <span className="">{user?.name}</span>
               </button>
             }
             items={[

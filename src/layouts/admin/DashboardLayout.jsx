@@ -2,7 +2,7 @@
 import { Dropdown } from "@/components/ui/dropdown";
 import { Menu } from "lucide-react";
 import { useState } from "react";
-import { useNavigate, Link, Outlet } from "react-router";
+import { NavLink, useNavigate, Link, Outlet } from "react-router";
 import useAuthStore from "@/store/authStore";
 import { House, Wrench, Package, Archive, Landmark } from "lucide-react";
 import { ModeToggle } from "@/components/mode-toggle";
@@ -30,13 +30,24 @@ export default function DashboardLayout({ children }) {
       <aside className="hidden md:flex w-64 flex-col bg-teal-100 dark:bg-[#1f2d3a] p-4 border-r border-s-teal-300 dark:border-white/10">
         <div className="text-xl font-bold mb-8">Admin</div>
         <nav className="flex flex-col gap-2">
-          <Link
+          <NavLink
+            to="/admin/dashboard"
+            className={({ isActive }) =>
+              `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                isActive ? "bg-teal-200 dark:bg-white/10" : ""
+              }`
+            }
+          >
+            <House className="w-5 h-5" />
+            <span>Dashboard</span>
+          </NavLink>
+          {/* <Link
             to="/admin/dashboard"
             className="flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 cursor-pointer"
           >
             <House className="w-5 h-5" />
             <span>Dashboard</span>
-          </Link>
+          </Link> */}
           {/* <Link
             to="/admin/setting"
             className="flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2"
@@ -44,34 +55,50 @@ export default function DashboardLayout({ children }) {
             <Wrench className="w-5 h-5" />
             <span>Settings</span>
           </Link> */}
-          <Link
+          <NavLink
             to="/admin/product"
-            className="flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2"
+            className={({ isActive }) =>
+              `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                isActive ? "bg-teal-200 dark:bg-white/10" : ""
+              }`
+            }
           >
             <Archive className="w-5 h-5" />
             <span>Daftar Produk</span>
-          </Link>
-          <Link
+          </NavLink>
+          <NavLink
             to="/admin/bank"
-            className="flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2"
+            className={({ isActive }) =>
+              `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                isActive ? "bg-teal-200 dark:bg-white/10" : ""
+              }`
+            }
           >
             <Landmark className="w-5 h-5" />
             <span>Daftar Bank</span>
-          </Link>
-          <Link
+          </NavLink>
+          <NavLink
             to="/admin/subscription"
-            className="flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2"
+            className={({ isActive }) =>
+              `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                isActive ? "bg-teal-200 dark:bg-white/10" : ""
+              }`
+            }
           >
             <Package className="w-5 h-5" />
             <span>Langganan</span>
-          </Link>
-          <Link
+          </NavLink>
+          <NavLink
             to="/admin/user"
-            className="flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2"
+            className={({ isActive }) =>
+              `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                isActive ? "bg-teal-200 dark:bg-white/10" : ""
+              }`
+            }
           >
             <Users className="w-5 h-5" />
             <span>Daftar Pengguna</span>
-          </Link>
+          </NavLink>
         </nav>
       </aside>
 
@@ -87,41 +114,61 @@ export default function DashboardLayout({ children }) {
         <aside className="fixed inset-y-0 left-0 z-40 w-64 bg-teal-100 dark:bg-[#1f2d3a] p-4 border-r border-s-teal-300 dark:border-white/10 md:hidden">
           <div className="text-xl font-bold mb-8">Admin</div>
           <nav className="flex flex-col gap-2">
-            <Link
+            <NavLink
               to="/admin/dashboard"
-              className="hover:bg-s-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 cursor-pointer"
-              onClick={() => setSidebarOpen(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                  isActive ? "bg-teal-200 dark:bg-white/10" : ""
+                }`
+              }
             >
-              Dashboard
-            </Link>
-            <Link
+              <House className="w-5 h-5" />
+              <span>Dashboard</span>
+            </NavLink>
+            <NavLink
               to="/admin/product"
-              className="hover:bg-s-teal-200 dark:hover:bg-white/10 rounded px-3 py-2"
-              onClick={() => setSidebarOpen(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                  isActive ? "bg-teal-200 dark:bg-white/10" : ""
+                }`
+              }
             >
-              Produk
-            </Link>
-            <Link
+              <Archive className="w-5 h-5" />
+              <span>Daftar Produk</span>
+            </NavLink>
+            <NavLink
               to="/admin/bank"
-              className="hover:bg-s-teal-200 dark:hover:bg-white/10 rounded px-3 py-2"
-              onClick={() => setSidebarOpen(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                  isActive ? "bg-teal-200 dark:bg-white/10" : ""
+                }`
+              }
             >
-              Bank
-            </Link>
-            <Link
+              <Landmark className="w-5 h-5" />
+              <span>Daftar Bank</span>
+            </NavLink>
+            <NavLink
               to="/admin/subscription"
-              className="hover:bg-s-teal-200 dark:hover:bg-white/10 rounded px-3 py-2"
-              onClick={() => setSidebarOpen(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                  isActive ? "bg-teal-200 dark:bg-white/10" : ""
+                }`
+              }
             >
-              Langganan
-            </Link>
-            <Link
+              <Package className="w-5 h-5" />
+              <span>Langganan</span>
+            </NavLink>
+            <NavLink
               to="/admin/user"
-              className="hover:bg-s-teal-200 dark:hover:bg-white/10 rounded px-3 py-2"
-              onClick={() => setSidebarOpen(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                  isActive ? "bg-teal-200 dark:bg-white/10" : ""
+                }`
+              }
             >
-              Pengguna
-            </Link>
+              <Users className="w-5 h-5" />
+              <span>Daftar Pengguna</span>
+            </NavLink>
           </nav>
         </aside>
       )}

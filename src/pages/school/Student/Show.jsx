@@ -80,7 +80,7 @@ const Show = () => {
     await rejectSelection(schoolStudent.id, note);
     navigate("/school/student");
   };
-  console.log(schoolStudent);
+  console.log(student);
 
   if (loading || !student) {
     return (
@@ -104,14 +104,6 @@ const Show = () => {
 
       {/* Informasi Biodata */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
-        {/* <Link
-          to={`/school/student/${student.id}/edit`}
-          className="flex items-center gap-2 mb-4"
-        >
-          <Button className="bg-sky-500 text-white hover:bg-sky-400 flex items-center gap-2">
-            Edit
-          </Button>
-        </Link> */}
         <h2 className="text-xl font-semibold mb-4 border-b pb-2">
           Biodata Siswa
         </h2>

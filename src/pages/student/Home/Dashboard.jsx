@@ -1,4 +1,5 @@
 import DashboardLayout from "@/layouts/student/DashboardLayout";
+import Hero from "@/layouts/student/Hero";
 import useAuthStore from "@/store/authStore";
 import useSchoolStudent from "@/store/useSchoolStudent";
 import { useState, useEffect } from "react";
@@ -32,17 +33,18 @@ export default function Dashboard() {
 
   return (
     <DashboardLayout>
-      {messages.length > 0 &&
+      {/* {messages.length > 0 &&
         messages.map((msg, i) => (
           <div key={i} className="mb-3">
             <p
-              className={`${msg.color} font-semibold text-lg p-4 rounded-md`}
+              className={`${msg.color} font-semibold text-lg p-4 inline-block text-center w-full rounded-md`}
             >
               <span className="block font-bold">{msg.schoolName}</span>
               {msg.text}
             </p>
           </div>
-        ))}
+        ))} */}
+        <Hero />
     </DashboardLayout>
   );
 }

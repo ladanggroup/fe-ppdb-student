@@ -49,16 +49,16 @@ const CompleteRegistration = () => {
   const { fetchPublicWaves } = useWaveStore();
   const navigate = useNavigate();
 
-useEffect(() => {
-  const checkWaves = async () => {
-    const res = await fetchPublicWaves();
-    if (!res || !res.data || res.data.length === 0) {
-      showError("Tidak ada gelombang pendaftaran yang aktif saat ini.");
-      navigate("/student/dashboard"); // arahkan ke dashboard / halaman lain
-    }
-  };
-  checkWaves();
-}, [fetchPublicWaves, navigate]);
+  useEffect(() => {
+    const checkWaves = async () => {
+      const res = await fetchPublicWaves();
+      if (!res || !res.data || res.data.length === 0) {
+        showError("Tidak ada gelombang pendaftaran yang aktif saat ini.");
+        navigate("/student/dashboard"); // arahkan ke dashboard / halaman lain
+      }
+    };
+    checkWaves();
+  }, [fetchPublicWaves, navigate]);
 
   // Tentukan step berdasarkan kondisi user
   const determineSteps = () => {
@@ -304,16 +304,19 @@ useEffect(() => {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     student_id: "",
+    avatar: null,
     name: "",
     school_origin: "",
     phone: "",
     birth_date: "",
     birth_place: "",
     gender: "",
+    religion: "",
     address: "",
     province_id: "",
     city_id: "",
     district_id: "",
+    postal_code: "",
     banks_per_school: {},
     selected_schools: [], // Array of { school_id: number, school_name: string, wave_id: number, wave_name: string, product_price: number }
     uploaded_documents: [], // Array of { doc_name: string, path: string, is_payment: boolean (false for general docs) }
@@ -328,16 +331,19 @@ useEffect(() => {
       setFormData((prev) => ({
         ...prev,
         student_id: student.id,
+        avatar: student.avatar,
         name: student.name,
         school_origin: student.school_origin,
         phone: student.phone,
         birth_date: student.birth_date,
         birth_place: student.birth_place,
         gender: student.gender,
+        religion: student.religion,
         address: student.address,
         province_id: student.province_id,
         city_id: student.city_id,
         district_id: student.district_id,
+        postal_code: student.postal_code,
       }));
       setIsPrefilled(true); // kasih tanda
     }
@@ -381,6 +387,8 @@ useEffect(() => {
     const stepName = steps[currentStep - 1];
 
     if (stepName === "Informasi Pribadi") {
+      if (!formData.avatar) errors.avatar = "Avatar harus diisi.";
+      if (!formData.name) errors.name = "Nama harus diisi.";
       if (!formData.school_origin)
         errors.school_origin = "Asal sekolah harus diisi.";
       if (!formData.phone) errors.phone = "Nomor telepon harus diisi.";
@@ -389,10 +397,13 @@ useEffect(() => {
       if (!formData.birth_place)
         errors.birth_place = "Tempat lahir harus diisi.";
       if (!formData.gender) errors.gender = "Jenis kelamin harus diisi.";
+      if (!formData.religion) errors.religion = "Agama harus diisi.";
       if (!formData.address) errors.address = "Alamat harus diisi.";
       if (!formData.province_id) errors.province_id = "Provinsi harus diisi.";
       if (!formData.city_id) errors.city_id = "Kota/Kabupaten harus diisi.";
       if (!formData.district_id) errors.district_id = "Kecamatan harus diisi.";
+      if (!formData.postal_code)
+        errors.postal_code = "Kode pos harus diisi.";
     }
 
     if (stepName === "Pilih Sekolah") {
@@ -598,26 +609,55 @@ useEffect(() => {
 
   return (
     <DashboardLayout>
-      <div className="bg-ppdb-soft dark:bg-ppdb-gray-dark py-6 px-5">
+      <div className="bg-ppdb-soft dark:bg-ppdb-gray-dark py-10 px-8">
         <LoadingOverlay isLoading={isLoading} />
         {/* Step Header */}
-        <div className="flex justify-between items-center mb-6">
-          {steps.map((step, index) => (
-            <div
-              key={index}
-              className={`flex-1 text-center py-2 border-b-2 ${
-                currentStep === index + 1
+        <div className="flex items-center justify-between mb-8 w-full">
+          {steps.map((step, index) => {
+            const isActive = currentStep === index + 1;
+            const isCompleted = currentStep > index + 1;
+
+            return (
+              <div key={index} className="flex-1 flex items-center">
+                {/* Step Item */}
+                <div className="flex flex-col items-center relative w-full">
+                  {/* Circle */}
+                  <div
+                    className={`flex items-center justify-center w-6 h-6 rounded-full border-2 bg-white z-10
+              ${
+                isActive
                   ? "border-ppdb-orange text-ppdb-orange"
-                  : "border-gray-300 text-gray-500"
+                  : isCompleted
+                  ? "border-ppdb-orange bg-ppdb-orange text-white"
+                  : "border-gray-300 text-gray-400"
               }`}
-            >
-              {index + 1}. {step}
-            </div>
-          ))}
+                  >
+                    {index + 1}
+                  </div>
+
+                  {/* Label */}
+                  <div
+                    className={`mt-2 text-sm font-semibold
+              ${isActive ? "text-ppdb-orange" : "text-gray-600"}`}
+                  >
+                    {step}
+                  </div>
+
+                  {/* Connector line (hanya kalau bukan step terakhir) */}
+                  {index < steps.length - 1 && (
+                    <div
+                      className={`absolute top-3 left-1/2 w-full h-0.5 -translate-y-1/2 
+                ${isCompleted ? "bg-ppdb-orange" : "bg-gray-300"}`}
+                    ></div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
 
         {student?.school_students?.some((ss) => ss.note) && (
-          <div className="mt-4">
+          <div className="mt-4 mb-8 border border-red-200 rounded-md p-3">
             <h2 className="text-xl font-semibold dark:text-white">
               Catatan Verifikasi:
             </h2>
@@ -637,16 +677,6 @@ useEffect(() => {
             </ul>
           </div>
         )}
-
-        <div className="mb-6">
-          <h2 className="text-lg font-semibold dark:text-white">
-            Ringkasan Pendaftaran
-          </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Silakan periksa kembali informasi yang telah Anda masukkan sebelum
-            melanjutkan.
-          </p>
-        </div>
 
         {/* Step Content */}
         {steps[currentStep - 1] === "Informasi Pribadi" && (

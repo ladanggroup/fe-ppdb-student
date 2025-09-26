@@ -1,7 +1,7 @@
 // Layout.jsx
 import { Dropdown } from "@/components/ui/dropdown";
 import { useState } from "react";
-import { useNavigate, Link } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import useAuthStore from "@/store/authStore";
 import {
   House,
@@ -12,6 +12,7 @@ import {
   Menu,
   Package,
   UserRoundPlus,
+  BookOpen,
 } from "lucide-react";
 import { ModeToggle } from "@/components/mode-toggle";
 import { NotificationDropdown } from "@/components/NotificationDropdown";
@@ -30,7 +31,6 @@ export default function DashboardLayout({ children }) {
     },
     { id: 2, title: "Rekap harian tersedia", time: "hari ini", unread: false },
   ];
-  console.log(user);
 
   return (
     <div className="flex min-h-screen w-full bg-blue-50 text-slate-800 dark:bg-[#2c3e50] dark:text-white overflow-hidden">
@@ -38,57 +38,96 @@ export default function DashboardLayout({ children }) {
       <aside className="hidden md:flex w-64 flex-col bg-blue-100 dark:bg-[#1f2d3a] p-4 border-r border-slate-300 dark:border-white/10">
         <div className="text-xl font-bold mb-8">Sekolah</div>
         <nav className="flex flex-col gap-2">
-          <Link
+          <NavLink
             to="/school/dashboard"
-            className="flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2"
+            className={({ isActive }) =>
+              `flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                isActive ? "bg-blue-200 dark:bg-white/10" : ""
+              }`
+            }
           >
             <House className="w-5 h-5" />
             <span>Dashboard</span>
-          </Link>
-          <Link
+          </NavLink>
+          <NavLink
             to="/school/student"
-            className="flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2"
+            className={({ isActive }) =>
+              `flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                isActive ? "bg-blue-200 dark:bg-white/10" : ""
+              }`
+            }
           >
             <Users2 className="w-5 h-5" />
             <span>Daftar Siswa</span>
-          </Link>
-          <Link
+          </NavLink>
+          <NavLink
             to="/school/bank"
-            className="flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2"
+            className={({ isActive }) =>
+              `flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                isActive ? "bg-blue-200 dark:bg-white/10" : ""
+              }`
+            }
           >
             <Landmark className="w-5 h-5" />
             <span>Bank</span>
-          </Link>
-          <Link
+          </NavLink>
+          <NavLink
             to="/school/wave"
-            className="flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-2.5 py-2"
+            className={({ isActive }) =>
+              `flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-2.5 py-2 ${
+                isActive ? "bg-blue-200 dark:bg-white/10" : ""
+              }`
+            }
           >
             <Waves className="w-5 h-5" />
             <span>Gelombang Pendaftaran</span>
-          </Link>
-          <Link
+          </NavLink>
+          <NavLink
             to="/school/subscription"
-            className="flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2"
+            className={({ isActive }) =>
+              `flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                isActive ? "bg-blue-200 dark:bg-white/10" : ""
+              }`
+            }
           >
             <Package className="w-5 h-5" />
             <span>Langganan</span>
-          </Link>
+          </NavLink>
+          <NavLink
+            to="/school/document-requirement"
+            className={({ isActive }) =>
+              `flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                isActive ? "bg-blue-200 dark:bg-white/10" : ""
+              }`
+            }
+          >
+            <BookOpen className="w-5 h-5" />
+            <span>Permintaan Dokumen</span>
+          </NavLink>
           {user.roles === "kepala_sekolah" && (
-            <Link
+            <NavLink
               to="/school/user"
-              className="flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2"
+              className={({ isActive }) =>
+                `flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                  isActive ? "bg-blue-200 dark:bg-white/10" : ""
+                }`
+              }
             >
               <UserRoundPlus className="w-5 h-5" />
               <span>Pengguna</span>
-            </Link>
+            </NavLink>
           )}
-          <Link
+          <NavLink
             to="/school/setting"
-            className="flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2"
+            className={({ isActive }) =>
+              `flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                isActive ? "bg-blue-200 dark:bg-white/10" : ""
+              }`
+            }
           >
             <Wrench className="w-5 h-5" />
-            <span>Settings</span>
-          </Link>
+            <span>Pengaturan</span>
+          </NavLink>
         </nav>
       </aside>
 
@@ -104,57 +143,88 @@ export default function DashboardLayout({ children }) {
         <aside className="fixed inset-y-0 left-0 z-40 w-64 bg-blue-100 dark:bg-[#1f2d3a] p-4 border-r border-slate-300 dark:border-white/10 md:hidden">
           <div className="text-xl font-bold mb-8">Sekolah</div>
           <nav className="flex flex-col gap-2">
-            <Link
+            <NavLink
               to="/school/dashboard"
-              className="hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2"
-              onClick={() => setSidebarOpen(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                  isActive ? "bg-blue-200 dark:bg-white/10" : ""
+                }`
+              }
             >
-              Dashboard
-            </Link>
-            <Link
+              <span>Dashboard</span>
+            </NavLink>
+            <NavLink
               to="/school/student"
-              className="hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2"
-              onClick={() => setSidebarOpen(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                  isActive ? "bg-blue-200 dark:bg-white/10" : ""
+                }`
+              }
             >
-              Daftar Siswa
-            </Link>
-            <Link
+              <span>Daftar Siswa</span>
+            </NavLink>
+            <NavLink
               to="/school/bank"
-              className="hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2"
-              onClick={() => setSidebarOpen(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                  isActive ? "bg-blue-200 dark:bg-white/10" : ""
+                }`
+              }
             >
-              Bank
-            </Link>
-            <Link
+              <span>Bank</span>
+            </NavLink>
+            <NavLink
               to="/school/wave"
-              className="hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2"
-              onClick={() => setSidebarOpen(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                  isActive ? "bg-blue-200 dark:bg-white/10" : ""
+                }`
+              }
             >
-              Gelombang Pendaftaran
-            </Link>
-            <Link
+              <span>Gelombang Pendaftaran</span>
+            </NavLink>
+            <NavLink
               to="/school/subscription"
-              className="hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2"
-              onClick={() => setSidebarOpen(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                  isActive ? "bg-blue-200 dark:bg-white/10" : ""
+                }`
+              }
             >
-              Langganan
-            </Link>
+              <span>Langganan</span>
+            </NavLink>
+            <NavLink
+              to="/school/document-requirement"
+              className={({ isActive }) =>
+                `flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                  isActive ? "bg-blue-200 dark:bg-white/10" : ""
+                }`
+              }
+            >
+              <span>Permintaan Dokumen</span>
+            </NavLink>
             {user.roles === "kepala_sekolah" && (
-              <Link
+              <NavLink
                 to="/school/user"
-                className="hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2"
-                onClick={() => setSidebarOpen(false)}
+                className={({ isActive }) =>
+                  `flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                    isActive ? "bg-blue-200 dark:bg-white/10" : ""
+                  }`
+                }
               >
-                Pengguna
-              </Link>
+                <span>Pengguna</span>
+              </NavLink>
             )}
-            <Link
-              to="/school/settings"
-              className="hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2"
-              onClick={() => setSidebarOpen(false)}
+            <NavLink
+              to="/school/setting"
+              className={({ isActive }) =>
+                `flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                  isActive ? "bg-blue-200 dark:bg-white/10" : ""
+                }`
+              }
             >
-              Settings
-            </Link>
+              <span>Settings</span>
+            </NavLink>
           </nav>
         </aside>
       )}

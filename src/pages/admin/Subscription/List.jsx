@@ -73,8 +73,6 @@ export default function List() {
     return () => clearTimeout(timeout);
   }, [page, status, listAdmin]);
 
-  // console.log(subscriptionsAdmin);
-
   return (
     <DashboardLayout>
       {/* overlay loading */}
