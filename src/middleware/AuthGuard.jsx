@@ -3,44 +3,24 @@ import { useEffect, useState } from "react";
 import { Navigate, Outlet, useLocation } from "react-router";
 import useAuthStore from "@/store/authStore";
 
-const AuthGuard = ({
-  allowedAbilities = ["admin", "kepala_sekolah", "admin_sekolah"],
-}) => {
+const AuthGuard = ({ allowedRoles = ["admin", "school", "student"] }) => {
   const [isLoading, setIsLoading] = useState(true);
-  const {
-    isAuthenticated,
-    abilities,
-    restoreAuth,
-    user, // Gunakan user langsung dari store
-    meSchool,
-  } = useAuthStore();
+  const { isAuthenticated, restoreAuth, user, role } = useAuthStore();
   const location = useLocation();
 
-  // Periksa apakah user adalah admin
-  const isAdmin = Array.isArray(abilities)
-    ? abilities.includes("admin")
-    : abilities === "admin";
-
   useEffect(() => {
-    const checkAuthAndUser = async () => {
+    const checkAuth = async () => {
       try {
-        // Restore auth jika belum authenticated
-        if (!isAuthenticated) {
-          await restoreAuth();
-        }
-
-        if (!isAdmin && !user?.school) {
-          await meSchool();
-        }
+        await restoreAuth();
       } catch (error) {
-        console.error("Auth check failed:", error);
+        console.error("Auth restore error:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    checkAuthAndUser();
-  }, [isAuthenticated, restoreAuth, abilities, meSchool, user, isAdmin]);
+    checkAuth();
+  }, [restoreAuth]);
 
   if (isLoading) {
     return (
@@ -54,26 +34,21 @@ const AuthGuard = ({
     return <Navigate to="/" state={{ from: location }} replace />;
   }
 
-  // Jika abilities tidak cocok
-  let allowed = false;
-
-  if (Array.isArray(abilities)) {
-    allowed = abilities.some((ab) => allowedAbilities.includes(ab));
-  } else {
-    allowed = allowedAbilities.includes(abilities);
-  }
-
-  if (!allowed) {
+  if (allowedRoles.length > 0 && !allowedRoles.includes(role)) {
     return <Navigate to="/unauthorized" replace />;
   }
 
-  if(isAdmin && user?.email_verified_at === null) { 
+  // Cek kondisi spesifik per-role
+  if (role === "admin" && user?.email_verified_at === null) {
     return <Navigate to="/admin/resend-email" replace />;
   }
 
-  // Periksa status sekolah untuk non-admin
-  if (!isAdmin && user?.status !== "active") {
-    return <Navigate to="/complete-registration/school" replace />;
+  if (
+    role === "school" &&
+    user?.status !== "active" &&
+    location.pathname !== "/school/complete-registration"
+  ) {
+    return <Navigate to="/school/complete-registration" replace />;
   }
 
   return <Outlet />;

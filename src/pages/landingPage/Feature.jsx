@@ -1,4 +1,4 @@
-import LandingPageLayout from "@/layouts/LandingPageLayout";
+import LandingPageLayout from "@/layouts/LandingPage/LandingPageLayout";
 
 const Feature = () => {
   return (

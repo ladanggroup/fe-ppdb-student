@@ -14,6 +14,7 @@ import SchoolDetails from "@/components/school/Register/SchoolDetails";
 import SubscriptionPackage from "@/components/school/Register/SubscriptionPackage";
 import PaymentInfo from "@/components/school/Register/PaymentInfo";
 import FormNavigation from "@/components/FormNavigation";
+import { Link } from "react-router";
 
 const CompleteRegistration = () => {
   // Stores
@@ -138,7 +139,7 @@ const CompleteRegistration = () => {
       }));
     }
   }, [user, documents, payments, subscriptions, products]);
-  
+
   const [formErrors, setFormErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -387,9 +388,18 @@ const CompleteRegistration = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-3xl">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
-          Form Pendaftaran PPDB Online
-        </h2>
+        <div className="flex flex-col mb-4">
+          <Link to="/">
+            <img
+              src="/src/assets/logo ppdb.png"
+              alt="Logo PPDB"
+              className="w-24 rounded-full mb-2"
+            />
+          </Link>
+          <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
+            Form Pendaftaran PPDB Online
+          </h2>
+        </div>
         <div className="mb-6">
           <div className="flex justify-between items-center">
             <div
@@ -498,9 +508,9 @@ const CompleteRegistration = () => {
             totalSteps={3}
             handlePrevStep={handlePrevStep}
             handleNextStep={handleNextStep}
-            isLoading={isLoading}
-            subscriptions={subscriptions}
             handleSubmit={handleSubmit}
+            isLoading={isLoading}
+            subscriptions={subscriptions?.data}
           />
         </form>
       </div>

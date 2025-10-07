@@ -14,8 +14,8 @@ const Dashboard = () => {
     // Pastikan user adalah sekolah
     if (
       authStore.isAuthenticated &&
-      (authStore.abilities.includes("admin_sekolah") ||
-        authStore.abilities.includes("kepala_sekolah"))
+      (authStore.role?.includes("admin") ||
+        authStore.role?.includes("school"))
     ) {
       authStore.meSchool();
       // schoolStore?.fetchStudents();

@@ -118,10 +118,19 @@ const CompleteRegistration = () => {
         if (schoolStudentResponse) {
           const mappedSchoolStudents = schoolStudentResponse.map((student) => ({
             school_id: student.school.id,
+            logo_url: student.school.logo_url,
             school_name: student.school.name,
+            school_npsn: student.school.npsn,
+            address: student.school.address,
+            province: student.school.provinces?.name || "",
+            city: student.school.cities?.name || "",
+            district: student.school.districts?.name || "",
             wave_id: student.wave.id,
             wave_name: student.wave.name,
-            product_price: student.wave.price, // Assuming wave has a price property
+            start_date: student.wave.start_date,
+            end_date: student.wave.end_date,
+            quota: student.wave.quota,
+            product_price: student.wave.price,
           }));
 
           // Update the form data with the fetched school students
@@ -160,6 +169,8 @@ const CompleteRegistration = () => {
               doc_id: doc.id,
               doc_name: doc.name,
               path: doc.path,
+              doc_requirement_id: doc.document_requirement_id,
+              school_id: doc.school_id,
               is_payment: false, // Ensure is_payment is false for general docs
               file: doc.file || "", // Include file if available
             }));
@@ -247,9 +258,18 @@ const CompleteRegistration = () => {
 
     const newSelectedSchool = {
       school_id: schoolId,
+      logo_url: wave.school.logo_url,
       school_name: wave.school.name,
+      school_npsn: wave.school.npsn,
+      address: wave.school.address,
+      province: wave.school.provinces?.name || "",
+      city: wave.school.cities?.name || "",
+      district: wave.school.districts?.name || "",
       wave_id: waveId,
       wave_name: wave.name,
+      start_date: wave.start_date,
+      end_date: wave.end_date,
+      quota: wave.quota,
       product_price: wave.price,
     };
 
@@ -277,7 +297,9 @@ const CompleteRegistration = () => {
 
         newPaymentsInfo[schoolId] = {
           payment_date: "",
-          selected_bank_id: null,
+          selected_bank_id: formData.banks_per_school[schoolId]?.length
+            ? formData.banks_per_school[schoolId]?.[0].id
+            : null,
           payment_proof_file: "",
           document_id: null,
         };
@@ -318,9 +340,9 @@ const CompleteRegistration = () => {
     district_id: "",
     postal_code: "",
     banks_per_school: {},
-    selected_schools: [], // Array of { school_id: number, school_name: string, wave_id: number, wave_name: string, product_price: number }
-    uploaded_documents: [], // Array of { doc_name: string, path: string, is_payment: boolean (false for general docs) }
-    payments_info: {}, // { [school_id]: { payment_date: string, selected_bank_id: number, payment_proof_file: string, document_id: number } }
+    selected_schools: [], // Array of { school_id: number, school_name: string, wave_id: number, wave_name: string, product_price: number, quota: number, start_date: string, end_date: string, logo_url: string, address: string, province: string, city: string, district: string }
+    uploaded_documents: [], // Array of { doc_name: string, path: string, is_payment: boolean (false for general docs), doc_requirement_id: number|null, school_id: number|null, doc_id: number|null }
+    payments_info: {}, // { [school_id]: { payment_date: string, selected_bank_id: number, payment_proof_file: string, document_id: number, school_id: number } }
   });
 
   // Prefill data untuk edit
@@ -332,6 +354,7 @@ const CompleteRegistration = () => {
         ...prev,
         student_id: student.id,
         avatar: student.avatar,
+        image: student.image,
         name: student.name,
         school_origin: student.school_origin,
         phone: student.phone,
@@ -387,7 +410,7 @@ const CompleteRegistration = () => {
     const stepName = steps[currentStep - 1];
 
     if (stepName === "Informasi Pribadi") {
-      if (!formData.avatar) errors.avatar = "Avatar harus diisi.";
+      if (!formData.avatar) errors.avatar = "Foto harus diisi.";
       if (!formData.name) errors.name = "Nama harus diisi.";
       if (!formData.school_origin)
         errors.school_origin = "Asal sekolah harus diisi.";
@@ -402,8 +425,7 @@ const CompleteRegistration = () => {
       if (!formData.province_id) errors.province_id = "Provinsi harus diisi.";
       if (!formData.city_id) errors.city_id = "Kota/Kabupaten harus diisi.";
       if (!formData.district_id) errors.district_id = "Kecamatan harus diisi.";
-      if (!formData.postal_code)
-        errors.postal_code = "Kode pos harus diisi.";
+      if (!formData.postal_code) errors.postal_code = "Kode pos harus diisi.";
     }
 
     if (stepName === "Pilih Sekolah") {
@@ -507,6 +529,8 @@ const CompleteRegistration = () => {
             await updateStudentDocument(doc.doc_id, {
               doc_name: doc.doc_name,
               path: doc.path,
+              document_requirement_id: doc.doc_requirement_id,
+              school_id: doc.school_id,
               student_id: student.id,
               is_payment: false,
             });
@@ -514,6 +538,8 @@ const CompleteRegistration = () => {
             await addStudentDocument({
               doc_name: doc.doc_name,
               path: doc.path,
+              document_requirement_id: doc.doc_requirement_id,
+              school_id: doc.school_id,
               student_id: student.id,
               is_payment: false,
             });
@@ -533,6 +559,8 @@ const CompleteRegistration = () => {
           const paymentProofDocResponse = await addStudentDocument({
             doc_name: `Bukti Pembayaran ${school.school_name}`,
             path: paymentInfo.payment_proof_file,
+            document_requirement_id: null,
+            school_id: school.school_id,
             student_id: student.id,
             is_payment: true,
           });
@@ -549,12 +577,9 @@ const CompleteRegistration = () => {
         };
 
         if (paymentInfo?.id) {
-          // kalau sudah ada → update
           await updateStudentPayment(paymentInfo.id, dataPayment);
         } else {
-          // kalau belum ada → insert baru
           const paymentResponse = await addStudentPayment(dataPayment);
-          // simpan id baru supaya tidak insert lagi kalau submit ulang
           paymentInfo.id = paymentResponse.data.id;
           paymentInfo.document_id = paymentProofDocId;
         }
@@ -606,7 +631,7 @@ const CompleteRegistration = () => {
     handleChange,
     formErrors,
   };
-
+console.log(formData);
   return (
     <DashboardLayout>
       <div className="bg-ppdb-soft dark:bg-ppdb-gray-dark py-10 px-8">
@@ -628,7 +653,7 @@ const CompleteRegistration = () => {
                 isActive
                   ? "border-ppdb-orange text-ppdb-orange"
                   : isCompleted
-                  ? "border-ppdb-orange bg-ppdb-orange text-white"
+                  ? "border-ppdb-orange bg-ppdb-orange text-ppdb-orange"
                   : "border-gray-300 text-gray-400"
               }`}
                   >

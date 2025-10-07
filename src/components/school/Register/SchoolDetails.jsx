@@ -320,7 +320,7 @@ const SchoolDetails = ({
   // Upload dokumen sekolah
   const { uploadedUrl: docUrl, handleFileChange: handleDocChange } = useFile({
     fieldName: "file",
-    folder: "school-documents",
+    folder: "school/documents",
     onSuccess: (res) =>
       setFormData({ ...formData, school_document_file: res.path }),
     onError: (err) => console.error("Upload dokumen gagal", err),

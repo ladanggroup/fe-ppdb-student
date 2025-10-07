@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import formatIdr from "@/utils/formatIdr";
+import { capitalizeWords } from "@/utils/string";
 import { Link } from "react-router";
 
 export default function SchoolDetail({ school, wave, onBack }) {
@@ -26,11 +27,10 @@ export default function SchoolDetail({ school, wave, onBack }) {
         <div className="mb-6">
           <h3 className="font-semibold text-gray-800">Alamat</h3>
           <p className="text-sm text-gray-600">
-            {school.address}, {school.districts?.name}
+            {school.address}, {capitalizeWords(school.districts?.name)}
           </p>
           <p className="text-sm text-gray-600">
-            {school.cities?.name}, {school.provinces?.name},{" "}
-            {school.postal_code}
+            {capitalizeWords(school.cities?.name)}, {capitalizeWords(school.provinces?.name)}, {school.postal_code}
           </p>
         </div>
 
@@ -45,11 +45,11 @@ export default function SchoolDetail({ school, wave, onBack }) {
           <div>
             <p className="text-gray-600">{wave.name}</p>
             <p className="font-medium">
-              {wave.start_date} s/d {wave.end_date}
+              {new Date(wave.start_date).toLocaleDateString("id")} - {new Date(wave.end_date).toLocaleDateString("id")}
             </p>
           </div>
           <div>
-            <p className="text-gray-600">Pagu Tersisa</p>
+            <p className="text-gray-600">Kuota Tersisa</p>
             <p className="font-medium">{wave.quota} Murid</p>
           </div>
         </div>
@@ -75,7 +75,7 @@ export default function SchoolDetail({ school, wave, onBack }) {
         {/* Keterangan */}
         <div>
           <h3 className="font-semibold text-gray-800">Keterangan</h3>
-          <p className="text-sm text-gray-600">{wave.description}</p>
+          <p className="text-sm text-gray-600">{wave.description || "Tidak ada deskripsi"}</p>
         </div>
       </div>
 

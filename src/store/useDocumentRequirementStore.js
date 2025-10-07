@@ -7,6 +7,7 @@ const useDocumentRequirementStore = create((set) => ({
     currentDocumentRequirement: null,
     loading: false,
     error: null,
+    //school
     fetchDocumentRequirements: async (page, schoolId) => {
         set({ loading: true, error: null });
         try {
@@ -57,6 +58,18 @@ const useDocumentRequirementStore = create((set) => ({
         } catch (error) {
             set({ error: error.response?.data?.message || 'Failed to delete document requirement', loading: false });
             return false;
+        }
+    },
+
+    //student
+    fetchStudentDocumentRequirements: async (schoolId) => {
+        set({ loading: true, error: null });
+        try {
+            const response = await apiClient.get('/api/student/document-requirement', { params: { school_id: schoolId } });
+            set({ documentRequirements: response.data.data, loading: false });
+            return response.data.data;
+        } catch (error) {
+            set({ error: error.response?.data?.message || 'Failed to fetch document requirements', loading: false });
         }
     },
 }));

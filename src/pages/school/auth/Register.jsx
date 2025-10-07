@@ -1,3 +1,4 @@
+// src/pages/school/auth/RegisterSchool.jsx
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,6 +8,7 @@ import { useNavigate, Link } from "react-router";
 import ErrorLabel from "@/components/ErrorLabel";
 import PasswordField from "@/components/PasswordField";
 import useSchoolStore from "@/store/useSchoolStore";
+import { showError, showSuccess } from "@/components/ui/toastSonner";
 
 const RegisterSchool = () => {
   const [form, setForm] = useState({
@@ -33,27 +35,27 @@ const RegisterSchool = () => {
     e.preventDefault();
     setIsSubmitting(true);
     setErrors({});
-    try {
-      const response = await registerSchool(form);
-      if (response) {
-        navigate("/login/school", { replace: true });
-      }
-    } catch (err) {
-      if (err.response?.data?.errors) {
-        setErrors(err.response.data.errors);
-      } else {
-        alert(err.response?.data?.message || "Terjadi kesalahan");
-      }
-    } finally {
-      setIsSubmitting(false);
+    const response = await registerSchool(form);
+    if (response.status === "success") {
+      showSuccess(response.message || "Registrasi berhasil!");
+      navigate("/login/school", { replace: true });
+    } else {
+      showError(response.message || "Registrasi gagal.");
+      setErrors(response.errors || {});
     }
+    setIsSubmitting(false);
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-12 bg-white">
-      <Card className="w-full max-w-5xl shadow-md rounded-xl border">
-        <CardHeader>
-          <CardTitle className="text-center text-2xl font-semibold">
+      <Card className="w-full max-w-5xl shadow-md rounded-xl border dark:border-gray-700 dark:bg-gray-800">
+        <CardHeader className="flex flex-col">
+          <img
+            src="/src/assets/logo ppdb.png"
+            alt="Logo PPDB"
+            className="w-24 rounded-full mb-2"
+          />
+          <CardTitle className="text-center text-2xl font-semibold text-gray-900 dark:text-white">
             Daftar Akun Sekolah
           </CardTitle>
         </CardHeader>
@@ -78,7 +80,9 @@ const RegisterSchool = () => {
 
               {/* Email */}
               <div>
-                <Label className="mb-2 block text-left" htmlFor="email">Email</Label>
+                <Label className="mb-2 block text-left" htmlFor="email">
+                  Email
+                </Label>
                 <Input
                   type="email"
                   id="email"
@@ -95,20 +99,20 @@ const RegisterSchool = () => {
               <PasswordField
                 label="Password"
                 id="password"
+                name="password"
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
                 error={errors?.password && errors.password[0]}
                 placeholder="Password Penanggung Jawab"
                 required
-                className="bg-blue-50"
               />
 
               {/* Konfirmasi Password */}
               <PasswordField
                 label="Konfirmasi Password"
                 id="password_confirmation"
+                name="password_confirmation"
                 value={form.password_confirmation}
-                placeholder="Konfirmasi Password Penanggung Jawab"
                 onChange={(e) =>
                   setForm({ ...form, password_confirmation: e.target.value })
                 }
@@ -116,13 +120,15 @@ const RegisterSchool = () => {
                   errors?.password_confirmation &&
                   errors.password_confirmation[0]
                 }
+                placeholder="Konfirmasi Password Penanggung Jawab"
                 required
-                className="bg-blue-50"
               />
 
               {/* Nama Sekolah */}
               <div>
-                <Label className="mb-2 block text-left" htmlFor="school_name">Nama Sekolah</Label>
+                <Label className="mb-2 block text-left" htmlFor="school_name">
+                  Nama Sekolah
+                </Label>
                 <Input
                   id="school_name"
                   name="school_name"
@@ -138,7 +144,9 @@ const RegisterSchool = () => {
 
               {/* NPSN */}
               <div>
-                <Label className="mb-2 block text-left" htmlFor="npsn">NPSN</Label>
+                <Label className="mb-2 block text-left" htmlFor="npsn">
+                  NPSN
+                </Label>
                 <Input
                   id="npsn"
                   name="npsn"
@@ -151,23 +159,28 @@ const RegisterSchool = () => {
               </div>
 
               {/* Role */}
-              <div className="">
-                <Label className="mb-2 block text-left"  htmlFor="roles">Peran</Label>
+              <div>
+                <Label className="mb-2 block text-left" htmlFor="roles">
+                  Peran
+                </Label>
                 <select
                   id="roles"
                   name="roles"
                   value={form.roles}
                   onChange={handleChange}
                   placeholder="Peran"
-                  className="w-full border rounded-md py-1.5 px-3 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full border rounded-md py-1.5 px-3 text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
-                  <option value="admin_sekolah">Admin / Operator Sekolah</option>
+                  <option value="admin_sekolah">
+                    Admin / Operator Sekolah
+                  </option>
                   <option value="kepala_sekolah">Kepala Sekolah</option>
                 </select>
                 {errors.roles && <ErrorLabel message={errors.roles[0]} />}
               </div>
 
-              <div className="">
+              {/* NIP */}
+              <div>
                 <Label className="mb-2 block text-left" htmlFor="nip">
                   NIP
                 </Label>
@@ -190,11 +203,12 @@ const RegisterSchool = () => {
             >
               {isSubmitting ? "Mendaftarkan..." : "Daftar"}
             </Button>
-            <div className="mt-4 text-center">
+
+            <div className="mt-4 text-center dark:text-gray-300">
               Sudah punya akun?{" "}
               <Link
                 to="/login/school"
-                className="text-blue-600 hover:underline"
+                className="text-orange-600 hover:underline"
               >
                 Masuk
               </Link>

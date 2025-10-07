@@ -2,13 +2,11 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const Table = React.forwardRef(({ className, ...props }, ref) => (
-  <div className="w-full overflow-auto">
     <table
       ref={ref}
-      className={cn("w-full caption-bottom text-sm border-collapse", className)}
+      className={cn("w-full overflow-auto caption-bottom text-sm border-collapse", className)}
       {...props}
     />
-  </div>
 ));
 Table.displayName = "Table";
 
@@ -69,7 +67,7 @@ TableHead.displayName = "TableHead";
 const TableCell = React.forwardRef(({ className, ...props }, ref) => (
   <td
     ref={ref}
-    className={cn("p-4 align-middle text-gray-600 dark:text-gray-300 text-left", className)}
+    className={cn("p-4 align-middle text-gray-700 dark:text-gray-300 text-left", className)}
     {...props}
   />
 ));

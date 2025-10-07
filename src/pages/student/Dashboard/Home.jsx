@@ -4,7 +4,7 @@ import useAuthStore from "@/store/authStore";
 import useSchoolStudent from "@/store/useSchoolStudent";
 import { useState, useEffect } from "react";
 
-export default function Dashboard() {
+export default function Home() {
   const { user: student } = useAuthStore();
   const { fetchSchoolStudents, schoolStudents } = useSchoolStudent();
   const [messages, setMessages] = useState([]);

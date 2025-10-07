@@ -26,7 +26,7 @@ const PaymentInfo = ({
 }) => {
   const { uploadedUrl, handleFileChange } = useFile({
     fieldName: "file",
-    folder: "payment-proof",
+    folder: "school/payment-proof",
     onSuccess: (response) => {
       setFormData({
         ...formData,
@@ -40,7 +40,7 @@ const PaymentInfo = ({
 
   const getFileName = (path) => {
     if (!path) return "";
-    return path.split("/").pop().split("?")[0];
+    return decodeURIComponent(path.split("/").pop().split("?")[0]);
   };
   return (
     <div className="border-b border-gray-900/10 pb-6">
@@ -51,7 +51,7 @@ const PaymentInfo = ({
         Lakukan pembayaran dan unggah bukti transfer.
       </p>
 
-      <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+      <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 text-center">
         <div className="sm:col-span-full">
           <p className="text-md font-medium text-gray-900">
             Total yang harus dibayar:

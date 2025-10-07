@@ -1,34 +1,29 @@
+// import { lazy } from "react";
 import { lazy } from "react";
 
-const LandingPage = lazy(() => import("@/pages/LandingPage"));
+const LandingPage = lazy(() => import("@/pages/landingPage/Home"));
 const dashboardSchool = lazy(() => import("@/pages/school/Dashboard"));
 
 const routes = [
   {
     path: "/",
     element: LandingPage,
-    // children: [
-    //   {
-    //     path: "/login/sekolah",
-    //     element: Login,
-    //   },
-    // ],
   },
   {
     path: "/about",
-    element: lazy(() => import("@/components/landingPage/About")),
+    element: lazy(() => import("@/pages/landingPage/About")),
   },
   {
     path: "/features",
-    element: lazy(() => import("@/components/landingPage/Feature")),
+    element: lazy(() => import("@/pages/landingPage/Feature")),
   },
   {
     path: "/pricing",
-    element: lazy(() => import("@/components/landingPage/Price")),
+    element: lazy(() => import("@/pages/landingPage/Price")),
   },
   {
     path: "/announcement",
-    element: lazy(() => import("@/components/landingPage/Announcement")),
+    element: lazy(() => import("@/pages/landingPage/Announcement")),
   },
 
   // School Routes
@@ -36,6 +31,10 @@ const routes = [
     path: "/school",
     element: lazy(() => import("@/middleware/AuthGuard")),
     children: [
+      {
+        path: "complete-registration",
+        element: lazy(() => import("@/pages/school/auth/CompleteRegistration")),
+      },
       {
         path: "dashboard",
         element: dashboardSchool,
@@ -88,7 +87,7 @@ const routes = [
             path: ":id/show",
             element: lazy(() => import("@/pages/school/Subscription/Show")),
           },
-        ]
+        ],
       },
       {
         path: "user",
@@ -101,25 +100,41 @@ const routes = [
             path: ":id/edit",
             element: lazy(() => import("@/pages/school/User/Edit")),
           },
-        ]
-      }
+        ],
+      },
     ],
   },
 
   // Student Routes
   {
     path: "/student",
-    element: lazy(() => import("@/middleware/AuthGuardStudent")),
+    element: lazy(() => import("@/middleware/AuthGuard")),
     children: [
       {
         path: "dashboard",
-        element: lazy(() => import("@/pages/student/Home/Dashboard")),
+        element: lazy(() => import("@/pages/student/Dashboard/Home")),
       },
       {
         path: "complete-registration",
         element: lazy(() =>
           import("@/pages/student/auth/CompleteRegistration")
         ),
+      },
+      {
+        path: "wave-price",
+        element: lazy(() => import("@/pages/student/Dashboard/WavePrice")),
+      },
+      {
+        path: "selection",
+        element: lazy(() => import("@/pages/student/StudentSelection")),
+      },
+      {
+        path: "profile",
+        element: lazy(() => import("@/pages/student/Profile")),
+      },
+      {
+        path: "change-password",
+        element: lazy(() => import("@/pages/student/ChangePassword")),
       },
     ],
   },
@@ -215,10 +230,6 @@ const routes = [
   {
     path: "/register/school",
     element: lazy(() => import("@/pages/school/auth/Register")),
-  },
-  {
-    path: "/complete-registration/school",
-    element: lazy(() => import("@/pages/school/auth/CompleteRegistration")),
   },
 
   {

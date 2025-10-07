@@ -38,7 +38,7 @@ const PersonalInfo = ({
   ];
 
   // hook upload avatar
-  const { preview, isUploading, handleFileChange, deleteFile } = useFile({
+  const { uploadedUrl, isUploading, handleFileChange, deleteFile } = useFile({
     folder: "student/avatars",
     onSuccess: (res) => {
       setFormData((prev) => ({ ...prev, avatar: res.path }));
@@ -49,11 +49,12 @@ const PersonalInfo = ({
   });
 
   const fileInputRef = useRef(null);
+  
 
   return (
     <div className="border border-gray-900/10 dark:border-gray-500 p-5 space-y-5 rounded-xl">
       <h3 className="text-lg font-semibold leading-7 text-gray-900 dark:text-white">
-        1. Informasi Pribadi Siswa
+        Informasi Pribadi Siswa
       </h3>
       <p className="text-sm leading-6 text-gray-600 dark:text-gray-400">
         Lengkapi data pribadi Anda.
@@ -161,10 +162,10 @@ const PersonalInfo = ({
 
           {/* Wrapper dengan tinggi & lebar tetap */}
           <div className="mt-3 flex flex-col items-center w-24 h-32">
-            {preview ? (
+            {uploadedUrl || formData.avatar ? (
               <>
                 <img
-                  src={preview}
+                  src={uploadedUrl || formData.image}
                   alt="Preview Avatar"
                   className="w-24 h-24 rounded-full object-cover border"
                 />
@@ -260,7 +261,7 @@ const PersonalInfo = ({
             Kode Pos
           </Label>
           <Input
-            type="text"
+            type="number"
             name="postal_code"
             id="postal_code"
             value={formData.postal_code}

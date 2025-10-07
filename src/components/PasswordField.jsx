@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 
 const PasswordField = ({
     label,
+    name,
     value,
     onChange,
     error,
@@ -25,6 +26,7 @@ const PasswordField = ({
                 <Input
                     id={id}
                     type={showPassword ? "text" : "password"}
+                    name={name}
                     value={value}
                     onChange={onChange}
                     required={required}

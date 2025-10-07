@@ -49,9 +49,9 @@ const Login = () => {
         <Card className="w-full max-w-md shadow-lg rounded-xl">
           <CardHeader className="items-center">
             <img
-              src="/logo.png" // Ganti dengan logo siswa jika perlu
+              src="/src/assets/logo ppdb.png"
               alt="Logo PPDB"
-              className="h-10 mb-2"
+              className="w-24 rounded-full mb-2"
             />
             <div className="flex border rounded-full overflow-hidden mb-4 w-full">
               <Link
@@ -101,6 +101,7 @@ const Login = () => {
               <PasswordField
                 label="Password"
                 id="password"
+                name="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 error={errors?.password && errors.password[0]}

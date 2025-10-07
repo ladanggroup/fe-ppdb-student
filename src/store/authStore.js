@@ -1,286 +1,262 @@
+// src/store/authStore.js
 import { create } from "zustand";
 import apiClient from "@/api/apiClient";
 
 const useAuthStore = create((set) => ({
   token: null,
-  expires_in: null,
   user: null,
   isAuthenticated: false,
-  roles: [],
-  abilities: JSON.parse(localStorage.getItem("abilities") || "[]"),
+  role: null, // 'admin' | 'school' | 'student'
+  expiresAt: null,
   errors: null,
 
-  // Restore auth state from localStorage
+  getRolePrefix: () => {
+    const path = window.location.pathname;
+    if (path.startsWith("/admin")) return "admin";
+    if (path.startsWith("/school")) return "school";
+    if (path.startsWith("/student")) return "student";
+    return null;
+  },
+
+  // 🔹 Restore token + auto logout jika expired
   restoreAuth: async () => {
-  const token = localStorage.getItem("access_token");
-  const expires_in = localStorage.getItem("expires_in");
-  const abilities = JSON.parse(localStorage.getItem("abilities") || "[]");
+    const prefix = useAuthStore.getState().getRolePrefix();
+    if (!prefix) return false;
 
-  if (!token) {
-    return false;
-  }
+    const token = localStorage.getItem(`${prefix}_access_token`);
+    const expiresAt = parseInt(
+      localStorage.getItem(`${prefix}_expires_at`),
+      10
+    );
 
-  // Set header Authorization
-  apiClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-  
-  try {
-    let userResponse;
-    
-    if (abilities.includes("kepala_sekolah") || abilities.includes("admin_sekolah")) {
-      userResponse = await useAuthStore.getState().meSchool();
-    } else if (abilities.includes("siswa")) {
-      userResponse = await useAuthStore.getState().meStudent();
-    } else if (abilities.includes("admin")) {
-      userResponse = await useAuthStore.getState().meAdmin();
-    } else {
-      console.warn("Unknown ability type:", abilities);
-      throw new Error("Unknown user role");
+    if (!token || !expiresAt) return false;
+
+    // 🔸 Cek kadaluarsa token
+    const now = Date.now();
+    if (now >= expiresAt) {
+      useAuthStore.getState()[`logout${prefix.charAt(0).toUpperCase() + prefix.slice(1)}`]();
+      return false;
     }
 
-    if (!userResponse) {
-      throw new Error("Failed to fetch user data");
+    apiClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+    try {
+      let userResponse;
+      if (prefix === "admin")
+        userResponse = await useAuthStore.getState().meAdmin();
+      else if (prefix === "school")
+        userResponse = await useAuthStore.getState().meSchool();
+      else if (prefix === "student")
+        userResponse = await useAuthStore.getState().meStudent();
+
+      if (!userResponse) throw new Error("Failed to fetch user data");
+
+      set({
+        token,
+        user: userResponse,
+        isAuthenticated: true,
+        role: prefix,
+        expiresAt,
+      });
+
+      return true;
+    } catch (error) {
+      console.error("Restore auth failed:", error);
+      localStorage.removeItem(`${prefix}_access_token`);
+      localStorage.removeItem(`${prefix}_expires_at`);
+      delete apiClient.defaults.headers.common["Authorization"];
+      set({
+        token: null,
+        user: null,
+        isAuthenticated: false,
+        role: null,
+        expiresAt: null,
+        errors: error.message,
+      });
+      return false;
     }
+  },
 
-    set({
-      token,
-      expires_in,
-      user: userResponse,
-      isAuthenticated: true,
-      roles: userResponse?.roles || [],
-      abilities,
-    });
-    
-    return true;
-  } catch (error) {
-    console.error("Restore auth failed:", error);
-
-    // Clean up invalid auth
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("expires_in");
-    localStorage.removeItem("abilities");
-    delete apiClient.defaults.headers.common["Authorization"];
-
-    // Reset state
-    set({
-      token: null,
-      user: null,
-      expires_in: null,
-      isAuthenticated: false,
-      roles: [],
-      abilities: [],
-      errors: error.message,
-    });
-    
-    return false;
-  }
-},
-
-  /* school */
+  /* ==================== SCHOOL ==================== */
   loginSchool: async ({ email, password }) => {
     try {
       const response = await apiClient.post("/api/school/login", {
         email,
         password,
       });
-      
-      const { access_token, expires_in, ability } = response.data.data;
-      localStorage.setItem("access_token", access_token);
-      localStorage.setItem("expires_in", expires_in);
-      localStorage.setItem("abilities", ability ? JSON.stringify(ability) : JSON.stringify([]));
-      set({
-        token: access_token,
-        expires_in,
-        isAuthenticated: true,
-        abilities: ability || [],
-        errors: null,
-      });
+      const { access_token, expires_in } = response.data.data;
 
-      // Set default header Authorization untuk Axios
+      // 🔹 Convert waktu expired ke timestamp
+      const expiresAt = new Date(expires_in.replace(" ", "T")).getTime();
+
+      localStorage.setItem("school_access_token", access_token);
+      localStorage.setItem("school_expires_at", expiresAt);
+
       apiClient.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${access_token}`;
-      // Fetch user data setelah login berhasil
-      await useAuthStore.getState().meSchool();
+
+      const user = await useAuthStore.getState().meSchool();
+      set({
+        token: access_token,
+        user,
+        isAuthenticated: true,
+        role: "school",
+        expiresAt,
+        errors: null,
+      });
       return true;
     } catch (error) {
-      if (error.response?.status === 422) {
-        set({ errors: error.response?.data.errors });
-      } else {
-        set({ errors: error.response?.data });
-      }
-      console.log(error);
-      
+      set({ errors: error.response?.data?.errors || error.response?.data });
       return false;
     }
   },
+
   logoutSchool: () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("expires_in");
-    localStorage.removeItem("abilities");
+    localStorage.removeItem("school_access_token");
+    localStorage.removeItem("school_expires_at");
+    delete apiClient.defaults.headers.common["Authorization"];
     set({
       token: null,
-      expires_in: null,
       user: null,
       isAuthenticated: false,
-      roles: [],
-      abilities: [],
+      role: null,
+      expiresAt: null,
       errors: null,
     });
-    // Hapus header Authorization dari Axios
-    delete apiClient.defaults.headers.common["Authorization"];
   },
-  // checkme
+
   meSchool: async () => {
     try {
       const response = await apiClient.get("/api/school/me");
       const user = response.data.data;
-      set({
-        user,
-        isAuthenticated: true,
-        roles: user.roles,
-        abilities: JSON.parse(localStorage.getItem("abilities") || "[]"),
-        errors: null,
-      });
+      set({ user, isAuthenticated: true, role: "school" });
       return user;
     } catch (error) {
-      console.error("Failed to fetch user data:", error);
-      set({ isAuthenticated: false, user: null, roles: [], abilities: [], errors: null });
+      console.error("Failed to fetch school data:", error);
+      set({ isAuthenticated: false, user: null, role: null });
       return null;
     }
   },
 
-  /* student */
+  /* ==================== STUDENT ==================== */
   loginStudent: async ({ email, password }) => {
     try {
       const response = await apiClient.post("/api/student/login", {
         email,
         password,
       });
-      const { access_token, expires_in, ability } = response.data.data;
-      localStorage.setItem("access_token", access_token);
-      localStorage.setItem("expires_in", expires_in);
-      localStorage.setItem("abilities", ability ? JSON.stringify(ability) : JSON.stringify([]));
-      set({
-        token: access_token,
-        expires_in,
-        abilities: ability || [],
-        isAuthenticated: true,
-        errors: null,
-      });
-      // Set default header Authorization untuk Axios
+      const { access_token, expires_in } = response.data.data;
+
+      const expiresAt = new Date(expires_in.replace(" ", "T")).getTime();
+
+      localStorage.setItem("student_access_token", access_token);
+      localStorage.setItem("student_expires_at", expiresAt);
+
       apiClient.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${access_token}`;
-      // Fetch user data setelah login berhasil
-      await useAuthStore.getState().meStudent();
+
+      const user = await useAuthStore.getState().meStudent();
+      set({
+        token: access_token,
+        user,
+        isAuthenticated: true,
+        role: "student",
+        expiresAt,
+        errors: null,
+      });
       return true;
     } catch (error) {
-      if (error.response?.status === 422) {
-        set({ errors: error.response.data.errors });
-      } else {
-        set({ errors: error.response.data.message });
-      }
+      set({ errors: error.response?.data?.errors || error.response?.data });
       return false;
     }
   },
+
   logoutStudent: () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("expires_in");
-    localStorage.removeItem("abilities");
+    localStorage.removeItem("student_access_token");
+    localStorage.removeItem("student_expires_at");
+    delete apiClient.defaults.headers.common["Authorization"];
     set({
       token: null,
-      expires_in: null,
       user: null,
       isAuthenticated: false,
-      roles: [],
-      abilities: [],
+      role: null,
+      expiresAt: null,
       errors: null,
     });
-    // Hapus header Authorization dari Axios
-    delete apiClient.defaults.headers.common["Authorization"];
   },
-  // checkme
+
   meStudent: async () => {
     try {
       const response = await apiClient.get("/api/student/me");
       const user = response.data.data;
-      set({
-        user,
-        isAuthenticated: true,
-        roles: [], // student tidak punya roles
-        abilities: user.abilities || [],
-        errors: null,
-      });
+      set({ user, isAuthenticated: true, role: "student" });
       return user;
     } catch (error) {
-      console.error("Failed to fetch user data:", error);
-      set({ isAuthenticated: false, user: null, abilities: [], errors: null });
+      console.error("Failed to fetch student data:", error);
+      set({ isAuthenticated: false, user: null, role: null });
       return null;
     }
   },
 
-  /* admin */
+  /* ==================== ADMIN ==================== */
   loginAdmin: async ({ email, password }) => {
     try {
       const response = await apiClient.post("/api/admin/login", {
         email,
         password,
       });
-      const { access_token, expires_in, ability } = response.data.data;
-      localStorage.setItem("access_token", access_token);
-      localStorage.setItem("expires_in", expires_in);
-      localStorage.setItem("abilities", ability ? JSON.stringify(ability) : JSON.stringify([]));
-      set({
-        token: access_token,
-        expires_in,
-        abilities: ability || [],
-        errors: null,
-        isAuthenticated: true,
-      });
-      // Set default header Authorization untuk Axios
+      const { access_token, expires_in } = response.data.data;
+
+      const expiresAt = new Date(expires_in.replace(" ", "T")).getTime();
+
+      localStorage.setItem("admin_access_token", access_token);
+      localStorage.setItem("admin_expires_at", expiresAt);
+
       apiClient.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${access_token}`;
-      // Fetch user data setelah login berhasil
-      await useAuthStore.getState().meAdmin();
+
+      const user = await useAuthStore.getState().meAdmin();
+      set({
+        token: access_token,
+        user,
+        isAuthenticated: true,
+        role: "admin",
+        expiresAt,
+        errors: null,
+      });
       return true;
     } catch (error) {
-      if (error.response?.status === 422) {
-        set({ errors: error.response?.data.errors });
-      } else {
-        set({ errors: error.response?.data });
-      }
+      set({ errors: error.response?.data?.errors || error.response?.data });
       return false;
     }
   },
+
   logoutAdmin: () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("expires_in");
-    localStorage.removeItem("abilities");
+    localStorage.removeItem("admin_access_token");
+    localStorage.removeItem("admin_expires_at");
+    delete apiClient.defaults.headers.common["Authorization"];
     set({
       token: null,
-      expires_in: null,
       user: null,
       isAuthenticated: false,
+      role: null,
+      expiresAt: null,
+      errors: null,
     });
-    // Hapus header Authorization dari Axios
-    delete apiClient.defaults.headers.common["Authorization"];
   },
-  // checkme
+
   meAdmin: async () => {
     try {
       const response = await apiClient.get("/api/admin/me");
       const user = response.data.data;
-      set({
-        user,
-        isAuthenticated: true,
-        roles: [], // admin tidak punya roles
-        abilities: user.abilities || [],
-      });
+      set({ user, isAuthenticated: true, role: "admin" });
       return user;
     } catch (error) {
-      console.error("Failed to fetch user data:", error);
-      set({ isAuthenticated: false, user: null, abilities: [] });
+      console.error("Failed to fetch admin data:", error);
+      set({ isAuthenticated: false, user: null, role: null });
       return null;
     }
   },

@@ -1,83 +1,162 @@
 // src/components/student/PaymentInfo.jsx
-import React from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectGroup,
-  SelectValue,
-  SelectTrigger,
-  SelectContent,
-  SelectLabel,
-  SelectItem,
-} from "@/components/ui/select";
-import BankSelectedCard from "@/components/BankSelectedCard";
+import { Button } from "@/components/ui/button";
 import ErrorLabel from "@/components/ErrorLabel";
 import useFile from "@/hooks/useFile";
 import useDocumentStore from "@/store/useDocumentStore";
-import { Link } from "react-router"; // Use react-router-dom Link if available
+import { Clipboard, Upload, Search, Check } from "lucide-react";
 import formatIdr from "@/utils/formatIdr";
-import { showError } from "../ui/toastSonner";
+import { showError, showSuccess } from "../ui/toastSonner";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { Link } from "react-router";
 
 const PaymentInfo = ({ formData, formErrors, onPaymentInfoChange }) => {
   const { deleteStudentDocument } = useDocumentStore();
+  const { deleteFile } = useFile({});
+
   const handleDeleteDocument = async (schoolId) => {
     const dataDelete = formData.payments_info[schoolId];
-    if (dataDelete) {
+    if (dataDelete?.document_id) {
       await deleteStudentDocument(dataDelete.document_id);
+    } else if (dataDelete?.payment_proof_file) {
+      await deleteFile(dataDelete.payment_proof_file);
+    }
+    onPaymentInfoChange(schoolId, "payment_proof_file", null);
+  };
+
+  const handleCopy = (text) => {
+    navigator.clipboard.writeText(text);
+    if (text) {
+      showSuccess("Berhasil menyalin ke clipboard");
+    } else {
+      showError("Gagal menyalin ke clipboard");
     }
   };
-  
+
   return (
-    <div className="border-b border-gray-900/10 pb-6">
-      <h3 className="text-lg font-semibold leading-7 text-gray-900 dark:text-white">
-        4. Informasi Pembayaran
+    <div className="border p-6 rounded-lg shadow-sm border-gray-600 dark:border-gray-400 pb-6">
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+        Informasi Pembayaran
       </h3>
-      <p className="mt-1 text-sm leading-6 text-gray-600 dark:text-gray-400">
-        Lakukan pembayaran untuk setiap sekolah yang Anda pilih.
+      <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+        Lakukan pembayaran untuk setiap sekolah yang anda pilih
       </p>
 
-      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
         {formData.selected_schools.length === 0 ? (
           <p className="text-gray-500 dark:text-gray-400">
             Tidak ada sekolah yang dipilih untuk pembayaran.
           </p>
         ) : (
-          formData.selected_schools.map((school) => (
-            <div
-              key={school.school_id}
-              className="border p-4 rounded-lg shadow-sm bg-gray-50 dark:bg-gray-700"
-            >
-              <h4 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
-                Pembayaran untuk {school.school_name} <br />
-                (Gelombang: {school.wave_name})
-              </h4>
+          formData.selected_schools.map((school) => {
+            const paymentInfo = formData.payments_info[school.school_id] || {};
+            const banks = formData.banks_per_school[school.school_id] || [];
+            const selectedBank =
+              banks.find(
+                (b) => String(b.id) === String(paymentInfo.selected_bank_id)
+              ) || banks[0];
 
-              <div className="sm:col-span-full mb-4">
-                <p className="text-md font-medium text-gray-900 dark:text-white">
-                  Total yang harus dibayar:
-                </p>
-                <p className="text-3xl font-bold text-green-700 dark:text-green-500">
-                  {formatIdr(school.product_price)}
-                </p>
-              </div>
+            return (
+              <div
+                key={school.school_id}
+                className="bg-white dark:bg-gray-800 rounded-xl border shadow-sm p-6 flex flex-col"
+              >
+                <h4 className="text-md font-semibold text-gray-900 dark:text-white text-center mb-4">
+                  Pembayaran <br /> {school.school_name}
+                </h4>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
-                <div className="mt-2.5">
-                  <Label
-                    htmlFor={`payment_date_${school.school_id}`}
-                    className="block text-left dark:text-white mb-2"
-                  >
-                    Tanggal Pembayaran
+                {/* Bank Info Card */}
+                {selectedBank ? (
+                  <div className="flex items-center justify-between border rounded-lg px-4 py-2 mb-4">
+                    <div>
+                      <p className="text-sm font-medium text-gray-800 dark:text-white">
+                        {selectedBank.name}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {selectedBank.account_name}
+                      </p>
+                    </div>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button className="cursor-pointer" size="sm">
+                          Ubah
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="bg-white">
+                        <DialogHeader>
+                          <DialogTitle>
+                            Pilih Bank {school.school_name}
+                          </DialogTitle>
+                        </DialogHeader>
+                        <BankSearchList
+                          banks={banks}
+                          schoolId={school.school_id}
+                          onPaymentInfoChange={onPaymentInfoChange}
+                          selectedBankId={selectedBank?.id}
+                        />
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-700 dark:text-gray-400 mb-4">
+                    Pilih bank tujuan terlebih dahulu.
+                  </p>
+                )}
+
+                {/* Nomor Rekening */}
+                {selectedBank && (
+                  <div className="flex items-center mb-3">
+                    <Input
+                      readOnly
+                      value={selectedBank.account_number}
+                      className="flex-1 text-center font-mono font-medium text-lg text-orange-600 bg-orange-50"
+                    />
+                    <Button
+                      onClick={() => handleCopy(selectedBank.account_number)}
+                      className="cursor-pointer ml-2"
+                    >
+                      <Clipboard size={18} />
+                    </Button>
+                  </div>
+                )}
+
+                {/* Nominal Transfer */}
+                <div className="mb-3">
+                  <Label className="block text-sm font-medium text-gray-700 mb-1">
+                    Nominal Transfer
+                  </Label>
+                  <div className="flex items-center flex-1">
+                    <Input
+                      readOnly
+                      value={formatIdr(school.product_price)}
+                      className="bg-gray-100 font-semibold"
+                    />
+                    <Button
+                      onClick={() => handleCopy(school.product_price)}
+                      className="cursor-pointer ml-2"
+                    >
+                      <Clipboard size={18} />
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Tanggal Transfer */}
+                <div className="mb-3">
+                  <Label className="block text-sm font-medium text-gray-700 mb-1">
+                    Tanggal Transfer
                   </Label>
                   <Input
                     type="date"
-                    name={`payment_date_${school.school_id}`}
-                    id={`payment_date_${school.school_id}`}
-                    value={
-                      formData.payments_info[school.school_id]?.payment_date ||
-                      ""
-                    }
+                    value={paymentInfo.payment_date || ""}
                     onChange={(e) =>
                       onPaymentInfoChange(
                         school.school_id,
@@ -93,86 +172,10 @@ const PaymentInfo = ({ formData, formErrors, onPaymentInfoChange }) => {
                   )}
                 </div>
 
-                <div>
-                  <SelectGroup>
-                    <SelectLabel
-                      htmlFor={`selected_bank_id_${school.school_id}`}
-                      className="block text-left dark:text-white"
-                    >
-                      Bank Tujuan
-                    </SelectLabel>
-                  </SelectGroup>
-                  <Select
-                    name={`selected_bank_id_${school.school_id}`}
-                    id={`selected_bank_id_${school.school_id}`}
-                    value={
-                      formData.payments_info[school.school_id]?.selected_bank_id
-                        ? String(
-                            formData.payments_info[school.school_id]
-                              ?.selected_bank_id
-                          )
-                        : undefined
-                    }
-                    onValueChange={(value) =>
-                      onPaymentInfoChange(
-                        school.school_id,
-                        "selected_bank_id",
-                        value
-                      )
-                    }
-                  >
-                    <SelectTrigger className="focus:ring-ppdb-orange focus:border-ppdb-orange bg-white">
-                      <SelectValue placeholder="Pilih Bank" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white">
-                      {formData.banks_per_school[school.school_id]?.length >
-                      0 ? (
-                        formData.banks_per_school[school.school_id].map(
-                          (bank) => (
-                            <SelectItem
-                              className="hover:bg-ppdb-soft"
-                              key={bank.id}
-                              value={String(bank.id)} // ini string
-                            >
-                              {bank.name} - <br />
-                              {bank.account_number} ({bank.account_name})
-                            </SelectItem>
-                          )
-                        )
-                      ) : (
-                        <SelectItem disabled>
-                          Tidak ada bank tersedia.
-                        </SelectItem>
-                      )}
-                    </SelectContent>
-                  </Select>
-                  {formErrors[`selected_bank_id_${school.school_id}`] && (
-                    <ErrorLabel
-                      message={
-                        formErrors[`selected_bank_id_${school.school_id}`]
-                      }
-                    />
-                  )}
-                </div>
-
-                <div className="col-span-full">
-                  <BankSelectedCard
-                    bank={formData.banks_per_school[school.school_id]?.find(
-                      (b) =>
-                        String(b.id) ===
-                        String(
-                          formData.payments_info[school.school_id]
-                            ?.selected_bank_id
-                        )
-                    )}
-                  />
-                </div>
-
+                {/* Upload Bukti Bayar */}
                 <PaymentProofUploader
                   schoolId={school.school_id}
-                  currentFile={
-                    formData.payments_info[school.school_id]?.payment_proof_file
-                  }
+                  currentFile={paymentInfo.payment_proof_file}
                   onFileUpload={(path) =>
                     onPaymentInfoChange(
                       school.school_id,
@@ -184,15 +187,72 @@ const PaymentInfo = ({ formData, formErrors, onPaymentInfoChange }) => {
                   formErrors={formErrors}
                 />
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>
   );
 };
 
-// Helper Component for payment proof upload
+/* ---------------- BANK SEARCH LIST ---------------- */
+const BankSearchList = ({
+  banks,
+  schoolId,
+  onPaymentInfoChange,
+  selectedBankId,
+}) => {
+  const [query, setQuery] = useState("");
+
+  const filteredBanks = banks.filter((b) =>
+    b.name.toLowerCase().includes(query.toLowerCase())
+  );
+
+  return (
+    <div className="mt-3">
+      {/* 🔍 Input pencarian */}
+      <div className="relative mb-4">
+        <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
+        <Input
+          placeholder="Cari nama bank..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="pl-10"
+        />
+      </div>
+
+      {/* List Bank */}
+      <div className="space-y-3 max-h-60 overflow-y-auto">
+        {filteredBanks.length > 0 ? (
+          filteredBanks.map((bank) => (
+            <DialogPrimitive.Close asChild key={bank.id}>
+              <div
+                className="p-3 border rounded-lg hover:bg-orange-50 cursor-pointer flex justify-between items-center"
+                onClick={() => {
+                  onPaymentInfoChange(schoolId, "selected_bank_id", bank.id);
+                }}
+              >
+                <div>
+                  <p className="font-medium">{bank.name}</p>
+                  <p className="text-sm text-gray-500">
+                    {bank.account_number} - {bank.account_name}
+                  </p>
+                </div>
+                {String(bank.id) === String(selectedBankId) && (
+                  <Check className="text-green-500" size={18} />
+                )}
+              </div>
+            </DialogPrimitive.Close>
+          ))
+        ) : (
+          <p className="text-sm text-gray-500">Bank tidak ditemukan</p>
+        )}
+      </div>
+    </div>
+  );
+};
+
+/* ---------------- PAYMENT PROOF UPLOADER ---------------- */
 const PaymentProofUploader = ({
   schoolId,
   currentFile,
@@ -201,132 +261,79 @@ const PaymentProofUploader = ({
   formErrors,
 }) => {
   const {
-    uploadedUrl,
-    handleFileChange: baseHandleFileChange,
+    handleFileChange,
     loading: uploadLoading,
+    uploadedUrl,
   } = useFile({
     fieldName: "file",
-    folder: "payment-proof",
+    folder: "student/payment-proof",
     onSuccess: (response) => {
-      onFileUpload(response.path); // update formData setelah upload sukses
+      onFileUpload(response.path);
     },
-    onError: (err) => {
-      console.error("Upload failed", err);
-      showError("Gagal mengunggah bukti pembayaran.");
+    onError: () => {
+      alert("Gagal upload file");
     },
   });
 
-  const handleFileChange = async (e) => {
-    if (currentFile) {
-      try {
-        onDelete();
-      } catch (err) {
-        console.error("Gagal menghapus file lama", err);
-      }
-    }
-    // lanjut upload file baru
-    baseHandleFileChange(e);
-  };
-
-  // 👉 handler drag & drop
-  const handleDrop = (e) => {
-    e.preventDefault();
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const file = e.dataTransfer.files[0];
-      const fakeEvent = {
-        preventDefault: () => {}, // dummy supaya gak error
-        target: { files: [file] },
-      };
-      handleFileChange(fakeEvent);
-      e.dataTransfer.clearData();
-    }
-  };
-
-  const handleDragOver = (e) => {
-    e.preventDefault(); // biar bisa drop
-  };
-
+  // const getFileName = (path) => path?.split("/").pop().split("?")[0];
   const getFileName = (path) => {
     if (!path) return "";
-    const fileName = path.split("/").pop().split("?")[0];
-    return decodeURIComponent(fileName);
+    return decodeURIComponent(path.split("/").pop().split("?")[0]);
   };
-
-  let objectUrl = uploadedUrl;
+  const fileUrl =
+    uploadedUrl || (typeof currentFile === "string" ? currentFile : null);
 
   return (
-    <div className="col-span-full">
-      <label
-        htmlFor={`payment_proof_file_${schoolId}`}
-        className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
-      >
-        Unggah Bukti Pembayaran
-      </label>
-      <div
-        className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10"
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-      >
-        <div className="text-center">
-          {currentFile ? (
-            <Link
-              to={
-                objectUrl ||
-                (typeof currentFile === "string" ? currentFile : "#")
-              }
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500 hover:underline"
+    <div>
+      <Label className="block text-sm font-medium text-gray-700 mb-1">
+        Upload Bukti Bayar
+      </Label>
+      {currentFile ? (
+        <div className="border rounded-lg p-3 bg-gray-50 flex flex-col items-center">
+          <p className="text-sm text-green-600">✓ {getFileName(currentFile)}</p>
+          <div className="flex flex-row items-center mt-2">
+            {/* Tombol lihat dokumen */}
+            {fileUrl && (
+              <Link
+                to={fileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 hover:underline mt-2 text-sm"
+              >
+                Lihat Dokumen
+              </Link>
+            )}
+
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="text-red-600 hover:underline cursor-pointer mt-2"
+              onClick={onDelete}
             >
-              Lihat Dokumen
-            </Link>
-          ) : (
-            <svg
-              className="mx-auto h-12 w-12 text-gray-300"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fillRule="evenodd"
-                d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.69a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z"
-                clipRule="evenodd"
-              />
-            </svg>
-          )}
-          <div className="mt-4 flex text-sm leading-6 text-gray-600">
-            <label
-              htmlFor={`payment_proof_file_input_${schoolId}`}
-              className="relative cursor-pointer rounded-md font-semibold text-indigo-400 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-400 focus-within:ring-offset-2 hover:text-indigo-500"
-            >
-              <span>{uploadLoading ? "Mengunggah..." : "Unggah file"}</span>
-              <input
-                id={`payment_proof_file_input_${schoolId}`}
-                name={`payment_proof_file_${schoolId}`}
-                type="file"
-                className="sr-only"
-                onChange={handleFileChange}
-                accept="image/jpeg,image/png,application/pdf"
-                disabled={uploadLoading}
-              />
-            </label>
-            <p className="dark:text-white pl-1">atau seret dan lepas</p>
+              Hapus
+            </Button>
           </div>
-          <p className="text-xs leading-5 text-gray-600 dark:text-white">
+        </div>
+      ) : (
+        <label className="mt-2 flex flex-col items-center justify-center cursor-pointer border border-dashed border-gray-400 rounded-lg px-6 py-8 text-sm text-gray-500">
+          <Upload size={20} className="mb-2 text-gray-400" />
+          {uploadLoading ? "Mengunggah..." : "Unggah file atau seret ke sini"}
+          <Input
+            id={`payment_proof_file_${schoolId}`}
+            type="file"
+            className="sr-only"
+            onChange={handleFileChange}
+            accept="image/jpeg,image/png,application/pdf"
+          />
+          <p className="text-xs text-gray-400 mt-1">
             JPG, PNG, PDF hingga 10MB
           </p>
-          {currentFile && (
-            <p className="mt-2 text-sm text-gray-500">
-              File terpilih: {getFileName(currentFile)}
-            </p>
-          )}
-          {formErrors[`payment_proof_file_${schoolId}`] && (
-            <ErrorLabel
-              message={formErrors[`payment_proof_file_${schoolId}`]}
-            />
-          )}
-        </div>
-      </div>
+        </label>
+      )}
+      {formErrors[`payment_proof_file_${schoolId}`] && (
+        <ErrorLabel message={formErrors[`payment_proof_file_${schoolId}`]} />
+      )}
     </div>
   );
 };

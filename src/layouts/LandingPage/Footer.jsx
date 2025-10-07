@@ -12,11 +12,21 @@ export default function Footer() {
         <div>
           <h3 className="font-bold">Navigasi</h3>
           <ul>
-            <li>Beranda</li>
-            <li>Tentang</li>
-            <li>Fitur</li>
-            <li>Harga</li>
-            <li>Pengumuman</li>
+            <li>
+              <Link to="/">Beranda</Link>
+            </li>
+            <li>
+              <Link to="/about">Tentang</Link>
+            </li>
+            <li>
+              <Link to="/features">Fitur</Link>
+            </li>
+            <li>
+              <Link to="/pricing">Harga</Link>
+            </li>
+            <li>
+              <Link to="/announcement">Pengumuman</Link>
+            </li>
           </ul>
         </div>
         <div>

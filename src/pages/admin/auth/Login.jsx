@@ -48,9 +48,9 @@ const Login = () => {
         <Card className="w-full max-w-md shadow-lg rounded-xl">
           <CardHeader className="items-center">
             <img
-              src="/logo.png" // Ganti dengan logo siswa jika perlu
+              src="/src/assets/logo ppdb.png"
               alt="Logo PPDB"
-              className="h-10 mb-2"
+              className="w-24 rounded-full mb-2"
             />
             <CardTitle className="text-center">Portal Admin</CardTitle>
             <CardDescription className="text-center">

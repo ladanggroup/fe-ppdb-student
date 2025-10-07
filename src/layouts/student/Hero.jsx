@@ -1,4 +1,4 @@
-import SchoolList from "@/pages/student/Home/SchoolList";
+import SchoolList from "@/pages/student/Dashboard/SchoolList";
 import { Link } from "react-router";
 
 export default function Hero() {
@@ -21,7 +21,7 @@ export default function Hero() {
             Daftar Sekarang
           </Link>
           <Link
-            to="/kontak"
+            to="/student/profile"
             className="px-6 py-2 border border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white rounded-2xl mt-4 inline-block ml-4"
           >
             Cek Profile

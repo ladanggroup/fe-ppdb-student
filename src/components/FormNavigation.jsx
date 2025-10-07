@@ -35,6 +35,7 @@ const FormNavigation = ({
 
       {currentStep < totalSteps && (
         <Button
+          type="button"
           onClick={handleNextStep}
           className="flex items-center justify-end px-3 py-1 text-sm font-semibold"
           disabled={isLoading}

@@ -50,7 +50,12 @@ const RegisterStudent = () => {
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-12 bg-white">
       <Card className="w-full max-w-5xl shadow-md rounded-xl border">
-        <CardHeader>
+        <CardHeader className="flex flex-col">
+          <img
+            src="/src/assets/logo ppdb.png"
+            alt="Logo PPDB"
+            className="w-24 rounded-full mb-2"
+          />
           <CardTitle className="text-center text-2xl font-semibold">
             Daftar Akun Siswa
           </CardTitle>
@@ -75,7 +80,9 @@ const RegisterStudent = () => {
 
               {/* Email */}
               <div>
-                <Label className="mb-2 block text-left" htmlFor="email">Email</Label>
+                <Label className="mb-2 block text-left" htmlFor="email">
+                  Email
+                </Label>
                 <Input
                   type="email"
                   id="email"
@@ -92,6 +99,7 @@ const RegisterStudent = () => {
                 label="Password"
                 id="password"
                 value={form.password}
+                name="password"
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
                 error={errors?.password && errors.password[0]}
                 required
@@ -102,6 +110,7 @@ const RegisterStudent = () => {
               <PasswordField
                 label="Konfirmasi Password"
                 id="password_confirmation"
+                name="password_confirmation"
                 value={form.password_confirmation}
                 onChange={(e) =>
                   setForm({ ...form, password_confirmation: e.target.value })
@@ -116,7 +125,9 @@ const RegisterStudent = () => {
 
               {/* NISN */}
               <div>
-                <Label className="mb-2 block text-left" htmlFor="nisn">NISN</Label>
+                <Label className="mb-2 block text-left" htmlFor="nisn">
+                  NISN
+                </Label>
                 <Input
                   id="nisn"
                   name="nisn"
@@ -129,7 +140,12 @@ const RegisterStudent = () => {
 
               {/* Tipe Pendaftaran */}
               <div>
-                <Label className="mb-2 block text-left"  htmlFor="registration_type">Tipe Pendaftaran</Label>
+                <Label
+                  className="mb-2 block text-left"
+                  htmlFor="registration_type"
+                >
+                  Tipe Pendaftaran
+                </Label>
                 <select
                   id="registration_type"
                   name="registration_type"
@@ -140,7 +156,9 @@ const RegisterStudent = () => {
                   <option value="new">Siswa Baru</option>
                   <option value="transfer">Siswa Pindahan</option>
                 </select>
-                {errors.registration_type && <ErrorLabel message={errors.registration_type[0]} />}
+                {errors.registration_type && (
+                  <ErrorLabel message={errors.registration_type[0]} />
+                )}
               </div>
             </div>
 

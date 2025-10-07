@@ -16,9 +16,9 @@ import { Label } from "../../../components/ui/label";
 import SelectModalUrl from "../../../components/SelectModalUrl";
 import { Search } from "lucide-react";
 import { useSearchParams, Link } from "react-router";
-import formatIdr from "@/utils/formatIdr";
-import SchoolDetail from "@/components/DetailWave";
+import SchoolDetail from "@/components/SchoolDetail";
 import PaginationSlidingWindow from "../../../components/PaginationSlidingWindow";
+import { capitalizeWords } from "@/utils/string";
 
 export default function SchoolList() {
   const { waves, fetchPublicWaves, loading } = useWaveStore();
@@ -133,7 +133,7 @@ export default function SchoolList() {
   }
 
   return (
-    <div className="flex flex-col px-4 py-6 items-center bg-gray-50 border border-gray-200 dark:bg-gray-400 dark:border-gray-700 shadow-lg">
+    <div className="flex flex-col p-6 items-center bg-gray-50 border border-gray-200 dark:bg-gray-400 dark:border-gray-700 shadow-lg">
       {/* Header */}
       <h1 className="text-2xl font-bold dark:text-white mb-6">
         Pendaftaran Sekolah Tersedia
@@ -272,42 +272,32 @@ export default function SchoolList() {
                 <div>
                   <h2 className="font-semibold">{wave.school.name}</h2>
                   <p className="text-sm text-gray-700 dark:text-gray-600">
-                    {wave.school.cities?.name}, {wave.school.provinces?.name}
+                    {capitalizeWords(wave.school.cities?.name)},{" "}
+                    {capitalizeWords(wave.school.provinces?.name)} |{" "}
+                    {wave.school.npsn}
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 mb-4">
-                <p className="text-sm text-gray-700 dark:text-gray-600 mb-1">
-                  {wave.name}: <br />
-                    {new Date(wave.start_date).toLocaleDateString('id')} -{" "}
-                    {new Date(wave.end_date).toLocaleDateString('id')}
-                </p>
-                <p className="text-sm text-gray-700 dark:text-gray-600 mb-1 ml-8">
-                  Pagu Sekolah: <br />
-                  {wave.quota} Murid
-                </p>
-              </div>
-
-              <p className="text-sm text-gray-700 dark:text-gray-600 mb-4">
-                Keterangan: <br />
-                {wave.description}
+              <p className="text-sm text-gray-700 dark:text-gray-600 mb-2">
+                {wave.name}:{" "}
+                {new Date(wave.start_date).toLocaleDateString("id")} -{" "}
+                {new Date(wave.end_date).toLocaleDateString("id")}
               </p>
-              <p className="text-sm text-gray-700 dark:text-gray-600 mb-4">
-                Biaya Pendaftaran: <br />
-                {formatIdr(wave.price)}
+              <p className="text-sm text-gray-700 dark:text-gray-600 mb-2">
+                Kuota: {wave.quota} Murid
               </p>
 
               <div className="mt-auto flex justify-end">
-                  <Button
-                    onClick={() => {
-                      setSelectedSchool(wave.school);
-                      setSelectedWave(wave);
-                    }}
-                    className="bg-orange-500 hover:bg-orange-600 text-white"
-                  >
-                    Lihat Detail
-                  </Button>
+                <Button
+                  onClick={() => {
+                    setSelectedSchool(wave.school);
+                    setSelectedWave(wave);
+                  }}
+                  className="bg-orange-500 hover:bg-orange-600 text-white"
+                >
+                  Lihat Detail
+                </Button>
               </div>
             </div>
           ))}

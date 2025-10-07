@@ -7,20 +7,20 @@ import useSchoolStudents from "../../hooks/useSchoolStudents";
 
 const Dashboard = () => {
   const authStore = useAuthStore();
-  const schoolStore = useSchoolStore();
-  const { students, handleVerify } = useSchoolStudents();
+  // const schoolStore = useSchoolStore();
+  // const { students, handleVerify } = useSchoolStudents();
 
   useEffect(() => {
     // Pastikan user adalah sekolah
     if (
       authStore.isAuthenticated &&
-      (authStore.abilities.includes("admin_sekolah") ||
-        authStore.abilities.includes("kepala_sekolah"))
+      (authStore.role.includes("admin") ||
+        authStore.role.includes("school"))
     ) {
-      authStore.meSchool();
-      schoolStore.fetchRegisteredStudents();
+      authStore.meAdmin();
+      // schoolStore.fetchRegisteredStudents();
     }
-  }, [authStore.isAuthenticated, authStore.abilities]);
+  }, [authStore.isAuthenticated]);
 
   if (!authStore.isAuthenticated) {
     return <div>Silakan login terlebih dahulu</div>;

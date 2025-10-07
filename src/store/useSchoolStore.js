@@ -22,7 +22,7 @@ const useSchoolStore = create((set) => ({
         loading: false,
         errors: error.response?.data?.errors || "Registration failed",
       });
-      return false;
+      return error.response?.data || { success: false };
     }
   },
   // Memperbarui profil sekolah

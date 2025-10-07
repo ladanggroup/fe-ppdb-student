@@ -1,4 +1,4 @@
-import LandingPageLayout from "@/layouts/LandingPageLayout";
+import LandingPageLayout from "@/layouts/LandingPage/LandingPageLayout";
 import { Users } from "lucide-react";
 import { House } from "lucide-react";
 import { Bell } from "lucide-react";

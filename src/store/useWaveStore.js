@@ -26,6 +26,25 @@ export const useWaveStore = create((set) => ({
     }
   },
 
+  // wave for student
+  fetchStudentWaves: async (
+    province_id,
+    city_id,
+    district_id,
+    education_level,
+    page,
+    search
+  ) => {
+    set({ loading: true, error: null });
+    try {
+      const res = await apiClient.get('/api/student/wave', { params: { province_id, city_id, district_id, education_level, page, search } });
+      set({ waves: res.data.data, loading: false });
+      return res.data.data;
+    } catch (err) {
+      set({ error: err.response?.data || err.message, loading: false, waves: [] });
+    }
+  },
+
   // ambil semua wave
   fetchWaves: async (schoolId, page) => {
     set({ loading: true, error: null });

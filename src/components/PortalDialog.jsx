@@ -13,7 +13,7 @@ export default function PortalDialog({ onClose }) {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-xl overflow-hidden w-full max-w-sm">
+    <div className="bg-white rounded-xl shadow-xl overflow-hidden w-full max-w-md">
       {/* Header */}
       <div className="bg-orange-soft p-5">
         <h2 className="text-xl font-bold text-black text-center">

@@ -222,6 +222,24 @@ const useSchoolStudent = create((set) => ({
       return false;
     }
   },
+
+  printSelectionLetter: async (registrationNumber) => {
+    set({ loading: true });
+    try {
+    const response = await apiClient.get(
+      `/api/student/school-student/print/${registrationNumber}`,
+      { responseType: "blob" }
+    );
+    set({ loading: false, errors: null });
+    return response.data;
+    } catch (error) {
+      set({
+        loading: false,
+        errors: error.response?.data?.message || "Failed to print selection letter",
+      });
+      return false;
+    }
+  },
 }));
 
 export default useSchoolStudent;
