@@ -258,9 +258,9 @@ export default function DashboardLayout({ children }) {
               trigger={
                 <button className="rounded-full overflow-hidden border border-slate-400 dark:border-white">
                   <img
-                    src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
+                    src={user?.school?.logo_url || "/src/assets/Group 1078.png"}
                     alt="Avatar"
-                    className="w-8 h-8 object-cover"
+                    className="w-9 h-9 object-cover"
                   />
                 </button>
               }
@@ -270,7 +270,7 @@ export default function DashboardLayout({ children }) {
                   onSelect: () => navigate("/school/dashboard"),
                 },
                 {
-                  label: "Settings",
+                  label: "Profile",
                   onSelect: () => navigate("/school/user/" + user.id + "/edit"),
                 },
                 {

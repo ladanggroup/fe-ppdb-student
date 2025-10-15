@@ -1,10 +1,11 @@
-// stores/school.store.js
+// src/store/useSchoolStore.js
 import { create } from "zustand";
 import apiClient from "@/api/apiClient";
 
 const useSchoolStore = create((set) => ({
   userSchool: [],
   schools: [],
+  currentSchool: null,
   currentUserSchool: null,
   students: [],
   errors: null,
@@ -43,7 +44,7 @@ const useSchoolStore = create((set) => ({
       return error.response?.data || { success: false };
     }
   },
-  // Memperbarui profil sekolah
+
   updateSchoolProfile: async (userId, form) => {
     set({ loading: true });
     try {
@@ -154,6 +155,27 @@ const useSchoolStore = create((set) => ({
         errors: error.response?.data?.errors || "Update failed",
       });
       return false;
+    }
+  },
+
+  // admin
+  fetchSchoolsAdmin: async (page, search) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await apiClient.get("/api/admin/school", { params: { page, search } });
+      set({ schools: response.data, loading: false });
+    } catch (error) {
+      set({ error: error.response?.data?.message || "Failed to fetch schools", loading: false });
+    }
+  },
+
+  showSchoolAdmin: async (schoolId) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await apiClient.get(`/api/admin/school/show/${schoolId}`);
+      set({ currentSchool: response.data.data, loading: false });
+    } catch (error) {
+      set({ error: error.response?.data?.message || "Failed to show school", loading: false });
     }
   },
 }));

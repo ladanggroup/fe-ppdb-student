@@ -197,8 +197,8 @@ const Show = () => {
                   Tanggal
                 </p>
                 <p className="font-medium">
-                  {subscription.start_date ?? "-"} s/d{" "}
-                  {subscription.end_date ?? "-"}
+                  {new Date(subscription.start_date).toLocaleDateString('id') ?? "-"} s.d{" "}
+                  {new Date(subscription.end_date).toLocaleDateString('id') ?? "-"}
                 </p>
               </div>
               <div>

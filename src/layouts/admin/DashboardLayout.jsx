@@ -9,6 +9,8 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { NotificationDropdown } from "@/components/NotificationDropdown";
 import { Users } from "lucide-react";
 import { UserPlus } from "lucide-react";
+import { School } from "lucide-react";
+import { GraduationCap } from "lucide-react";
 
 export default function DashboardLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -41,20 +43,6 @@ export default function DashboardLayout({ children }) {
             <House className="w-5 h-5" />
             <span>Dashboard</span>
           </NavLink>
-          {/* <Link
-            to="/admin/dashboard"
-            className="flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 cursor-pointer"
-          >
-            <House className="w-5 h-5" />
-            <span>Dashboard</span>
-          </Link> */}
-          {/* <Link
-            to="/admin/setting"
-            className="flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2"
-          >
-            <Wrench className="w-5 h-5" />
-            <span>Settings</span>
-          </Link> */}
           <NavLink
             to="/admin/product"
             className={({ isActive }) =>
@@ -76,6 +64,28 @@ export default function DashboardLayout({ children }) {
           >
             <Landmark className="w-5 h-5" />
             <span>Daftar Bank</span>
+          </NavLink>
+          <NavLink
+            to="/admin/school"
+            className={({ isActive }) =>
+              `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                isActive ? "bg-teal-200 dark:bg-white/10" : ""
+              }`
+            }
+          >
+            <School className="w-5 h-5" />
+            <span>Daftar Sekolah</span>
+          </NavLink>
+          <NavLink
+            to="/admin/student"
+            className={({ isActive }) =>
+              `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                isActive ? "bg-teal-200 dark:bg-white/10" : ""
+              }`
+            }
+          >
+            <GraduationCap className="w-5 h-5" />
+            <span>Daftar Siswa</span>
           </NavLink>
           <NavLink
             to="/admin/subscription"
@@ -146,6 +156,28 @@ export default function DashboardLayout({ children }) {
             >
               <Landmark className="w-5 h-5" />
               <span>Daftar Bank</span>
+            </NavLink>
+            <NavLink
+              to="/admin/school"
+              className={({ isActive }) =>
+                `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                  isActive ? "bg-teal-200 dark:bg-white/10" : ""
+                }`
+              }
+            >
+              <School className="w-5 h-5" />
+              <span>Daftar Sekolah</span>
+            </NavLink>
+            <NavLink
+              to="/admin/student"
+              className={({ isActive }) =>
+                `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                  isActive ? "bg-teal-200 dark:bg-white/10" : ""
+                }`
+              }
+            >
+              <GraduationCap className="w-5 h-5" />
+              <span>Daftar Siswa</span>
             </NavLink>
             <NavLink
               to="/admin/subscription"

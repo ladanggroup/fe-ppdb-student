@@ -30,6 +30,7 @@ const List = () => {
   const [form, setForm] = useState({
     id: null,
     name: "",
+    roles: "",
     email: "",
   });
 
@@ -37,6 +38,7 @@ const List = () => {
     setForm({
       id: null,
       name: "",
+      roles: "",
       email: "",
     });
   };
@@ -52,6 +54,7 @@ const List = () => {
     setForm({
       id: user.id,
       name: user.name,
+      roles: user.roles,
       email: user.email,
     });
     setOpenModal(true);
@@ -117,6 +120,7 @@ const List = () => {
                 <TableRow>
                   <TableHead>No</TableHead>
                   <TableHead>Nama</TableHead>
+                  <TableHead>Role</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead className="text-center">Aksi</TableHead>
                 </TableRow>
@@ -126,6 +130,7 @@ const List = () => {
                   <TableRow key={user.id}>
                     <TableCell>{admins.from + index}</TableCell>
                     <TableCell>{user.name}</TableCell>
+                    <TableCell>{user.roles}</TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell className="flex items-center justify-center gap-2">
                       <Button

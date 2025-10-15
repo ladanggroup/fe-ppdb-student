@@ -3,6 +3,7 @@ import apiClient from "@/api/apiClient";
 
 const useStudentStore = create((set) => ({
   students: [],
+  currentStudent: null,
   loading: false,
   error: null,
 
@@ -51,6 +52,27 @@ const useStudentStore = create((set) => ({
     } catch (error) {
       set({ loading: false, error: error.response?.data?.errors || error.response?.data?.message || 'Failed to update password' });
       throw error;
+    }
+  },
+
+  //admin
+  fetchStudentsAdmin: async (page, search) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await apiClient.get("/api/admin/student", { params: { page, search } });
+      set({ students: response.data, loading: false });
+    } catch (error) {
+      set({ error: error.response?.data?.message || "Failed to fetch students", loading: false });
+    }
+  },
+
+  showStudentAdmin: async (studentId) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await apiClient.get(`/api/admin/student/show/${studentId}`);
+      set({ currentStudent: response.data.data, loading: false });
+    } catch (error) {
+      set({ error: error.response?.data?.message || "Failed to show student", loading: false });
     }
   },
 }));

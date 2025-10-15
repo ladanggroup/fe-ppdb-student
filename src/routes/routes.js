@@ -202,6 +202,32 @@ const routes = [
         ],
       },
       {
+        path: "school",
+        children: [
+          {
+            index: true,
+            element: lazy(() => import("@/pages/admin/School/List")),
+          },
+          {
+            path: ":id/show",
+            element: lazy(() => import("@/pages/admin/School/Show")),
+          },
+        ],
+      },
+      {
+        path: "student",
+        children: [
+          {
+            index: true,
+            element: lazy(() => import("@/pages/admin/Student/List")),
+          },
+          {
+            path: ":id/show",
+            element: lazy(() => import("@/pages/admin/Student/Show")),
+          },
+        ],
+      },
+      {
         path: "user",
         children: [
           {
