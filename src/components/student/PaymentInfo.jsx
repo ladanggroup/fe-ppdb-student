@@ -275,7 +275,6 @@ const PaymentProofUploader = ({
     },
   });
 
-  // const getFileName = (path) => path?.split("/").pop().split("?")[0];
   const getFileName = (path) => {
     if (!path) return "";
     return decodeURIComponent(path.split("/").pop().split("?")[0]);

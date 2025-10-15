@@ -66,7 +66,16 @@ const routes = [
       },
       {
         path: "wave",
-        element: lazy(() => import("@/pages/school/Wave/List")),
+        children: [
+          {
+            index: true,
+            element: lazy(() => import("@/pages/school/Wave/List")),
+          },
+          {
+            path: ":id/show",
+            element: lazy(() => import("@/pages/school/Wave/Show")),
+          }
+        ]
       },
       {
         path: "document-requirement",
@@ -86,6 +95,10 @@ const routes = [
           {
             path: ":id/show",
             element: lazy(() => import("@/pages/school/Subscription/Show")),
+          },
+          {
+            path: "expired",
+            element: lazy(() => import("@/pages/school/Subscription/Expired")),
           },
         ],
       },
@@ -202,7 +215,7 @@ const routes = [
 
   /* auth */
   {
-    path: "/login/admin",
+    path: "/admin/login",
     element: lazy(() => import("@/pages/admin/auth/Login")),
   },
   {
@@ -215,20 +228,20 @@ const routes = [
   },
   // student
   {
-    path: "/login/student",
+    path: "/student/login",
     element: lazy(() => import("@/pages/student/auth/Login")),
   },
   {
-    path: "/register/student",
+    path: "/student/register",
     element: lazy(() => import("@/pages/student/auth/Register")),
   },
   // school
   {
-    path: "/login/school",
+    path: "/school/login",
     element: lazy(() => import("@/pages/school/auth/Login")),
   },
   {
-    path: "/register/school",
+    path: "/school/register",
     element: lazy(() => import("@/pages/school/auth/Register")),
   },
 

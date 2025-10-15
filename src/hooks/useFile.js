@@ -35,7 +35,7 @@ export default function useFile({
         setErrors(null);
       }
     } catch (err) {
-      setErrors(err.response.data);
+      setErrors(err.response?.data);
       onError && onError(err);
     } finally {
       setIsUploading(false);

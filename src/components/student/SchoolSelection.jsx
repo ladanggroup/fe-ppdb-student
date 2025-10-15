@@ -53,7 +53,7 @@ const SchoolSelection = ({
       education_level: "",
       page: 1,
     });
-    setSearchParams({}); // clear URL query
+    setSearchParams({});
   };
 
   // hapus semua filter saat pertama kali komponen mount (refresh halaman)
@@ -105,6 +105,8 @@ const SchoolSelection = ({
 
   const optionEducationLevel = [
     { value: "all", name: "Semua" },
+    { value: "paud", name: "PAUD" },
+    { value: "tk/ra", name: "TK/RA" },
     { value: "sd/mi", name: "SD/MI" },
     { value: "smp/mts", name: "SMP/MTs" },
     { value: "sma/ma/smk/mak", name: "SMA/MA/SMK/MAK" },
@@ -285,7 +287,7 @@ const SchoolSelection = ({
                     Biaya Pendaftaran:
                   </p>
                   <p className="text-sm font-medium dark:text-ppdb-orange">
-                    {formatIdr(wave?.price)}
+                    Rp {formatIdr(wave?.price)}
                   </p>
 
                   <Button

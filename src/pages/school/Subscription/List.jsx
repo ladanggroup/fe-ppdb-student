@@ -112,9 +112,9 @@ const Subscription = () => {
                       <TableHead className="text-gray-600 dark:text-white">
                         Harga
                       </TableHead>
-                      <TableHead className="text-gray-600 dark:text-white">
+                      {/* <TableHead className="text-gray-600 dark:text-white">
                         Fitur
-                      </TableHead>
+                      </TableHead> */}
                       <TableHead className="text-gray-600 dark:text-white">
                         Status
                       </TableHead>
@@ -146,7 +146,7 @@ const Subscription = () => {
                         <TableCell className="text-gray-600 dark:text-white px-3 py-4">
                           {formatIdr(sub.price)}
                         </TableCell>
-                        <TableCell className="text-gray-600 dark:text-white px-3 py-4">
+                        {/* <TableCell className="text-gray-600 dark:text-white px-3 py-4">
                           {sub.features && sub.features.length > 0 ? (
                             <div>
                               {sub.features.map((f, i) => (
@@ -160,7 +160,7 @@ const Subscription = () => {
                           ) : (
                             "-"
                           )}
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell className="text-gray-600 dark:text-white px-3 py-4">
                           <span
                             className={`${

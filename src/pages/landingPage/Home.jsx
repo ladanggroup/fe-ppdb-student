@@ -57,13 +57,12 @@ export default function Home() {
   return (
     <LandingPageLayout>
       <div className="overflow-y-auto">
-        {/* Section Hero */}
         <section className="text-center py-16 bg-orange-50">
           <h1 className="text-4xl font-bold">
             Situs <span className="text-orange-500">PPDB Online</span>
           </h1>
           <p className="mt-2">
-            Pendaftaran Sekolah Dalam Genggaman Langkah Cepat Menuju
+            Pendaftaran Sekolah Dalam Genggaman, Langkah Cepat Menuju
           </p>
           <p className="mt-1">Sekolah Impian</p>
           <div className="mt-6 space-x-4">
@@ -141,7 +140,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Section Bagaimana Sistem Bekerja */}
         <section className="py-16 bg-gray-50 text-center">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-10">
             Bagaimana Sistem Kami Bekerja ?
@@ -165,7 +163,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Section Testimoni */}
         <section className="py-16 max-w-7xl mx-auto px-4">
           <h2 className="text-center text-2xl md:text-3xl font-bold mb-4">
             Sekolah Telah{" "}
@@ -203,7 +200,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Section FAQ */}
         <section className="py-16 bg-gray-50 max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>

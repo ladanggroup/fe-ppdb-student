@@ -34,7 +34,7 @@ const RegisterStudent = () => {
     try {
       const response = await register(form);
       if (response) {
-        navigate("/login/student", { replace: true });
+        navigate("/student/login", { replace: true });
       }
     } catch (err) {
       if (err.response?.data?.errors) {
@@ -172,7 +172,7 @@ const RegisterStudent = () => {
             <div className="mt-4 text-center">
               Sudah punya akun?{" "}
               <Link
-                to="/login/student"
+                to="/student/login"
                 className="text-blue-600 hover:underline"
               >
                 Masuk

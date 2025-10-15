@@ -84,7 +84,7 @@ export default function List() {
   };
 
   const handleEdit = (req) => {
-    setFormData({ doc_name: req.name, description: req.description, is_required: req.is_required, school_id: user?.school_id });
+    setFormData({ doc_name: req.name, description: req?.wave_document_requirements[0]?.description, is_required: req?.wave_document_requirements[0]?.is_required, school_id: user?.school_id });
     setEditId(req.id);
     setOpen(true);
   };
@@ -185,8 +185,8 @@ export default function List() {
                 <TableRow key={req.id}>
                   <TableCell>{documentRequirements.from + idx}</TableCell>
                   <TableCell>{req.name}</TableCell>
-                  <TableCell>{req.is_required ? "Wajib" : "Opsional"}</TableCell>
-                  <TableCell>{req.description}</TableCell>
+                  <TableCell>{req?.wave_document_requirements[0]?.is_required === true ? "Wajib" : "Opsional"}</TableCell>
+                  <TableCell>{req?.wave_document_requirements[0]?.description}</TableCell>
                   <TableCell className="flex gap-2">
                     <Button variant="secondary" onClick={() => handleEdit(req)}>
                       Edit

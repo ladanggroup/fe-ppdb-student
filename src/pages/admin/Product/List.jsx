@@ -63,31 +63,31 @@ const List = () => {
         </Link>
       </div>
 
-      <table className="min-w-full border-collapse border border-gray-200">
+      <table className="min-w-full">
         <thead>
-          <tr>
-            <th className="border border-gray-300 p-2">No</th>
-            <th className="border border-gray-300 p-2">Nama</th>
-            <th className="border border-gray-300 p-2">Durasi</th>
-            <th className="border border-gray-300 p-2">Harga</th>
-            <th className="border border-gray-300 p-2">Status</th>
-            <th className="border border-gray-300 p-2">Fitur</th>
-            <th className="border border-gray-300 p-2">Aksi</th>
+          <tr className="border-b border-gray-200">
+            <th className="p-2">No</th>
+            <th className="p-2">Nama</th>
+            <th className="p-2">Durasi</th>
+            <th className="p-2">Harga</th>
+            <th className="p-2">Status</th>
+            {/* <th className="p-2">Fitur</th> */}
+            <th className="p-2">Aksi</th>
           </tr>
         </thead>
         <tbody>
           {products.data?.map((product, index) => (
             <tr key={product.id}>
-              <td className="border border-gray-300 p-2">
+              <td className="text-center border-b border-gray-200 p-2">
                 {products.from + index}
               </td>
-              <td className="border border-gray-300 p-2">{product.name}</td>
-              <td className="border border-gray-300 p-2">{product.duration}</td>
-              <td className="border border-gray-300 p-2">
+              <td className="text-center border-b border-gray-200 p-2">{product.name}</td>
+              <td className="text-center border-b border-gray-200 p-2">{product.duration}</td>
+              <td className="text-center border-b border-gray-200 p-2">
                 {formatIdr(product.price)}
               </td>
-              <td className="border border-gray-300 p-2">{product.status}</td>
-              <td className="border border-gray-300 p-2">
+              <td className="text-center border-b border-gray-200 p-2">{product.status}</td>
+              {/* <td className="p-2">
                 {product.features && product.features.length > 0 ? (
                   <div>
                     {product.features.map((f, i) => (
@@ -101,8 +101,8 @@ const List = () => {
                 ) : (
                   "-"
                 )}
-              </td>
-              <td className="border border-gray-300 p-2">
+              </td> */}
+              <td className="text-center border-b border-gray-200  p-2">
                 <Link
                   to={`/admin/product/${product.id}/edit`}
                   className="bg-teal-500 text-white hover:bg-teal-600 px-4 py-2 rounded-lg mr-2"

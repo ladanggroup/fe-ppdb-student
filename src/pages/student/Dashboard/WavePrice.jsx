@@ -43,6 +43,8 @@ export default function WavePrice() {
 
   const optionEducationLevel = [
     { value: "all", name: "Semua" },
+    { value: "paud", name: "PAUD" },
+    { value: "tk/ra", name: "TK/RA" },
     { value: "sd/mi", name: "SD/MI" },
     { value: "smp/mts", name: "SMP/MTs" },
     { value: "sma/ma/smk/mak", name: "SMA/MA/SMK/MAK" },

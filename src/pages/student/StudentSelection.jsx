@@ -14,6 +14,7 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { Link } from "react-router";
+import SelectionStatusBadge from "@/components/SelectionStatusBadge";
 
 export default function StudentSelection() {
   const { schoolStudents, fetchSchoolStudents, printSelectionLetter, loading } =
@@ -79,28 +80,9 @@ export default function StudentSelection() {
                     <TableCell>{item.student.name}</TableCell>
                     <TableCell>{item.student.nisn}</TableCell>
                     <TableCell>
-                      {item.selection_status === "passed_selection" ? (
-                        <span className="text-green-600 font-semibold">
-                          Lulus
-                        </span>
-                      ) : item.selection_status === "failed_selection" ? (
-                        <span className="text-red-600 font-semibold">
-                          Tidak Lulus
-                        </span>
-                      ) : item.selection_status === "verify" ? (
-                        <span className="text-blue-600 font-semibold">
-                          Verifikasi Berkas
-                        </span>
-                      ) : item.selection_status ===
-                        "data_received_awaiting_selection" ? (
-                        <span className="text-yellow-600 font-semibold">
-                          Data Diterima, Menunggu Seleksi
-                        </span>
-                      ) : (
-                        <span className="text-gray-400 font-semibold">
-                          Ditolak, Data Tidak Sesuai
-                        </span>
-                      )}
+                      <SelectionStatusBadge
+                        status={item.selection_status}
+                      />
                     </TableCell>
                     {item.selection_status === "passed_selection" ? (
                       <TableCell className="text-center">

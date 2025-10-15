@@ -59,8 +59,8 @@ export default function SelectModalUrl({
 
         <DialogContent className="sm:max-w-[425px] bg-white dark:bg-slate-800">
           <DialogHeader>
-            <DialogTitle>{label ?? "Pilih Opsi"}</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="dark:text-white">{label ?? "Pilih Opsi"}</DialogTitle>
+            <DialogDescription className="dark:text-white mb-1">
               Gunakan input pencarian untuk menemukan opsi yang tersedia.
             </DialogDescription>
           </DialogHeader>

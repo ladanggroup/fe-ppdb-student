@@ -38,7 +38,7 @@ const RegisterSchool = () => {
     const response = await registerSchool(form);
     if (response.status === "success") {
       showSuccess(response.message || "Registrasi berhasil!");
-      navigate("/login/school", { replace: true });
+      navigate("/school/login", { replace: true });
     } else {
       showError(response.message || "Registrasi gagal.");
       setErrors(response.errors || {});
@@ -207,7 +207,7 @@ const RegisterSchool = () => {
             <div className="mt-4 text-center dark:text-gray-300">
               Sudah punya akun?{" "}
               <Link
-                to="/login/school"
+                to="/school/login"
                 className="text-orange-600 hover:underline"
               >
                 Masuk

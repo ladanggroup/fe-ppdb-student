@@ -112,9 +112,11 @@ const Setting = () => {
   };
 
   const optionEducationLevel = [
-    { id: 1, name: "SD/MI", value: "sd/mi" },
-    { id: 2, name: "SMP/MTs", value: "smp/mts" },
-    { id: 3, name: "SMA/MA/SMK/MAK", value: "sma/ma/smk/mak" },
+    { id: 1, name: "PAUD", value: "paud" },
+    { id: 2, name: "TK/RA", value: "tk/ra" }, //RA(Raudhatul Athfal)
+    { id: 3, name: "SD/MI", value: "sd/mi" },
+    { id: 4, name: "SMP/MTs", value: "smp/mts" },
+    { id: 5, name: "SMA/MA/SMK/MAK", value: "sma/ma/smk/mak" },
   ];
 
   return (

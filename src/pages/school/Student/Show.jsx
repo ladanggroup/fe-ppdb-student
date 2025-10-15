@@ -13,6 +13,7 @@ import { confirmToast } from "@/components/ui/confirmToast";
 import VerifySelectionDialog from "@/components/school/VerifySelectionDialog";
 import { X } from "lucide-react";
 import { Pencil } from "lucide-react";
+import SelectionStatusBadge from "@/components/SelectionStatusBadge";
 
 const Show = () => {
   const { id } = useParams();
@@ -80,7 +81,6 @@ const Show = () => {
     await rejectSelection(schoolStudent.id, note);
     navigate("/school/student");
   };
-  console.log(student);
 
   if (loading || !student) {
     return (
@@ -133,29 +133,7 @@ const Show = () => {
           <span className="font-medium">No. Registrasi:</span>
           <p>{student.school_students?.[0]?.registration_number}</p>
           <span className="font-medium">Status:</span>
-          {schoolStudent.selection_status === "verify" ? (
-            <p className="text-blue-500 flex items-center gap-2">
-              Menunggu Verifikasi
-            </p>
-          ) : schoolStudent.selection_status ===
-            "data_received_awaiting_selection" ? (
-            <p className="text-yellow-500 flex items-center gap-2">
-              Data Diterima, Menunggu Seleksi
-            </p>
-          ) : schoolStudent.selection_status === "passed_selection" ? (
-            <p className="text-green-500 flex items-center gap-2">
-              Lulus Seleksi
-            </p>
-          ) : schoolStudent.selection_status ===
-            "rejected_data_does_not_match" ? (
-            <p className="text-red-500 flex items-center gap-2">
-              Ditolak, Data Tidak Sesuai
-            </p>
-          ) : (
-            <p className="text-gray-500 flex items-center gap-2">
-              Gagal Seleksi
-            </p>
-          )}
+          <SelectionStatusBadge status={schoolStudent?.selection_status} />
           <span className="font-medium">Alamat:</span>
           <p>
             {student.address}

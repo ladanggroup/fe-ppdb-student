@@ -50,17 +50,6 @@ export default function DashboardLayout({ children }) {
             <span>Dashboard</span>
           </NavLink>
           <NavLink
-            to="/school/student"
-            className={({ isActive }) =>
-              `flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
-                isActive ? "bg-blue-200 dark:bg-white/10" : ""
-              }`
-            }
-          >
-            <Users2 className="w-5 h-5" />
-            <span>Daftar Siswa</span>
-          </NavLink>
-          <NavLink
             to="/school/bank"
             className={({ isActive }) =>
               `flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
@@ -70,6 +59,17 @@ export default function DashboardLayout({ children }) {
           >
             <Landmark className="w-5 h-5" />
             <span>Bank</span>
+          </NavLink>
+          <NavLink
+            to="/school/document-requirement"
+            className={({ isActive }) =>
+              `flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                isActive ? "bg-blue-200 dark:bg-white/10" : ""
+              }`
+            }
+          >
+            <BookOpen className="w-5 h-5" />
+            <span>Permintaan Dokumen</span>
           </NavLink>
           <NavLink
             to="/school/wave"
@@ -94,15 +94,15 @@ export default function DashboardLayout({ children }) {
             <span>Langganan</span>
           </NavLink>
           <NavLink
-            to="/school/document-requirement"
+            to="/school/student"
             className={({ isActive }) =>
               `flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
                 isActive ? "bg-blue-200 dark:bg-white/10" : ""
               }`
             }
           >
-            <BookOpen className="w-5 h-5" />
-            <span>Permintaan Dokumen</span>
+            <Users2 className="w-5 h-5" />
+            <span>Daftar Siswa</span>
           </NavLink>
           {user.roles === "kepala_sekolah" && (
             <NavLink
@@ -154,16 +154,6 @@ export default function DashboardLayout({ children }) {
               <span>Dashboard</span>
             </NavLink>
             <NavLink
-              to="/school/student"
-              className={({ isActive }) =>
-                `flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
-                  isActive ? "bg-blue-200 dark:bg-white/10" : ""
-                }`
-              }
-            >
-              <span>Daftar Siswa</span>
-            </NavLink>
-            <NavLink
               to="/school/bank"
               className={({ isActive }) =>
                 `flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
@@ -172,6 +162,16 @@ export default function DashboardLayout({ children }) {
               }
             >
               <span>Bank</span>
+            </NavLink>
+            <NavLink
+              to="/school/document-requirement"
+              className={({ isActive }) =>
+                `flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                  isActive ? "bg-blue-200 dark:bg-white/10" : ""
+                }`
+              }
+            >
+              <span>Permintaan Dokumen</span>
             </NavLink>
             <NavLink
               to="/school/wave"
@@ -194,14 +194,14 @@ export default function DashboardLayout({ children }) {
               <span>Langganan</span>
             </NavLink>
             <NavLink
-              to="/school/document-requirement"
+              to="/school/student"
               className={({ isActive }) =>
                 `flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
                   isActive ? "bg-blue-200 dark:bg-white/10" : ""
                 }`
               }
             >
-              <span>Permintaan Dokumen</span>
+              <span>Daftar Siswa</span>
             </NavLink>
             {user.roles === "kepala_sekolah" && (
               <NavLink
@@ -241,9 +241,7 @@ export default function DashboardLayout({ children }) {
               onClickNotification={(notif) => {
                 alert(`Buka notifikasi: ${notif.title}`);
               }}
-              onClickViewAll={() => {
-                // Navigasi ke halaman /sekolah/notifikasi
-              }}
+              onClickViewAll={() => {}}
               className="ml-4"
             />
             <Dropdown

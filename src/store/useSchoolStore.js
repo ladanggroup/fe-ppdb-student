@@ -1,14 +1,32 @@
 // stores/school.store.js
 import { create } from "zustand";
 import apiClient from "@/api/apiClient";
-import { Waves } from "lucide-react";
 
 const useSchoolStore = create((set) => ({
   userSchool: [],
+  schools: [],
   currentUserSchool: null,
   students: [],
   errors: null,
   loading: false,
+
+  // Mendapatkan semua sekolah
+  fetchSchools: async (page, search, provinceId, cityId, districtId, educationLevel) => {
+    set({ loading: true });
+    try {
+      const response = await apiClient.get(`/api/schools/list`, {
+        params: { page, search, province_id: provinceId, city_id: cityId, district_id: districtId, education_level: educationLevel },
+      });
+      set({ schools: response.data.data, loading: false, errors: null });
+      return response.data.data;
+    } catch (error) {
+      set({
+        loading: false,
+        errors: error.response?.data?.message || "Failed to fetch schools",
+      });
+      return [];
+    }
+  },
 
   // Mendaftarkan sekolah baru
   registerSchool: async (form) => {

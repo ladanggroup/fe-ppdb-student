@@ -16,7 +16,7 @@ import { Label } from "../../../components/ui/label";
 import SelectModalUrl from "../../../components/SelectModalUrl";
 import { Search } from "lucide-react";
 import { useSearchParams, Link } from "react-router";
-import SchoolDetail from "@/components/SchoolDetail";
+import SchoolDetail from "@/components/student/SchoolDetail";
 import PaginationSlidingWindow from "../../../components/PaginationSlidingWindow";
 import { capitalizeWords } from "@/utils/string";
 
@@ -42,6 +42,8 @@ export default function SchoolList() {
 
   const optionEducationLevel = [
     { value: "all", name: "Semua" },
+    { value: "paud", name: "PAUD" },
+    { value: "tk/ra", name: "TK/RA" },
     { value: "sd/mi", name: "SD/MI" },
     { value: "smp/mts", name: "SMP/MTs" },
     { value: "sma/ma/smk/mak", name: "SMA/MA/SMK/MAK" },
@@ -144,6 +146,8 @@ export default function SchoolList() {
         <div className="flex items-center relative mb-4">
           <Search className="absolute left-2 top-2 dark:text-gray-400 w-5 h-5" />
           <Input
+            type="text"
+            name="search"
             placeholder="Cari sekolah..."
             value={filters.search}
             onChange={(e) => handleFilterChange(e)}

@@ -75,7 +75,6 @@ export default function List() {
 
   return (
     <DashboardLayout>
-      {/* overlay loading */}
       {loading && <LoadingOverlay />}
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-xl font-semibold">Daftar Langganan</h1>
@@ -141,9 +140,9 @@ export default function List() {
                   <TableHead className="text-gray-600 dark:text-white">
                     End Date
                   </TableHead>
-                  <TableHead className="text-gray-600 dark:text-white">
+                  {/* <TableHead className="text-gray-600 dark:text-white">
                     Fitur
-                  </TableHead>
+                  </TableHead> */}
                   <TableHead className="text-gray-600 dark:text-white">
                     Aksi
                   </TableHead>
@@ -171,7 +170,7 @@ export default function List() {
                     <TableCell className="text-gray-600 dark:text-white px-3 py-4">
                       {sub.end_date ?? "-"}
                     </TableCell>
-                    <TableCell className="text-gray-600 dark:text-white px-3 py-4">
+                    {/* <TableCell className="text-gray-600 dark:text-white px-3 py-4">
                       {sub.features && sub.features.length > 0 ? (
                         <div>
                           {sub.features.map((f, i) => (
@@ -185,7 +184,7 @@ export default function List() {
                       ) : (
                         "-"
                       )}
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell className="flex items-center gap-2">
                       {sub.status === "verify" && (
                         <>

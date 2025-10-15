@@ -84,13 +84,13 @@ const Verification = () => {
     <DashboardLayout>
       {/* Header */}
       <div className="flex justify-between items-center">
-        <h1 className="text-xl font-bold">Detail Subscription</h1>
+        <h1 className="text-xl font-bold">Detail Langganan</h1>
         <div className="space-x-2">
           {subscription?.status === "verify" && (
             <>
               <Button
                 variant="success"
-                className="bg-teal-300 dark:bg-[#1f2937] hover:bg-teal-200 dark:hover:bg-white/10 text-teal-800 dark:text-white"
+                className="bg-teal-500 hover:bg-teal-300 text-teal-800 dark:text-white"
                 onClick={handleVerify}
               >
                 Verifikasi
@@ -102,7 +102,7 @@ const Verification = () => {
           {subscription?.status === "rejected" && (
             <Button
               variant="success"
-              className="bg-teal-300 dark:bg-[#1f2937] hover:bg-teal-200 dark:hover:bg-white/10 text-teal-800 dark:text-white"
+              className="bg-teal-300 hover:bg-teal-200 text-teal-800 dark:text-white"
               onClick={handleVerify}
             >
               Verifikasi

@@ -22,6 +22,7 @@ import RejectDialog from "@/components/RejectDialog";
 import CreateStudentDialog from "@/components/CreateStudentDialog";
 import { confirmToast } from "@/components/ui/confirmToast";
 import VerifySelectionDialog from "@/components/school/VerifySelectionDialog";
+import SelectionStatusBadge from "@/components/SelectionStatusBadge";
 
 const List = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -188,6 +189,7 @@ const List = () => {
             <TableHead className="dark:text-white">No. Registrasi</TableHead>
             <TableHead className="dark:text-white">Nama Siswa</TableHead>
             <TableHead className="dark:text-white">NISN</TableHead>
+            <TableHead className="dark:text-white">Gelombang</TableHead>
             <TableHead className="dark:text-white">Status</TableHead>
             <TableHead className="dark:text-white">Aksi</TableHead>
           </TableRow>
@@ -208,25 +210,10 @@ const List = () => {
                 {schoolStudent.student.nisn}
               </TableCell>
               <TableCell className="dark:text-white">
-                {schoolStudent?.selection_status === "verify" ? (
-                  <span className="text-blue-500">Menunggu Verifikasi</span>
-                ) : schoolStudent?.selection_status ===
-                  "data_received_awaiting_selection" ? (
-                  <span className="text-orange-500">
-                    Data Diterima (Menunggu Seleksi)
-                  </span>
-                ) : schoolStudent?.selection_status === "passed_selection" ? (
-                  <span className="text-green-500">Lulus Seleksi</span>
-                ) : schoolStudent?.selection_status === "failed_selection" ? (
-                  <span className="text-red-500">Gagal Seleksi</span>
-                ) : schoolStudent?.selection_status ===
-                  "rejected_data_does_not_match" ? (
-                  <span className="text-yellow-500">
-                    Ditolak (Data Tidak Sesuai)
-                  </span>
-                ) : (
-                  <span className="text-gray-500">Tidak Diketahui</span>
-                )}
+                {schoolStudent?.wave?.name}
+              </TableCell>
+              <TableCell className="dark:text-white">
+                <SelectionStatusBadge status={schoolStudent?.selection_status} />
               </TableCell>
               <TableCell className="flex gap-2">
                 {schoolStudent?.selection_status === "verify" && schoolStudent.student.status === "active" && (

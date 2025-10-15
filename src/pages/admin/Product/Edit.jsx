@@ -26,7 +26,7 @@ const Edit = () => {
     update,
     storeProductFeature,
     updateProductFeature,
-    deleteProductFeature,
+    // deleteProductFeature,
     error,
     success,
     loading,
@@ -97,25 +97,25 @@ const Edit = () => {
     }
   };
 
-  const handleAddFeature = (index) => {
-    const newFeatures = [...features];
-    newFeatures.splice(index + 1, 0, { featureName: "" });
-    setFeatures(newFeatures);
-  };
+  // const handleAddFeature = (index) => {
+  //   const newFeatures = [...features];
+  //   newFeatures.splice(index + 1, 0, { featureName: "" });
+  //   setFeatures(newFeatures);
+  // };
 
-  const handleFeatureChange = (index, value) => {
-    const newFeatures = [...features];
-    newFeatures[index].featureName = value;
-    setFeatures(newFeatures);
-  };
+  // const handleFeatureChange = (index, value) => {
+  //   const newFeatures = [...features];
+  //   newFeatures[index].featureName = value;
+  //   setFeatures(newFeatures);
+  // };
 
-  const handleRemoveFeature = (index) => {
-    const featureId = features[index].id;
-    deleteProductFeature(featureId);
+  // const handleRemoveFeature = (index) => {
+  //   const featureId = features[index].id;
+  //   deleteProductFeature(featureId);
 
-    const newFeatures = features.filter((_, i) => i !== index);
-    setFeatures(newFeatures);
-  };
+  //   const newFeatures = features.filter((_, i) => i !== index);
+  //   setFeatures(newFeatures);
+  // };
 
   return (
     <DashboardLayout>
@@ -183,7 +183,7 @@ const Edit = () => {
         </div>
 
         {/* Input Fitur Produk */}
-        <div className="md:col-span-4">
+        {/* <div className="md:col-span-4">
           <Label className="block text-left mb-2">Fitur Produk:</Label>
           <div className="grid grid-cols-1 gap-2">
             {features.map((feature, index) => (
@@ -215,7 +215,7 @@ const Edit = () => {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
 
         <Button
           type="submit"

@@ -38,17 +38,32 @@ const AuthGuard = ({ allowedRoles = ["admin", "school", "student"] }) => {
     return <Navigate to="/unauthorized" replace />;
   }
 
-  // Cek kondisi spesifik per-role
+  // ✅ Cek kondisi spesifik per-role
   if (role === "admin" && user?.email_verified_at === null) {
     return <Navigate to="/admin/resend-email" replace />;
   }
 
-  if (
-    role === "school" &&
-    user?.status !== "active" &&
-    location.pathname !== "/school/complete-registration"
-  ) {
-    return <Navigate to="/school/complete-registration" replace />;
+  if (role === "school") {
+    const schoolStatus = user?.status;
+    const subscriptions = user?.school?.subscriptions || [];
+    const latestSub = subscriptions[subscriptions.length - 1]; // ✅ ambil data terakhir
+
+    // Belum aktif
+    if (
+      schoolStatus !== "active" &&
+      location.pathname !== "/school/complete-registration"
+    ) {
+      return <Navigate to="/school/complete-registration" replace />;
+    }
+
+    // Expired
+    if (
+      latestSub && ["expired", "verify", "rejected"].includes(latestSub.status) &&
+        subscriptions.length > 1 &&
+      location.pathname !== "/school/subscription/expired"
+    ) {
+      return <Navigate to="/school/subscription/expired" replace />;
+    }
   }
 
   return <Outlet />;

@@ -22,7 +22,6 @@ const DocumentUpload = ({
   const [url, setUrl] = useState({});
   const { deleteFile } = useFile({});
 
-  // Fetch requirement dokumen dari semua sekolah
   const documentRequirementFetch = useCallback(async () => {
     if (formData.selected_schools.length > 0) {
       try {
@@ -51,7 +50,6 @@ const DocumentUpload = ({
     documentRequirementFetch();
   }, [documentRequirementFetch]);
 
-  // Pastikan semua requirement ada di formData.uploaded_documents
   useEffect(() => {
     let updatedDocs = [...formData.uploaded_documents];
     let changed = false;

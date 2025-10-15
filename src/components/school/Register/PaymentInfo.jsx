@@ -14,6 +14,7 @@ import { Label } from "../../ui/label";
 import BankSelectedCard from "../../BankSelectedCard";
 import useFile from "@/hooks/useFile";
 import { Link } from "react-router";
+import formatIdr from "@/utils/formatIdr";
 
 const PaymentInfo = ({
   setFormData,
@@ -57,7 +58,7 @@ const PaymentInfo = ({
             Total yang harus dibayar:
           </p>
           <p className="text-3xl font-bold text-green-700">
-            Rp {getProductPrice().toLocaleString("id-ID")}
+            {formatIdr(getProductPrice())}
           </p>
         </div>
 

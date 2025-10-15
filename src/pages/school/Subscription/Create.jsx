@@ -142,7 +142,7 @@ const Create = () => {
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
                     Harga: {formatIdr(product.price)}
                   </p>
-                  <div className="text-sm text-gray-700 dark:text-gray-300">
+                  {/* <div className="text-sm text-gray-700 dark:text-gray-300">
                     <span className="font-medium">Fitur:</span>{" "}
                     {product.features?.length > 0 ? (
                       <ul className="list-disc list-inside">
@@ -153,7 +153,7 @@ const Create = () => {
                     ) : (
                       "-"
                     )}
-                  </div>
+                  </div> */}
                 </CardContent>
               </Card>
             ))}

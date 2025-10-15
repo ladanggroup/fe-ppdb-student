@@ -153,7 +153,6 @@ const Show = () => {
   const getStatus = (status) => {
     return STATUS_MAP[status] || STATUS_MAP.default;
   };
-console.log(product);
 
   return (
     <DashboardLayout>
@@ -220,14 +219,14 @@ console.log(product);
                   </span>
                 </p>
               </div>
-              <div className="col-span-2">
+              {/* <div className="col-span-2">
                 <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
                   Fitur
                 </p>
                 <p className="font-medium">
                   {subscription.features?.map((f) => f.name).join(", ") || "-"}
                 </p>
-              </div>
+              </div> */}
             </div>
           </CardContent>
         </Card>

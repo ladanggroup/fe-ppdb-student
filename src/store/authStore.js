@@ -15,6 +15,11 @@ const useAuthStore = create((set) => ({
     if (path.startsWith("/admin")) return "admin";
     if (path.startsWith("/school")) return "school";
     if (path.startsWith("/student")) return "student";
+
+    if (localStorage.getItem("admin_access_token")) return "admin";
+    if (localStorage.getItem("school_access_token")) return "school";
+    if (localStorage.getItem("student_access_token")) return "student";
+
     return null;
   },
 

@@ -1,310 +1,231 @@
-// src/components/student/DocumentUpload.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import ErrorLabel from "@/components/ErrorLabel";
+import { Upload } from "lucide-react";
 import useFile from "@/hooks/useFile";
-import { Link } from "react-router";
-import { Plus, X, Upload } from "lucide-react";
+import useDocumentRequirementStore from "@/store/useDocumentRequirementStore";
 
 const DocumentUpload = ({
   formData,
-  onDocumentUploadChange,
-  onDocumentDelete,
+  setFormData,
   formErrors,
+  schoolId,
+  onDeleteDocument,
 }) => {
-  const [newDocumentName, setNewDocumentName] = useState("");
-  const [showNewDocumentForm, setShowNewDocumentForm] = useState(false);
-  const [url, setUrl] = useState([]);
+  const { documentRequirements, fetchDocumentRequirements, loading } =
+    useDocumentRequirementStore();
   const { deleteFile } = useFile({});
-  const handleFileUpload = (docName, file, path) => {
-    const newDoc = {
-      doc_name: docName,
-      path: path,
-      file: file,
+
+  const [page, setPage] = useState(1);
+  const [allRequirements, setAllRequirements] = useState([]);
+
+  // Fetch dokumen requirement berdasarkan school_id
+  useEffect(() => {
+    if (schoolId) {
+      fetchDocumentRequirements(page, schoolId);
+    }
+  }, [schoolId, page, fetchDocumentRequirements]);
+
+  // Gabungkan data lama dan baru saat paginasi
+  useEffect(() => {
+    if (documentRequirements?.data) {
+      setAllRequirements((prev) => {
+        const newItems = documentRequirements.data.filter(
+          (req) => !prev.some((p) => p.id === req.id)
+        );
+        return [...prev, ...newItems];
+      });
+    }
+  }, [documentRequirements]);
+
+  const uploadedDocs = Array.isArray(formData?.uploaded_documents)
+    ? formData.uploaded_documents
+    : [];
+
+  const handleFileUpload = (req, file, path) => {
+    const updated = uploadedDocs.filter((d) => d.doc_name !== req.name);
+    updated.push({
+      doc_name: req.name,
+      doc_requirement_id: req.id,
+      file,
+      path,
       is_payment: false,
-      type: docName,
-    };
-
-    const updatedDocuments = formData.uploaded_documents.filter(
-      (doc) => doc.type !== docName
-    );
-    updatedDocuments.push(newDoc);
-
-    onDocumentUploadChange(updatedDocuments);
-    setShowNewDocumentForm(false);
-    setNewDocumentName("");
+    });
+    setFormData((prev) => ({
+      ...prev,
+      uploaded_documents: updated,
+    }));
   };
 
   const handleDeleteDocument = async (doc) => {
     try {
-      if (doc.doc_id) {
-        // dokumen lama di DB
-        await onDocumentDelete(doc.doc_id);
-      } else if (doc?.path) {
-        // dokumen baru di-upload
+      // Hapus file dari storage (jika punya path)
+      if (doc?.path) {
         await deleteFile(doc.path);
       }
-    } catch (err) {
-      console.error("Gagal hapus dokumen:", err);
+
+      // Hapus di backend (jika callback disediakan)
+      if (onDeleteDocument) {
+        await onDeleteDocument(doc);
+      }
+
+      const updated = uploadedDocs.filter((d) => d.doc_name !== doc.doc_name);
+      setFormData((prev) => ({
+        ...prev,
+        uploaded_documents: updated,
+      }));
+    } catch (error) {
+      console.error("Gagal menghapus dokumen:", error);
     }
-
-    const updatedDocuments = formData.uploaded_documents.filter(
-      (d) => d.doc_name !== doc.doc_name
-    );
-    onDocumentUploadChange(updatedDocuments);
   };
 
-  const handleAddNewDocumentType = () => {
-    if (newDocumentName.trim()) {
-      setShowNewDocumentForm(true);
+  const handleLoadMore = () => {
+    if (documentRequirements?.next_page_url) {
+      setPage((prev) => prev + 1);
     }
   };
-
-  const handleCancelNewDocument = () => {
-    setShowNewDocumentForm(false);
-    setNewDocumentName("");
-  };
-
-  const getDocumentTypes = () => {
-    return formData.uploaded_documents.map((doc) => doc.type);
-  };
-  console.log(formData);
 
   return (
-    <div className="border-b border-gray-900/10 pb-6">
+    <div className="border-b border-gray-200 pb-6">
       <h3 className="text-lg font-semibold leading-7 text-gray-900 dark:text-white">
-        2. Unggah Dokumen
+        Unggah Dokumen Persyaratan
       </h3>
       <p className="mt-1 text-sm leading-6 text-gray-600 dark:text-gray-400">
-        Tambahkan dan unggah dokumen-dokumen yang diperlukan untuk pendaftaran.
-        Maksimal 1 file per jenis dokumen.
+        Silakan unggah dokumen sesuai ketentuan sekolah. Pastikan file yang
+        diunggah benar dan terbaca.
       </p>
 
-      {/* Form Tambah Jenis Dokumen Baru */}
-      <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-        <div className="md:col-span-2">
-          <Label
-            htmlFor="new-document-name"
-            className="text-sm font-medium dark:text-white"
-          >
-            Nama Dokumen
-          </Label>
-          <Input
-            id="new-document-name"
-            type="text"
-            value={newDocumentName}
-            onChange={(e) => setNewDocumentName(e.target.value)}
-            placeholder="Contoh: Kartu Keluarga, Ijazah, Akta Kelahiran, dll."
-            className="mt-1 py-2 px-3"
-            disabled={showNewDocumentForm}
-          />
-        </div>
-        {!showNewDocumentForm ? (
-          <Button
-            type="button"
-            onClick={handleAddNewDocumentType}
-            disabled={
-              !newDocumentName.trim() ||
-              getDocumentTypes().includes(newDocumentName.trim())
-            }
-            className="flex items-center justify-center gap-2"
-          >
-            <Plus size={16} />
-            Tambah Dokumen
-          </Button>
-        ) : (
-          <Button
-            type="button"
-            variant="primary"
-            onClick={handleCancelNewDocument}
-            className="flex items-center gap-2"
-          >
-            <X size={16} />
-            Batal
-          </Button>
-        )}
-      </div>
+      {loading && page === 1 ? (
+        <p className="mt-4 text-center text-gray-600">Memuat dokumen...</p>
+      ) : allRequirements.length > 0 ? (
+        <>
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+            {allRequirements.map((req) => {
+              const existing =
+                uploadedDocs.find((d) => d.doc_requirement_id === req.id) ||
+                uploadedDocs.find((d) => d.doc_name === req.name) ||
+                null;
 
-      {/* Daftar Dokumen yang Sudah Diupload */}
-      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-        {formData.uploaded_documents.map((document) => (
-          <DocumentUploader
-            key={document.doc_name}
-            docType={document.doc_name}
-            currentFile={document}
-            onFileUpload={(file, path) =>
-              handleFileUpload(document.doc_name, file, path)
-            }
-            setUrl={setUrl}
-            url={url}
-            onDelete={() => handleDeleteDocument(document)} // 🔥 ganti onRemoveDocument
-            formErrors={formErrors}
-          />
-        ))}
+              return (
+                <DocumentUploader
+                  key={req.id}
+                  req={req}
+                  existingFile={existing}
+                  onUpload={(file, path) => handleFileUpload(req, file, path)}
+                  onDelete={() => handleDeleteDocument(existing || req)}
+                  formErrors={formErrors}
+                />
+              );
+            })}
+          </div>
 
-        {/* Form Upload untuk Dokumen Baru */}
-        {showNewDocumentForm && (
-          <DocumentUploader
-            key="new"
-            docType={newDocumentName}
-            currentFile={null}
-            onFileUpload={(file, path) =>
-              handleFileUpload(newDocumentName, file, path)
-            }
-            onDelete={handleCancelNewDocument}
-            formErrors={formErrors}
-            url={url}
-            setUrl={setUrl}
-            isNew={true}
-          />
-        )}
-
-        {formErrors?.uploaded_documents && (
-          <ErrorLabel message={formErrors.uploaded_documents} />
-        )}
-      </div>
+          {/* Tombol Muat Lebih Banyak */}
+          {documentRequirements?.next_page_url && (
+            <div className="flex justify-center mt-6">
+              <Button
+                type="button"
+                onClick={handleLoadMore}
+                disabled={loading}
+                className="bg-orange-500 hover:bg-orange-600 text-white px-6"
+              >
+                {loading ? "Memuat..." : "Muat Lebih Banyak"}
+              </Button>
+            </div>
+          )}
+        </>
+      ) : (
+        <p className="mt-4 text-gray-500 text-center">
+          Belum ada dokumen persyaratan dari sekolah.
+        </p>
+      )}
     </div>
   );
 };
 
 const DocumentUploader = ({
-  docType,
-  currentFile,
-  onFileUpload,
+  req,
+  existingFile,
+  onUpload,
   onDelete,
   formErrors,
-  url,
-  setUrl,
-  isNew = false,
 }) => {
+  const [url, setUrl] = useState(null);
   const { handleFileChange, loading: uploadLoading } = useFile({
     fieldName: "file",
-    folder: "student-documents",
+    folder: "student/documents",
     onSuccess: (response) => {
-      setUrl((prev) => ({
-        ...prev,
-        [docType]: response.url,
-      }));
-      onFileUpload(response.file, response.path);
+      setUrl(response.url);
+      onUpload(response.file, response.path);
     },
     onError: (err) => {
-      console.error("Upload failed", err);
+      console.error("Upload gagal:", err);
     },
   });
 
-  const getFileNameFromPath = (path) => {
-    if (!path) return "";
-    return path.split("/").pop().split("?")[0];
-  };
+  const getFileName = (path) => path?.split("/").pop() || "";
 
   return (
-    <div className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-800">
-      {/* Header */}
+    <div className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-800 shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <Label className="text-lg font-semibold text-left text-gray-900 dark:text-white">
-            {docType}
+          <Label className="text-base font-semibold text-gray-900 dark:text-white">
+            {req.name}
           </Label>
-          {currentFile ? (
-            <p className="text-sm text-green-600 dark:text-green-400 mt-1">
-              ✓ File sudah diunggah
-            </p>
-          ) : (
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              Silakan unggah file
-            </p>
-          )}
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            {req.is_required ? "Wajib diunggah" : "Opsional"}
+          </p>
         </div>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={onDelete} // 🔥 pakai onDelete
-          className="text-red-600 hover:text-red-800 hover:bg-red-50"
-        >
-          {isNew ? "Batal" : "Hapus"}
-        </Button>
+        {existingFile && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={onDelete}
+            className="text-red-600 hover:text-red-800 hover:bg-red-50"
+          >
+            Hapus
+          </Button>
+        )}
       </div>
 
-      {/* File saat ini */}
-      {currentFile ? (
-        <div className="mb-4 p-3 bg-white dark:bg-gray-700 rounded-md border">
+      {existingFile ? (
+        <div className="p-3 bg-white dark:bg-gray-700 rounded-md border text-sm">
           <div className="flex items-center justify-between">
-            <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <Label className="text-sm font-medium mb-1">
-                  File Terunggah: {getFileNameFromPath(currentFile.path)}
-                </Label>
-                <Link
-                  to={
-                    url[docType] ||
-                    (typeof currentFile.file === "string"
-                      ? currentFile.file
-                      : "#")
-                  }
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-500 hover:underline text-[18px] px-2 py-1"
-                >
-                  Lihat Dokumen
-                </Link>
-                <span className="text-xs text-green-600">✓</span>
-              </div>
-            </div>
+            <span className="truncate">
+              File: {getFileName(existingFile.path)}
+            </span>
+            <a
+              href={url || existingFile.file || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 hover:underline ml-2"
+            >
+              Lihat
+            </a>
           </div>
         </div>
       ) : (
-        /* Upload File */
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center p-3 bg-white dark:bg-gray-700 rounded-md border">
-          <div>
-            <Label className="text-sm font-medium mb-1 dark:text-white">
-              Nama Dokumen
-            </Label>
-            <Input
-              type="text"
-              value={docType}
-              readOnly
-              className="w-full bg-gray-100 dark:bg-gray-600 dark:text-gray-400 py-2 px-3 rounded-md"
+        <div className="flex flex-col gap-2">
+          <label
+            htmlFor={`file-${req.id}`}
+            className="cursor-pointer rounded-md border border-gray-300 dark:border-gray-500 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 flex items-center justify-center gap-2"
+          >
+            <Upload size={16} />
+            <span>{uploadLoading ? "Mengunggah..." : "Pilih File"}</span>
+            <input
+              id={`file-${req.id}`}
+              type="file"
+              className="hidden"
+              accept="image/jpeg,image/png,application/pdf"
+              onChange={handleFileChange}
+              disabled={uploadLoading}
             />
-            <span className="text-xs text-gray-500 dark:text-gray-400">
-              Dokumen yang diunggah
-            </span>
-            {formErrors[docType] && (
-              <ErrorLabel message={formErrors[docType]} />
-            )}
-          </div>
-          <div>
-            <Label className="text-sm font-medium mb-1 dark:text-white">
-              Unggah File
-            </Label>
-            <div className="flex items-center gap-2">
-              <label
-                htmlFor={`file-input-${docType}`}
-                className="flex-1 cursor-pointer rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-400 dark:text-gray-300 dark:hover:bg-gray-600 flex items-center gap-2 justify-center"
-              >
-                <Upload size={16} />
-                <span>{uploadLoading ? "Mengunggah..." : "Pilih File"}</span>
-                <input
-                  id={`file-input-${docType}`}
-                  type="file"
-                  className="sr-only"
-                  onChange={handleFileChange}
-                  accept="image/jpeg,image/png,application/pdf"
-                  disabled={uploadLoading}
-                />
-              </label>
-            </div>
-            <p className="text-xs text-gray-500 mt-1 dark:text-gray-400">
-              JPG, PNG, PDF hingga 10MB
-            </p>
-          </div>
+          </label>
+          {formErrors?.[req.name] && (
+            <ErrorLabel message={formErrors[req.name]} />
+          )}
         </div>
-      )}
-
-      {formErrors[`uploaded_documents_${docType}`] && (
-        <ErrorLabel message={formErrors[`uploaded_documents_${docType}`]} />
       )}
     </div>
   );

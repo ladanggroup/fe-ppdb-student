@@ -25,7 +25,7 @@ export default function PortalDialog({ onClose }) {
       <div className="p-6 space-y-4">
         {/* Sekolah Option */}
         <Link
-          to="/login/school"
+          to="/school/login"
           onClick={() => handleOptionSelect("sekolah")}
           className={`flex items-center p-4 rounded-lg border-2 cursor-pointer transition-all ${
             selectedOption === "sekolah"
@@ -41,7 +41,7 @@ export default function PortalDialog({ onClose }) {
 
         {/* Siswa Option */}
         <Link
-          to="/login/student"
+          to="/student/login"
           onClick={() => handleOptionSelect("siswa")}
           className={`flex items-center p-4 rounded-lg border-2 cursor-pointer transition-all ${
             selectedOption === "siswa"

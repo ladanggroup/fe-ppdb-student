@@ -54,23 +54,23 @@ const Create = () => {
     }
   };
 
-  const handleAddFeature = (index) => {
-    // setFeatures([...features, { featureName: "" }]); // Menambahkan fitur baru
-    const newFeatures = [...features];
-    newFeatures.splice(index + 1, 0, { featureName: "" }); // Menambahkan fitur baru di indeks index + 1
-    setFeatures(newFeatures);
-  };
+  // const handleAddFeature = (index) => {
+  //   // setFeatures([...features, { featureName: "" }]); // Menambahkan fitur baru
+  //   const newFeatures = [...features];
+  //   newFeatures.splice(index + 1, 0, { featureName: "" }); // Menambahkan fitur baru di indeks index + 1
+  //   setFeatures(newFeatures);
+  // };
 
-  const handleFeatureChange = (index, value) => {
-    const newFeatures = [...features];
-    newFeatures[index].featureName = value; // Mengupdate nama fitur
-    setFeatures(newFeatures);
-  };
+  // const handleFeatureChange = (index, value) => {
+  //   const newFeatures = [...features];
+  //   newFeatures[index].featureName = value; // Mengupdate nama fitur
+  //   setFeatures(newFeatures);
+  // };
 
-  const handleRemoveFeature = (index) => {
-    const newFeatures = features.filter((_, i) => i !== index); // Menghapus fitur berdasarkan indeks
-    setFeatures(newFeatures);
-  };
+  // const handleRemoveFeature = (index) => {
+  //   const newFeatures = features.filter((_, i) => i !== index); // Menghapus fitur berdasarkan indeks
+  //   setFeatures(newFeatures);
+  // };
 
   return (
     <DashboardLayout>
@@ -144,7 +144,7 @@ const Create = () => {
         </div>
 
         {/* Input untuk fitur produk */}
-        <div className="md:col-span-4">
+        {/* <div className="md:col-span-4">
           <Label className="block text-left mb-2">Fitur Produk:</Label>
           <div className="grid grid-cols-1 gap-2">
             {features.map((feature, index) => (
@@ -179,7 +179,7 @@ const Create = () => {
               <div className="text-gray-500">Tidak ada fitur produk</div>
             )}
           </div>
-        </div>
+        </div> */}
 
         <Button
           type="submit"

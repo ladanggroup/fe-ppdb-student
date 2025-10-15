@@ -54,7 +54,7 @@ const CompleteRegistration = () => {
       const res = await fetchPublicWaves();
       if (!res || !res.data || res.data.length === 0) {
         showError("Tidak ada gelombang pendaftaran yang aktif saat ini.");
-        navigate("/student/dashboard"); // arahkan ke dashboard / halaman lain
+        navigate("/student/dashboard"); 
       }
     };
     checkWaves();

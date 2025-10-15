@@ -55,9 +55,9 @@ const Login = () => {
             />
             <div className="flex border rounded-full overflow-hidden mb-4 w-full">
               <Link
-                to="/login/student"
+                to="/student/login"
                 className={`w-1/2 py-2 text-center font-semibold text-sm border-r hover:bg-orange-300 ${
-                  location.pathname === "/login/school"
+                  location.pathname === "/student/login"
                     ? "bg-orange-400 text-white"
                     : "bg-gray-100 text-gray-500"
                 }`}
@@ -65,9 +65,9 @@ const Login = () => {
                 Masuk
               </Link>
               <Link
-                to="/register/student"
+                to="/student/register"
                 className={`w-1/2 py-2 text-center font-semibold text-sm hover:bg-orange-300 ${
-                  location.pathname === "/school/auth/register"
+                  location.pathname === "/student/register"
                     ? "bg-orange-400 text-white"
                     : "bg-gray-100 text-gray-500"
                 }`}

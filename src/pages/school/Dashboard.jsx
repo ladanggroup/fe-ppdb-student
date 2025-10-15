@@ -4,6 +4,7 @@ import DashboardLayout from "@/layouts/school/DashboardLayout";
 import useAuthStore from "../../store/authStore";
 import useSchoolStore from "../../store/useSchoolStore";
 import useSchoolStudents from "../../hooks/useSchoolStudents";
+import SelectionStatusBadge from "@/components/SelectionStatusBadge";
 
 const Dashboard = () => {
   const authStore = useAuthStore();
@@ -76,30 +77,20 @@ const Dashboard = () => {
                   <td>{student.name}</td>
                   <td>{student.school_origin}</td>
                   <td>
-                    <span
-                      className={`px-2 py-1 rounded ${
-                        student.selection_status === "lolos"
-                          ? "bg-green-100 text-green-800"
-                          : student.selection_status === "tidak_lolos"
-                          ? "bg-red-100 text-red-800"
-                          : "bg-yellow-100 text-yellow-800"
-                      }`}
-                    >
-                      {student.selection_status}
-                    </span>
+                    <SelectionStatusBadge status={student.selection_status} />
                   </td>
                   <td>
                     <button
                       onClick={() => handleVerify(student.id, "lolos")}
                       className="bg-green-500 text-white px-3 py-1 rounded mr-2"
                     >
-                      Lolos
+                      Lulus
                     </button>
                     <button
                       onClick={() => handleVerify(student.id, "tidak_lolos")}
                       className="bg-red-500 text-white px-3 py-1 rounded"
                     >
-                      Tidak Lolos
+                      Tidak Lulus
                     </button>
                   </td>
                 </tr>

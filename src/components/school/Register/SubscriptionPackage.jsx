@@ -1,3 +1,4 @@
+import formatIdr from "@/utils/formatIdr";
 import React from "react";
 
 const SubscriptionPackage = ({
@@ -42,7 +43,7 @@ const SubscriptionPackage = ({
                   Durasi: {product.duration} bulan
                 </p>
                 <p className="text-xl font-bold text-orange-soft text-left">
-                  Rp {product.price.toLocaleString("id-ID")}
+                  {formatIdr(product.price)}
                 </p>
                 <p className="text-gray-600 text-left">Fitur:</p>
                 <ul className="mt-2 text-sm text-gray-700 list-disc pl-6">

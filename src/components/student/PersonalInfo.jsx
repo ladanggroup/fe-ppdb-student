@@ -37,7 +37,6 @@ const PersonalInfo = ({
     { id: "Konghucu", name: "Konghucu" },
   ];
 
-  // hook upload avatar
   const { uploadedUrl, isUploading, handleFileChange, deleteFile } = useFile({
     folder: "student/avatars",
     onSuccess: (res) => {
@@ -283,7 +282,8 @@ const PersonalInfo = ({
             id="address"
             value={formData.address}
             onChange={handleChange}
-            className="min-h-[5rem] bg-white"
+            rows={3}
+            className="bg-white"
             placeholder="Masukkan alamat lengkap"
           />
           {formErrors.address && <ErrorLabel message={formErrors.address} />}

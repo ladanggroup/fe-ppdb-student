@@ -254,6 +254,12 @@ export default function About() {
           </div>
 
           <div className="flex flex-wrap gap-6">
+            <div className="w-24 h-24 flex items-center justify-center rounded-full bg-blue-500 text-white text-lg font-semibold">
+              PAUD
+            </div>
+            <div className="w-20 h-20 flex items-center justify-center rounded-full bg-green-500 text-white text-lg font-semibold">
+              TK/RA
+            </div>
             <div className="w-20 h-20 flex items-center justify-center rounded-full bg-red-500 text-white text-lg font-semibold">
               SD/MI
             </div>

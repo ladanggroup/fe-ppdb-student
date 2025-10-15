@@ -145,6 +145,8 @@ const CompleteRegistration = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [currentStep, setCurrentStep] = useState(1);
 
+    const isDisabled = user?.school?.subscriptions?.[0]?.status === "verify";
+
   // Fetch initial data
   useEffect(() => {
     fetchProvinces();
@@ -179,6 +181,7 @@ const CompleteRegistration = () => {
   }, [formData.city_id, fetchDistricts]);
 
   const handleChange = (e) => {
+        if (isDisabled) return;
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     setFormErrors((prev) => ({ ...prev, [name]: "" }));
@@ -234,17 +237,20 @@ const CompleteRegistration = () => {
   };
 
   const handleNextStep = () => {
+    if (isDisabled) return;
     if (validateStep(currentStep)) {
       setCurrentStep((prev) => prev + 1);
     }
   };
 
   const handlePrevStep = () => {
+    if (isDisabled) return;
     setCurrentStep((prev) => prev - 1);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isDisabled) return;
     setFormErrors({});
     setSuccessMessage("");
 
@@ -465,7 +471,7 @@ const CompleteRegistration = () => {
               {" "}
               {errorMessage}
               <br />
-              {user?.school?.subscriptions?.[0]?.note}
+              {user?.school?.note}
             </span>
           </div>
         )}
@@ -480,6 +486,7 @@ const CompleteRegistration = () => {
               provinces={provinces}
               cities={cities}
               districts={districts}
+              disabled={isDisabled}
             />
           )}
           {currentStep === 2 && (
@@ -510,7 +517,7 @@ const CompleteRegistration = () => {
             handleNextStep={handleNextStep}
             handleSubmit={handleSubmit}
             isLoading={isLoading}
-            subscriptions={subscriptions?.data}
+            disabled={isDisabled}
           />
         </form>
       </div>

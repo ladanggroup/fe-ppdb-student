@@ -8,7 +8,7 @@ const FormNavigation = ({
   handleNextStep,
   isLoading,
   handleSubmit,
-  subscriptions,
+  disabled
 }) => {
   return (
     <div className="grid grid-cols-2 gap-4 border border-gray-600 px-4 py-3 dark:border-gray-500 rounded-md mt-4">
@@ -38,7 +38,7 @@ const FormNavigation = ({
           type="button"
           onClick={handleNextStep}
           className="flex items-center justify-end px-3 py-1 text-sm font-semibold"
-          disabled={isLoading}
+          disabled={isLoading || disabled}
         >
           <span className="mr-1">Selanjutnya</span>
           <svg
@@ -56,8 +56,7 @@ const FormNavigation = ({
         </Button>
       )}
 
-      {currentStep === totalSteps &&
-        subscriptions?.[0]?.status !== "verify" && (
+      {currentStep === totalSteps && (
           <Button
             onClick={handleSubmit}
             className="flex items-center justify-end px-3 py-1 text-sm font-semibold"

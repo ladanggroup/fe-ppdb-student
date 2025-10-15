@@ -10,24 +10,14 @@ import useBankStore from "@/store/useBankStore";
 import useRegionStore from "@/store/regionStore";
 import LoadingOverlay from "@/components/LoadingOverlay";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { ArrowLeft } from "lucide-react";
-import { Label } from "@/components/ui/label";
-import SelectModalUrl from "@/components/SelectModalUrl";
-import {
-  Select,
-  SelectGroup,
-  SelectValue,
-  SelectTrigger,
-  SelectContent,
-  SelectLabel,
-  SelectItem,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import DocumentUpload from "@/components/school/DocumentUpload";
 import PersonalInfoStudent from "@/components/school/PersonalInfoStudent";
 import FormNavigation from "@/components/FormNavigation";
 import Payment from "@/components/school/Payment";
+import { User2 } from "lucide-react";
+import { FileText } from "lucide-react";
+import { CreditCard } from "lucide-react";
 
 const Edit = () => {
   const { id } = useParams();
@@ -57,10 +47,16 @@ const Edit = () => {
   } = useRegionStore();
   const [formErrors, setFormErrors] = useState({});
   const [currentStep, setCurrentStep] = useState(1);
+  const steps = [
+    { id: 1, label: "Detail Siswa", icon: <User2 size={18} /> },
+    { id: 2, label: "Upload Dokumen", icon: <FileText size={18} /> },
+    { id: 3, label: "Pembayaran", icon: <CreditCard size={18} /> },
+  ];
 
   // Prefill data untuk edit
   const [isPrefilled, setIsPrefilled] = useState(false);
   const [formData, setFormData] = useState({
+    avatar: null,
     name: "",
     email: "",
     nisn: "",
@@ -70,10 +66,12 @@ const Edit = () => {
     birth_date: "",
     birth_place: "",
     gender: "",
+    religion: "",
     address: "",
     province_id: "",
     city_id: "",
     district_id: "",
+    postal_code: "",
     uploaded_documents: [],
     waves: "",
     payment_date: "",
@@ -87,6 +85,7 @@ const Edit = () => {
     let isValid = true;
 
     if (step === 1) {
+      if (!formData.avatar) errors.avatar = "Foto wajib diisi.";
       if (!formData.name) errors.name = "Nama wajib diisi.";
       if (!formData.email) errors.email = "Email wajib diisi.";
       if (!formData.nisn) errors.nisn = "NISN wajib diisi.";
@@ -98,11 +97,13 @@ const Edit = () => {
       if (!formData.birth_place)
         errors.birth_place = "Tempat lahir wajib diisi.";
       if (!formData.gender) errors.gender = "Jenis kelamin wajib diisi.";
+      if (!formData.religion) errors.religion = "Agama wajib diisi.";
       if (!formData.address) errors.address = "Alamat wajib diisi.";
       if (!formData.province_id) errors.province_id = "Provinsi wajib dipilih.";
       if (!formData.city_id) errors.city_id = "Kota/Kabupaten wajib dipilih.";
       if (!formData.district_id)
         errors.district_id = "Kecamatan wajib dipilih.";
+      if (!formData.postal_code) errors.postal_code = "Kode pos wajib diisi.";
     }
 
     setFormErrors(errors);
@@ -152,6 +153,8 @@ const Edit = () => {
       const data = await detailStudent(id, user.school_id);
       if (data) {
         setFormData({
+          avatar: data.avatar || null,
+          image: data.image || null,
           name: data.name || "",
           email: data.email || "",
           nisn: data.nisn || "",
@@ -161,10 +164,12 @@ const Edit = () => {
           birth_date: data.birth_date || "",
           birth_place: data.birth_place || "",
           gender: data.gender || "",
+          religion: data.religion || "",
           address: data.address || "",
           province_id: data.province_id || "",
           city_id: data.city_id || "",
           district_id: data.district_id || "",
+          postal_code: data.postal_code || "",
           uploaded_documents: {
             doc_id: data.documents.id,
             doc_name: data.documents.name,
@@ -221,6 +226,8 @@ const Edit = () => {
         } else {
           await addStudentDocumentBySchool({
             doc_name: doc.doc_name,
+            doc_requirement_id: doc.doc_requirement_id,
+            school_id: user.school_id,
             path: doc.path,
             student_id: id,
             is_payment: false,
@@ -234,10 +241,11 @@ const Edit = () => {
       const document = await addStudentDocumentBySchool({
         doc_name: "Bukti Pembayaran " + user.school.name,
         path: formData.payment_proof_file,
+        school_id: user.school_id,
         student_id: id,
         is_payment: true,
-      })
-      documentId = document?.data?.id
+      });
+      documentId = document?.data?.id;
     }
 
     await addStudentPaymentBySchool({
@@ -245,8 +253,8 @@ const Edit = () => {
       price: formData.waves.price,
       payer_id: id,
       bank_id: formData.selected_bank_id,
-      document_id: documentId
-    })
+      document_id: documentId,
+    });
     navigate(`/school/student/${id}/show`);
   };
 
@@ -263,10 +271,13 @@ const Edit = () => {
 
   return (
     <DashboardLayout>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Edit Siswa</h1>
+      {/* HEADER */}
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
+          📝 Edit Data Siswa
+        </h1>
         <Button
-          className="bg-sky-500 text-white hover:bg-sky-400 flex items-center gap-2"
+          className="bg-sky-500 hover:bg-sky-400 text-white flex items-center gap-2"
           onClick={() => navigate(-1)}
         >
           <ArrowLeft size={16} /> Kembali
@@ -277,37 +288,64 @@ const Edit = () => {
         onSubmit={handleSubmit}
         className="bg-sky-100 dark:bg-gray-800 p-6 rounded-lg shadow space-y-4"
       >
-        <div className="mb-6">
-          <div className="flex justify-between items-center">
+        {/* STEP INDICATOR */}
+        <div className="flex items-center justify-between mb-10 relative">
+          {steps.map((step, index) => (
             <div
-              className={`flex-1 text-center py-2 border-b-2 ${
-                currentStep == 1
-                  ? "border-ppdb-orange text-ppdb-orange"
-                  : "border-gray-300 text-gray-500"
-              }`}
+              key={step.id}
+              className="flex-1 flex flex-col items-center relative"
             >
-              1. Detail Siswa
+              {/* Garis penghubung kiri */}
+              {index > 0 && (
+                <div
+                  className={`absolute top-5 left-0 w-1/2 h-[3px] transition-all duration-500 ${
+                    currentStep > step.id
+                      ? "bg-ppdb-orange"
+                      : currentStep === step.id
+                      ? "bg-ppdb-orange"
+                      : "bg-gray-300"
+                  }`}
+                />
+              )}
+
+              {/* Garis penghubung kanan */}
+              {index < steps.length - 1 && (
+                <div
+                  className={`absolute top-5 right-0 w-1/2 h-[3px] transition-all duration-500 ${
+                    currentStep > step.id ? "bg-ppdb-orange" : "bg-gray-300"
+                  }`}
+                />
+              )}
+
+              {/* Icon dan Label */}
+              <div
+                className={`flex flex-col items-center z-10 ${
+                  currentStep === step.id
+                    ? "text-ppdb-orange"
+                    : currentStep > step.id
+                    ? "text-ppdb-orange"
+                    : "text-gray-400"
+                }`}
+              >
+                <div
+                  className={`w-10 h-10 rounded-full border-2 flex items-center justify-center mb-2 font-semibold transition-all duration-300 ${
+                    currentStep === step.id
+                      ? "border-ppdb-orange bg-orange-soft-100"
+                      : currentStep > step.id
+                      ? "border-ppdb-orange bg-orange-soft-100"
+                      : "border-gray-300 bg-white"
+                  }`}
+                >
+                  {step.icon}
+                </div>
+                <span className="text-sm font-medium text-center">
+                  {step.label}
+                </span>
+              </div>
             </div>
-            <div
-              className={`flex-1 text-center py-2 border-b-2 ${
-                currentStep == 2
-                  ? "border-ppdb-orange text-ppdb-orange"
-                  : "border-gray-300 text-gray-500"
-              }`}
-            >
-              2. Upload Dokumen
-            </div>
-            <div
-              className={`flex-1 text-center py-2 border-b-2 ${
-                currentStep == 3
-                  ? "border-ppdb-orange text-ppdb-orange"
-                  : "border-gray-300 text-gray-500"
-              }`}
-            >
-              3. Pembayaran
-            </div>
-          </div>
+          ))}
         </div>
+
         {currentStep === 1 && (
           <PersonalInfoStudent
             formData={formData}
@@ -316,14 +354,17 @@ const Edit = () => {
             provinces={provinces}
             cities={cities}
             districts={districts}
+            setFormData={setFormData}
           />
         )}
         {currentStep === 2 && (
           <DocumentUpload
             formData={formData}
-            onDocumentUploadChange={handleDocumentUploadChange}
-            onDocumentDelete={handleDocumentDelete}
+            setFormData={setFormData}
             formErrors={formErrors}
+            schoolId={user?.school_id}
+            onDocumentDelete={handleDocumentDelete}
+            onDocumentUploadChange={handleDocumentUploadChange}
           />
         )}
         {currentStep === 3 && (
@@ -345,14 +386,6 @@ const Edit = () => {
           isLoading={isLoading}
           handleSubmit={handleSubmit}
         />
-        {/* <div className="flex justify-end">
-          <Button
-            type="submit"
-            className="bg-teal-500 text-white hover:bg-teal-400"
-          >
-            Simpan
-          </Button>
-        </div> */}
       </form>
     </DashboardLayout>
   );

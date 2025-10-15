@@ -22,11 +22,11 @@ const useSchoolStudent = create((set) => ({
       return false;
     }
   },
-  fetchSchoolStudents: async (studentId) => {
+  fetchSchoolStudents: async (page, studentId) => {
     set({ loading: true, error: null });
     try {
       const response = await apiClient.get(`/api/student/school-student`, {
-        params: { student_id: studentId },
+        params: { page, student_id: studentId },
       });
       set({ schoolStudents: response.data.data, loading: false });
       return response.data.data;
