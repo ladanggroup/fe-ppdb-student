@@ -1,6 +1,6 @@
 // src/pages/admin/Bank/BankList.jsx
 import React, { useEffect, useState } from "react";
-import { useSearchParams, Outlet } from "react-router"; // Import Link dari react-router
+import { useSearchParams, Outlet } from "react-router";
 import DashboardLayout from "@/layouts/admin/DashboardLayout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -33,6 +33,7 @@ const BankList = () => {
   const page = Number(searchParams.get("page")) || 1;
   const [open, setOpen] = useState(false);
   const [update, setUpdate] = useState(false);
+  const [selectedBankId, setSelectedBankId] = useState(null);
 
   const reset = () => {
     setFormData({
@@ -83,17 +84,16 @@ const BankList = () => {
   };
 
   const handleOpen = async (edit = false, bankId = null) => {
-    if (edit === true && bankId !== null) {
+    if (edit && bankId) {
       setUpdate(true);
-      await handleShow(bankId); // ini akan isi formData
-      setOpen(true);
-      // setOpenUpdate(true); // buka modal setelah state terisi
-    } else if (edit === false && bankId === null) {
+      setSelectedBankId(bankId);
+      await handleShow(bankId);
+    } else {
       setUpdate(false);
+      setSelectedBankId(null);
       reset();
-      // setOpenCreate(true);
-      setOpen(true);
     }
+    setOpen(true);
   };
 
   const handleClose = () => {
@@ -131,18 +131,6 @@ const BankList = () => {
         >
           Tambah Bank Baru
         </Button>
-        {update !== true && (
-          <BankModal
-            title="Tambah Data Bank"
-            onSubmit={handleCreate}
-            handleChange={handleChange}
-            formData={formData}
-            open={open}
-            setOpen={handleClose}
-            loading={loading}
-            update={update}
-          />
-        )}
       </div>
 
       {loading ? (
@@ -176,20 +164,6 @@ const BankList = () => {
                 >
                   Edit
                 </Button>
-                {update !== false && (
-                  <BankModal
-                    title="Edit Data Bank"
-                    onSubmit={() => handleUpdate(bank.id)}
-                    handleChange={handleChange}
-                    formData={formData}
-                    setFormData={setFormData}
-                    setOpen={handleClose}
-                    open={open}
-                    update={update}
-                    loading={loading}
-                    classNameSelectItem="hover:bg-sky-200 dark:hover:bg-gray-300"
-                  />
-                )}
                 {/* Tombol Hapus */}
                 <Button
                   onClick={() => handleDelete(bank.id)}
@@ -202,6 +176,18 @@ const BankList = () => {
           ))}
         </div>
       )}
+
+      <BankModal
+        title={update ? "Edit Data Bank" : "Tambah Data Bank"}
+        onSubmit={update ? () => handleUpdate(selectedBankId) : handleCreate}
+        handleChange={handleChange}
+        formData={formData}
+        setFormData={setFormData}
+        open={open}
+        setOpen={handleClose}
+        update={update}
+        loading={loading}
+      />
 
       {/* Pagination */}
       <Pagination

@@ -62,12 +62,12 @@ const List = () => {
         </div>
 
         {/* Table Section */}
-        <div className="overflow-x-auto bg-white dark:bg-[#1f2d3a] rounded-lg border border-gray-200 dark:border-gray-700 shadow">
+        <div className="overflow-x-auto">
           {loading ? (
             <p className="p-4 text-center text-gray-500">Memuat data...</p>
           ) : schools?.data?.length > 0 ? (
-            <Table className="min-w-full">
-              <TableHeader className="bg-teal-200 dark:bg-gray-900">
+            <Table className="bg-teal-100 dark:bg-gray-800 mt-4 rounded-xl">
+              <TableHeader>
                 <TableRow>
                   <TableHead className="w-[50px] text-center">No</TableHead>
                   <TableHead>Nama Sekolah</TableHead>
@@ -82,7 +82,7 @@ const List = () => {
                 {schools.data.map((school, index) => (
                   <TableRow
                     key={school.id}
-                    className="hover:bg-gray-100 dark:hover:bg-gray-700 bg-teal-100 dark:bg-gray-800"
+                    className="hover:bg-teal-200 dark:hover:bg-gray-700 bg-teal-100 dark:bg-gray-800"
                   >
                     <TableCell className="text-center">
                       {(schools.current_page - 1) * schools.per_page +
@@ -91,10 +91,10 @@ const List = () => {
                     </TableCell>
                     <TableCell className="font-medium">{school.name}</TableCell>
                     <TableCell>{school.npsn}</TableCell>
-                    <TableCell>{school.email}</TableCell>
+                    <TableCell>{school.email || "-"}</TableCell>
                     <TableCell>{school.phone || "-"}</TableCell>
                     <TableCell className="uppercase">
-                      {school.education_level}
+                      {school.education_level || "-"}
                     </TableCell>
                     <TableCell className="text-center">
                       <Button
@@ -123,7 +123,7 @@ const List = () => {
         {/* Pagination */}
         {schools?.total > 0 && (
           <Pagination
-            className="mt-6 bg-teal-200 dark:bg-teal-900 hover:bg-teal-300 dark:hover:bg-teal-700"
+            className="mt-4"
             pagination={schools}
             onPageChange={handlePageChange}
           />

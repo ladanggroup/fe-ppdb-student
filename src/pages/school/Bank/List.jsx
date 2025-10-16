@@ -36,6 +36,7 @@ const List = () => {
   const page = Number(searchParams.get("page")) || 1;
   const [open, setOpen] = useState(false);
   const [update, setUpdate] = useState(false);
+  const [selectedBankId, setSelectedBankId] = useState(null);
 
   const reset = () => {
     setFormData({
@@ -88,15 +89,16 @@ const List = () => {
   };
 
   const handleOpen = async (edit = false, bankId = null) => {
-    if (edit === true && bankId !== null) {
+    if (edit && bankId) {
       setUpdate(true);
-      await handleShow(bankId); // ini akan isi formData
-      setOpen(true);
-    } else if (edit === false && bankId === null) {
+      setSelectedBankId(bankId);
+      await handleShow(bankId);
+    } else {
       setUpdate(false);
+      setSelectedBankId(null);
       reset();
-      setOpen(true);
     }
+    setOpen(true);
   };
 
   const handleClose = () => {
@@ -134,18 +136,6 @@ const List = () => {
         >
           Tambah Bank Baru
         </Button>
-        {update !== true && (
-          <BankModal
-            title="Tambah Data Bank"
-            onSubmit={handleCreate}
-            handleChange={handleChange}
-            formData={formData}
-            open={open}
-            setOpen={handleClose}
-            loading={loading}
-            update={update}
-          />
-        )}
       </div>
 
       {loading ? (
@@ -179,20 +169,6 @@ const List = () => {
                 >
                   Edit
                 </Button>
-                {update !== false && (
-                  <BankModal
-                    title="Edit Data Bank"
-                    onSubmit={() => handleUpdate(bank.id)}
-                    handleChange={handleChange}
-                    formData={formData}
-                    setFormData={setFormData}
-                    setOpen={handleClose}
-                    open={open}
-                    update={update}
-                    loading={loading}
-                    classNameSelectItem="hover:bg-sky-200 dark:hover:bg-gray-300"
-                  />
-                )}
                 {/* Tombol Hapus */}
                 <Button
                   onClick={() => handleDelete(bank.id)}
@@ -205,6 +181,18 @@ const List = () => {
           ))}
         </div>
       )}
+
+      <BankModal
+        title={update ? "Edit Data Bank" : "Tambah Data Bank"}
+        onSubmit={update ? () => handleUpdate(selectedBankId) : handleCreate}
+        handleChange={handleChange}
+        formData={formData}
+        setFormData={setFormData}
+        open={open}
+        setOpen={handleClose}
+        update={update}
+        loading={loading}
+      />
 
       {/* Pagination */}
       <Pagination

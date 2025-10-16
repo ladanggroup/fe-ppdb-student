@@ -19,7 +19,7 @@ const RegisterSchool = () => {
     npsn: "",
     nip: "",
     school_name: "",
-    roles: "kepala_sekolah",
+    roles: "principal",
   });
 
   const [errors, setErrors] = useState({});
@@ -171,10 +171,10 @@ const RegisterSchool = () => {
                   placeholder="Peran"
                   className="w-full border rounded-md py-1.5 px-3 text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
-                  <option value="admin_sekolah">
+                  <option value="school_admin">
                     Admin / Operator Sekolah
                   </option>
-                  <option value="kepala_sekolah">Kepala Sekolah</option>
+                  <option value="principal">Kepala Sekolah</option>
                 </select>
                 {errors.roles && <ErrorLabel message={errors.roles[0]} />}
               </div>

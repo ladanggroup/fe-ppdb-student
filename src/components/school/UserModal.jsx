@@ -105,10 +105,10 @@ const UserModal = ({ open, onClose, setForm, form, update, schoolId, page }) => 
                 <SelectValue placeholder="Pilih Peran" />
               </SelectTrigger>
               <SelectContent className="bg-white">
-                <SelectItem className="hover:bg-sky-100" value="admin_sekolah">
+                <SelectItem className="hover:bg-sky-100" value="school_admin">
                   Admin Sekolah
                 </SelectItem>
-                <SelectItem className="hover:bg-sky-100" value="kepala_sekolah">
+                <SelectItem className="hover:bg-sky-100" value="principal">
                   Kepala Sekolah
                 </SelectItem>
               </SelectContent>

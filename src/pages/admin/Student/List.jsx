@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import DashboardLayout from "@/layouts/admin/DashboardLayout";
 import useStudentStore from "@/store/useStudentStore";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableHeader,
@@ -13,8 +11,7 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import Pagination from "@/components/pagination";
-import { Search } from "lucide-react";
-import { Eye } from "lucide-react";
+import { Search, Eye, Loader2 } from "lucide-react";
 import { Link } from "react-router";
 
 const List = () => {
@@ -22,12 +19,10 @@ const List = () => {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
 
-  // debounce agar tidak langsung fetch tiap ketik
   useEffect(() => {
     const delay = setTimeout(() => {
       fetchStudentsAdmin(page, search);
     }, 500);
-
     return () => clearTimeout(delay);
   }, [page, search, fetchStudentsAdmin]);
 
@@ -36,6 +31,7 @@ const List = () => {
   return (
     <DashboardLayout>
       <div className="p-6">
+        {/* Header dan Pencarian */}
         <div className="flex flex-col md:flex-row justify-between md:items-center mb-4 gap-3">
           <h1 className="text-2xl font-semibold text-gray-800 dark:text-white">
             Daftar Siswa
@@ -53,106 +49,93 @@ const List = () => {
             />
           </div>
         </div>
-        <Card className="border-0 shadow-md bg-gradient-to-b from-teal-200 to-teal-200 dark:from-slate-900 dark:to-slate-900">
-          <CardContent>
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader className="">
-                  <TableRow>
-                    <TableHead className="w-12">No</TableHead>
-                    <TableHead>Nama</TableHead>
-                    <TableHead>NISN</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-center">Aksi</TableHead>
+
+        {/* Tabel Data */}
+        {loading ? (
+          <div className="flex justify-center py-10">
+            <Loader2 className="animate-spin h-6 w-6 text-gray-500" />
+          </div>
+        ) : error ? (
+          <p className="text-center text-red-500 py-4">{error}</p>
+        ) : students?.data?.length === 0 ? (
+          <p className="text-gray-600 dark:text-white">
+            Belum ada data siswa.
+          </p>
+        ) : (
+          <div className="overflow-x-auto">
+            <Table className="bg-teal-100 dark:bg-gray-800 mt-4 rounded-xl">
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="text-gray-600 dark:text-white">No</TableHead>
+                  <TableHead className="text-gray-600 dark:text-white">Nama</TableHead>
+                  <TableHead className="text-gray-600 dark:text-white">NISN</TableHead>
+                  <TableHead className="text-gray-600 dark:text-white">Email</TableHead>
+                  <TableHead className="text-gray-600 dark:text-white">Status</TableHead>
+                  <TableHead className="text-gray-600 dark:text-white text-center">
+                    Aksi
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {students.data?.map((student, index) => (
+                  <TableRow
+                    key={student.id}
+                    className="hover:bg-teal-200 dark:hover:bg-gray-600 transition"
+                  >
+                    <TableCell className="text-gray-600 dark:text-white px-3 py-4">
+                      {students.from + index}
+                    </TableCell>
+                    <TableCell className="text-gray-600 dark:text-white px-3 py-4">
+                      {student.name}
+                    </TableCell>
+                    <TableCell className="text-gray-600 dark:text-white px-3 py-4">
+                      {student.nisn}
+                    </TableCell>
+                    <TableCell className="text-gray-600 dark:text-white px-3 py-4">
+                      {student.email}
+                    </TableCell>
+                    <TableCell className="text-gray-600 dark:text-white px-3 py-4">
+                      <span
+                        className={`px-2 py-1 rounded text-xs font-medium ${
+                          student.status === "active"
+                            ? "bg-green-100 text-green-700"
+                            : student.status === "inactive"
+                            ? "bg-gray-100 text-gray-700"
+                            : student.status === "reject"
+                            ? "bg-red-100 text-red-700"
+                            : "bg-orange-100 text-orange-700"
+                        }`}
+                      >
+                        {student.status === "active"
+                          ? "Aktif"
+                          : student.status === "inactive"
+                          ? "Tidak Aktif"
+                          : student.status === "reject"
+                          ? "Ditolak"
+                          : "Menunggu"}
+                      </span>
+                    </TableCell>
+                    <TableCell className="flex justify-center gap-2 px-3 py-4">
+                      <Link
+                        to={`/admin/student/${student.id}/show`}
+                        className="bg-sky-500 text-white hover:bg-sky-600 px-3 py-2 rounded-md"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </Link>
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
 
-                <TableBody>
-                  {loading ? (
-                    <TableRow>
-                      <TableCell colSpan={7} className="text-center py-4">
-                        Memuat data...
-                      </TableCell>
-                    </TableRow>
-                  ) : error ? (
-                    <TableRow>
-                      <TableCell
-                        colSpan={7}
-                        className="text-center py-4 text-red-500"
-                      >
-                        {error}
-                      </TableCell>
-                    </TableRow>
-                  ) : students?.data?.length > 0 ? (
-                    students.data.map((student, index) => (
-                      <TableRow
-                        key={student.id}
-                        className="hover:bg-teal-50 dark:hover:bg-slate-800 transition"
-                      >
-                        <TableCell>{students.from + index}</TableCell>
-                        <TableCell>
-                          {student.name}
-                        </TableCell>
-                        <TableCell>{student.nisn}</TableCell>
-                        <TableCell>{student.email}</TableCell>
-                        <TableCell>
-                          <span
-                            className={`px-2 py-1 rounded text-xs font-medium ${
-                              student.status === "active"
-                                ? "bg-green-100 text-green-700"
-                                : student.status === "inactive"
-                                ? "bg-gray-100 text-gray-700"
-                                : student.status === "reject"
-                                ? "bg-red-100 text-red-700"
-                                : "bg-orange-100 text-orange-700"
-                            }`}
-                          >
-                            {student.status === "active"
-                              ? "Aktif"
-                              : student.status === "inactive"
-                              ? "Tidak Aktif"
-                              : student.status === "reject"
-                              ? "Ditolak"
-                              : "Menunggu"}
-                          </span>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <div className="flex justify-center gap-2">
-                            <Link
-                              to={`/admin/student/${student.id}/show`}
-                              className="bg-teal-500 hover:bg-teal-600 dark:bg-slate-800 dark:hover:bg-slate-700 px-3 py-2 rounded text-xs font-medium"
-                            >
-                              <Eye className="w-4 h-4" />
-                            </Link>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell
-                        colSpan={7}
-                        className="text-center py-4 text-slate-500 dark:text-slate-400"
-                      >
-                        Tidak ada data siswa
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-
-            {/* Pagination */}
-            {students?.total > 0 && (
-              <Pagination
-                pagination={students}
-                onPageChange={handlePageChange}
-                className="mt-2 bg-teal-200 dark:bg-teal-900 hover:bg-teal-300 dark:hover:bg-teal-700"
-              />
-            )}
-          </CardContent>
-        </Card>
+        {/* Pagination */}
+        {students?.total > 0 && (
+          <div className="mt-4">
+            <Pagination pagination={students} onPageChange={handlePageChange} />
+          </div>
+        )}
       </div>
     </DashboardLayout>
   );

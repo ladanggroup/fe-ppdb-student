@@ -33,7 +33,7 @@ const List = () => {
     name: "",
     email: "",
     nip: "",
-    roles: "admin_sekolah",
+    roles: "school_admin",
     status: "",
   });
 
@@ -43,7 +43,7 @@ const List = () => {
       name: "",
       email: "",
       nip: "",
-      roles: "admin_sekolah",
+      roles: "school_admin",
       status: "active",
     });
   };

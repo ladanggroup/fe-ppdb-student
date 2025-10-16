@@ -1,7 +1,6 @@
 // src/pages/admin/Subscription/SubscriptionList.jsx
 import React, { useEffect, useState } from "react";
 import useSubscriptionStore from "@/store/useSubscriptionStore";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -19,6 +18,7 @@ import LoadingOverlay from "@/components/LoadingOverlay";
 import { CheckCircle, Eye, Ban } from "lucide-react";
 import RejectDialog from "@/components/RejectDialog";
 import { confirmToast } from "@/components/ui/confirmToast";
+import { Loader2 } from "lucide-react";
 
 export default function List() {
   const {
@@ -44,7 +44,7 @@ export default function List() {
       onCancel: () => {
         console.log("cancel");
       },
-    })
+    });
   };
 
   const handleReject = async (id, note) => {
@@ -117,60 +117,63 @@ export default function List() {
 
       {error && <p className="text-red-500 mb-2">{error}</p>}
 
-      <Card className="border border-teal-100 dark:border-[#1f2937]">
-        <CardContent className="bg-teal-100 dark:bg-[#1f2937]">
-          {loading ? (
-            <p>Loading...</p>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="text-gray-600 dark:text-white">
-                    ID
-                  </TableHead>
-                  <TableHead className="text-gray-600 dark:text-white">
-                    Sekolah
-                  </TableHead>
-                  <TableHead className="text-gray-600 dark:text-white">
-                    Status
-                  </TableHead>
-                  <TableHead className="text-gray-600 dark:text-white">
-                    Start Date
-                  </TableHead>
-                  <TableHead className="text-gray-600 dark:text-white">
-                    End Date
-                  </TableHead>
-                  {/* <TableHead className="text-gray-600 dark:text-white">
+      {loading ? (
+        <div className="flex justify-center py-10">
+          <Loader2 className="animate-spin h-6 w-6 text-gray-500" />
+        </div>
+      ) : subscriptionsAdmin?.data?.length === 0 ? (
+        <p className="text-gray-600 dark:text-white">Belum ada langganan.</p>
+      ) : (
+        <>
+          <Table className="bg-teal-100 dark:bg-gray-800 mt-4 rounded-xl">
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-gray-600 dark:text-white">
+                  ID
+                </TableHead>
+                <TableHead className="text-gray-600 dark:text-white">
+                  Sekolah
+                </TableHead>
+                <TableHead className="text-gray-600 dark:text-white">
+                  Status
+                </TableHead>
+                <TableHead className="text-gray-600 dark:text-white">
+                  Start Date
+                </TableHead>
+                <TableHead className="text-gray-600 dark:text-white">
+                  End Date
+                </TableHead>
+                {/* <TableHead className="text-gray-600 dark:text-white">
                     Fitur
                   </TableHead> */}
-                  <TableHead className="text-gray-600 dark:text-white">
-                    Aksi
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {subscriptionsAdmin?.data?.map((sub, index) => (
-                  <TableRow
-                    key={sub.id}
-                    className="hover:bg-teal-200 dark:hover:bg-gray-500"
-                  >
-                    <TableCell className="text-gray-600 dark:text-white px-3 py-4">
-                      {subscriptionsAdmin.from + index}
-                    </TableCell>
-                    <TableCell className="text-gray-600 dark:text-white px-3 py-4">
-                      {sub.school?.name ?? "-"}
-                    </TableCell>
-                    <TableCell className="text-gray-600 dark:text-white px-3 py-4">
-                      {statusSubscriptions.find((s) => s.value === sub.status)
-                        ?.label ?? "-"}
-                    </TableCell>
-                    <TableCell className="text-gray-600 dark:text-white px-3 py-4">
-                      {sub.start_date ?? "-"}
-                    </TableCell>
-                    <TableCell className="text-gray-600 dark:text-white px-3 py-4">
-                      {sub.end_date ?? "-"}
-                    </TableCell>
-                    {/* <TableCell className="text-gray-600 dark:text-white px-3 py-4">
+                <TableHead className="text-gray-600 dark:text-white">
+                  Aksi
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {subscriptionsAdmin?.data?.map((sub, index) => (
+                <TableRow
+                  key={sub.id}
+                  className="hover:bg-teal-200 dark:hover:bg-gray-500"
+                >
+                  <TableCell className="text-gray-600 dark:text-white px-3 py-4">
+                    {subscriptionsAdmin.from + index}
+                  </TableCell>
+                  <TableCell className="text-gray-600 dark:text-white px-3 py-4">
+                    {sub.school?.name ?? "-"}
+                  </TableCell>
+                  <TableCell className="text-gray-600 dark:text-white px-3 py-4">
+                    {statusSubscriptions.find((s) => s.value === sub.status)
+                      ?.label ?? "-"}
+                  </TableCell>
+                  <TableCell className="text-gray-600 dark:text-white px-3 py-4">
+                    {sub.start_date ?? "-"}
+                  </TableCell>
+                  <TableCell className="text-gray-600 dark:text-white px-3 py-4">
+                    {sub.end_date ?? "-"}
+                  </TableCell>
+                  {/* <TableCell className="text-gray-600 dark:text-white px-3 py-4">
                       {sub.features && sub.features.length > 0 ? (
                         <div>
                           {sub.features.map((f, i) => (
@@ -185,55 +188,54 @@ export default function List() {
                         "-"
                       )}
                     </TableCell> */}
-                    <TableCell className="flex items-center gap-2">
-                      {sub.status === "verify" && (
-                        <>
-                          {/* Verifikasi */}
-                          <Button
-                            size="sm"
-                            className="bg-teal-600 text-white hover:bg-teal-500"
-                            onClick={() => handleVerify(sub.id)}
-                          >
-                            <CheckCircle className="w-4 h-4" />
-                          </Button>
-                          {/* Tolak */}
-                          <RejectDialog
-                            onConfirm={(note) => handleReject(sub.id, note)}
-                            triggerLabel={<Ban className="w-4 h-4" />}
-                          />
-                        </>
-                      )}
-                      {sub.status === "rejected" && (
+                  <TableCell className="flex items-center gap-2">
+                    {sub.status === "verify" && (
+                      <>
+                        {/* Verifikasi */}
                         <Button
                           size="sm"
                           className="bg-teal-600 text-white hover:bg-teal-500"
                           onClick={() => handleVerify(sub.id)}
                         >
-                          {/* Verifikasi */}
                           <CheckCircle className="w-4 h-4" />
                         </Button>
-                      )}
-                      <Link
-                        to={`/admin/subscription/${sub.id}/verify`}
-                        className="bg-blue-500 text-white hover:bg-blue-600 px-4 py-2 rounded-md"
+                        {/* Tolak */}
+                        <RejectDialog
+                          onConfirm={(note) => handleReject(sub.id, note)}
+                          triggerLabel={<Ban className="w-4 h-4" />}
+                        />
+                      </>
+                    )}
+                    {sub.status === "rejected" && (
+                      <Button
+                        size="sm"
+                        className="bg-teal-600 text-white hover:bg-teal-500"
+                        onClick={() => handleVerify(sub.id)}
                       >
-                        <Eye className="w-4 h-4" />
-                        {/* Lihat */}
-                      </Link>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
+                        {/* Verifikasi */}
+                        <CheckCircle className="w-4 h-4" />
+                      </Button>
+                    )}
+                    <Link
+                      to={`/admin/subscription/${sub.id}/verify`}
+                      className="bg-blue-500 text-white hover:bg-blue-600 px-4 py-2 rounded-md"
+                    >
+                      <Eye className="w-4 h-4" />
+                      {/* Lihat */}
+                    </Link>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </>
+      )}
 
-          {/* Pagination */}
-          <Pagination
-            pagination={subscriptionsAdmin}
-            onPageChange={handlePageChange}
-          />
-        </CardContent>
-      </Card>
+      {/* Pagination */}
+      <Pagination
+        pagination={subscriptionsAdmin}
+        onPageChange={handlePageChange}
+      />
     </DashboardLayout>
   );
 }

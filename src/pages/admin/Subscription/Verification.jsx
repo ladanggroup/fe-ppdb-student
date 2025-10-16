@@ -146,7 +146,7 @@ const Verification = () => {
             </span>
           </div>
           {/* Fitur */}
-          <div className="flex">
+          {/* <div className="flex">
             <span className="font-semibold block">Fitur:</span>
             <div className="pl-4 mt-1">
               {subscription?.features?.length > 0 ? (
@@ -173,7 +173,7 @@ const Verification = () => {
                 <p className="text-gray-500">Tidak ada fitur</p>
               )}
             </div>
-          </div>
+          </div> */}
         </CardContent>
       </Card>
 

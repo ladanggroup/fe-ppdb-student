@@ -258,8 +258,12 @@ const Wave = () => {
                         <SelectValue placeholder="Pilih status" />
                       </SelectTrigger>
                       <SelectContent className="bg-white">
-                        <SelectItem className="hover:bg-sky-100" value="open">Dibuka</SelectItem>
-                        <SelectItem className="hover:bg-sky-100" value="closed">Ditutup</SelectItem>
+                        <SelectItem className="hover:bg-sky-100" value="open">
+                          Dibuka
+                        </SelectItem>
+                        <SelectItem className="hover:bg-sky-100" value="closed">
+                          Ditutup
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -435,6 +439,7 @@ const Wave = () => {
       <Pagination
         pagination={waves}
         onPageChange={(p) => setSearchParams({ page: p })}
+        className="bg-sky-200 dark:bg-sky-900 hover:bg-sky-300 dark:hover:bg-sky-700"
       />
     </DashboardLayout>
   );

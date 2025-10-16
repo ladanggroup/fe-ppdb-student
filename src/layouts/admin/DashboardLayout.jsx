@@ -11,6 +11,7 @@ import { Users } from "lucide-react";
 import { UserPlus } from "lucide-react";
 import { School } from "lucide-react";
 import { GraduationCap } from "lucide-react";
+import RoleGuard from "@/components/RoleGuard";
 
 export default function DashboardLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -43,17 +44,19 @@ export default function DashboardLayout({ children }) {
             <House className="w-5 h-5" />
             <span>Dashboard</span>
           </NavLink>
-          <NavLink
-            to="/admin/product"
-            className={({ isActive }) =>
-              `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
-                isActive ? "bg-teal-200 dark:bg-white/10" : ""
-              }`
-            }
-          >
-            <Archive className="w-5 h-5" />
-            <span>Daftar Produk</span>
-          </NavLink>
+          <RoleGuard roles={["super_admin", "admin"]}>
+            <NavLink
+              to="/admin/product"
+              className={({ isActive }) =>
+                `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                  isActive ? "bg-teal-200 dark:bg-white/10" : ""
+                }`
+              }
+            >
+              <Archive className="w-5 h-5" />
+              <span>Daftar Produk</span>
+            </NavLink>
+          </RoleGuard>
           <NavLink
             to="/admin/bank"
             className={({ isActive }) =>
@@ -65,28 +68,32 @@ export default function DashboardLayout({ children }) {
             <Landmark className="w-5 h-5" />
             <span>Daftar Bank</span>
           </NavLink>
-          <NavLink
-            to="/admin/school"
-            className={({ isActive }) =>
-              `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
-                isActive ? "bg-teal-200 dark:bg-white/10" : ""
-              }`
-            }
-          >
-            <School className="w-5 h-5" />
-            <span>Daftar Sekolah</span>
-          </NavLink>
-          <NavLink
-            to="/admin/student"
-            className={({ isActive }) =>
-              `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
-                isActive ? "bg-teal-200 dark:bg-white/10" : ""
-              }`
-            }
-          >
-            <GraduationCap className="w-5 h-5" />
-            <span>Daftar Siswa</span>
-          </NavLink>
+          <RoleGuard roles={["super_admin", "admin"]}>
+            <NavLink
+              to="/admin/school"
+              className={({ isActive }) =>
+                `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                  isActive ? "bg-teal-200 dark:bg-white/10" : ""
+                }`
+              }
+            >
+              <School className="w-5 h-5" />
+              <span>Daftar Sekolah</span>
+            </NavLink>
+          </RoleGuard>
+          <RoleGuard roles={["super_admin", "admin"]}>
+            <NavLink
+              to="/admin/student"
+              className={({ isActive }) =>
+                `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                  isActive ? "bg-teal-200 dark:bg-white/10" : ""
+                }`
+              }
+            >
+              <GraduationCap className="w-5 h-5" />
+              <span>Daftar Siswa</span>
+            </NavLink>
+          </RoleGuard>
           <NavLink
             to="/admin/subscription"
             className={({ isActive }) =>
@@ -98,17 +105,19 @@ export default function DashboardLayout({ children }) {
             <Package className="w-5 h-5" />
             <span>Langganan</span>
           </NavLink>
-          <NavLink
-            to="/admin/user"
-            className={({ isActive }) =>
-              `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
-                isActive ? "bg-teal-200 dark:bg-white/10" : ""
-              }`
-            }
-          >
-            <Users className="w-5 h-5" />
-            <span>Daftar Pengguna</span>
-          </NavLink>
+          <RoleGuard roles="super_admin">
+            <NavLink
+              to="/admin/user"
+              className={({ isActive }) =>
+                `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                  isActive ? "bg-teal-200 dark:bg-white/10" : ""
+                }`
+              }
+            >
+              <Users className="w-5 h-5" />
+              <span>Daftar Pengguna</span>
+            </NavLink>
+          </RoleGuard>
         </nav>
       </aside>
 
@@ -135,17 +144,19 @@ export default function DashboardLayout({ children }) {
               <House className="w-5 h-5" />
               <span>Dashboard</span>
             </NavLink>
-            <NavLink
-              to="/admin/product"
-              className={({ isActive }) =>
-                `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
-                  isActive ? "bg-teal-200 dark:bg-white/10" : ""
-                }`
-              }
-            >
-              <Archive className="w-5 h-5" />
-              <span>Daftar Produk</span>
-            </NavLink>
+            <RoleGuard roles={["super_admin", "admin"]}>
+              <NavLink
+                to="/admin/product"
+                className={({ isActive }) =>
+                  `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                    isActive ? "bg-teal-200 dark:bg-white/10" : ""
+                  }`
+                }
+              >
+                <Archive className="w-5 h-5" />
+                <span>Daftar Produk</span>
+              </NavLink>
+            </RoleGuard>
             <NavLink
               to="/admin/bank"
               className={({ isActive }) =>
@@ -157,28 +168,32 @@ export default function DashboardLayout({ children }) {
               <Landmark className="w-5 h-5" />
               <span>Daftar Bank</span>
             </NavLink>
-            <NavLink
-              to="/admin/school"
-              className={({ isActive }) =>
-                `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
-                  isActive ? "bg-teal-200 dark:bg-white/10" : ""
-                }`
-              }
-            >
-              <School className="w-5 h-5" />
-              <span>Daftar Sekolah</span>
-            </NavLink>
-            <NavLink
-              to="/admin/student"
-              className={({ isActive }) =>
-                `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
-                  isActive ? "bg-teal-200 dark:bg-white/10" : ""
-                }`
-              }
-            >
-              <GraduationCap className="w-5 h-5" />
-              <span>Daftar Siswa</span>
-            </NavLink>
+            <RoleGuard roles={["super_admin", "admin"]}>
+              <NavLink
+                to="/admin/school"
+                className={({ isActive }) =>
+                  `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                    isActive ? "bg-teal-200 dark:bg-white/10" : ""
+                  }`
+                }
+              >
+                <School className="w-5 h-5" />
+                <span>Daftar Sekolah</span>
+              </NavLink>
+            </RoleGuard>
+            <RoleGuard roles={["super_admin", "admin"]}>
+              <NavLink
+                to="/admin/student"
+                className={({ isActive }) =>
+                  `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                    isActive ? "bg-teal-200 dark:bg-white/10" : ""
+                  }`
+                }
+              >
+                <GraduationCap className="w-5 h-5" />
+                <span>Daftar Siswa</span>
+              </NavLink>
+            </RoleGuard>
             <NavLink
               to="/admin/subscription"
               className={({ isActive }) =>
@@ -190,17 +205,19 @@ export default function DashboardLayout({ children }) {
               <Package className="w-5 h-5" />
               <span>Langganan</span>
             </NavLink>
-            <NavLink
-              to="/admin/user"
-              className={({ isActive }) =>
-                `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
-                  isActive ? "bg-teal-200 dark:bg-white/10" : ""
-                }`
-              }
-            >
-              <Users className="w-5 h-5" />
-              <span>Daftar Pengguna</span>
-            </NavLink>
+            <RoleGuard roles="super_admin">
+              <NavLink
+                to="/admin/user"
+                className={({ isActive }) =>
+                  `flex items-center gap-2 hover:bg-teal-200 dark:hover:bg-white/10 rounded px-3 py-2 ${
+                    isActive ? "bg-teal-200 dark:bg-white/10" : ""
+                  }`
+                }
+              >
+                <Users className="w-5 h-5" />
+                <span>Daftar Pengguna</span>
+              </NavLink>
+            </RoleGuard>
           </nav>
         </aside>
       )}

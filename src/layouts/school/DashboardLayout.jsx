@@ -104,7 +104,7 @@ export default function DashboardLayout({ children }) {
             <Users2 className="w-5 h-5" />
             <span>Daftar Siswa</span>
           </NavLink>
-          {user.roles === "kepala_sekolah" && (
+          {user.roles === "principal" && (
             <NavLink
               to="/school/user"
               className={({ isActive }) =>
@@ -203,7 +203,7 @@ export default function DashboardLayout({ children }) {
             >
               <span>Daftar Siswa</span>
             </NavLink>
-            {user.roles === "kepala_sekolah" && (
+            {user.roles === "principal" && (
               <NavLink
                 to="/school/user"
                 className={({ isActive }) =>

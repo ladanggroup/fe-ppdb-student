@@ -16,9 +16,10 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Pencil, Trash2, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import UserAdminModal from "@/components/UserAdminModal";
+import { showError } from "@/components/ui/toastSonner";
 
 const List = () => {
-  const { admins, fetchAdmins, deleteAdmin, loading } = useAdminStore();
+  const { admins, fetchAdmins, deleteAdmin, loading, error } = useAdminStore();
   const { user } = useAuthStore();
   const [searchParams, setSearchParams] = useSearchParams();
   const [openModal, setOpenModal] = useState(false);
@@ -75,6 +76,10 @@ const List = () => {
 
     return () => clearTimeout(timeout);
   }, [search, user, fetchAdmins, page, setSearchParams]);
+
+  useEffect(() => {
+    if (error) showError(error);
+  }, [error]);
 
   const handleDelete = async (id) => {
     if (confirm("Yakin ingin menghapus pengguna ini?")) {

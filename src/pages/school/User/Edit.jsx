@@ -142,7 +142,7 @@ const handleUpdatePassword = async (e) => {
                 required
               />
             </div>
-            {user?.roles === "kepala_sekolah" && (
+            {user?.roles === "principal" && (
               <>
                 <div>
                   <Label htmlFor="roles">Role</Label>
@@ -154,8 +154,8 @@ const handleUpdatePassword = async (e) => {
                     className="w-full border rounded-md px-3 py-2 bg-white text-gray-800"
                     required
                   >
-                    <option value="admin_sekolah">Admin Sekolah</option>
-                    <option value="kepala_sekolah">Kepala Sekolah</option>
+                    <option value="school_admin">Admin Sekolah</option>
+                    <option value="principal">Kepala Sekolah</option>
                   </select>
                 </div>
 
