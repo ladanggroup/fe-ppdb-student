@@ -1,4 +1,3 @@
-// import { lazy } from "react";
 import { lazy } from "react";
 
 const LandingPage = lazy(() => import("@/pages/landingPage/Home"));
@@ -10,20 +9,12 @@ const routes = [
     element: LandingPage,
   },
   {
-    path: "/about",
-    element: lazy(() => import("@/pages/landingPage/About")),
-  },
-  {
-    path: "/features",
-    element: lazy(() => import("@/pages/landingPage/Feature")),
-  },
-  {
-    path: "/pricing",
-    element: lazy(() => import("@/pages/landingPage/Price")),
-  },
-  {
-    path: "/announcement",
+    path: ":slug/announcement",
     element: lazy(() => import("@/pages/landingPage/Announcement")),
+  },
+  {
+    path: ":slug",
+    element: lazy(() => import("@/pages/landingPage/School")),
   },
 
   // School Routes
@@ -124,22 +115,14 @@ const routes = [
     element: lazy(() => import("@/middleware/AuthGuard")),
     children: [
       {
-        path: "dashboard",
-        element: lazy(() => import("@/pages/student/Dashboard/Home")),
-      },
-      {
-        path: "complete-registration",
+        path: ":slug/complete-registration",
         element: lazy(() =>
-          import("@/pages/student/auth/CompleteRegistration")
+          import("@/pages/student/auth/CompleteRegister")
         ),
       },
       {
-        path: "wave-price",
-        element: lazy(() => import("@/pages/student/Dashboard/WavePrice")),
-      },
-      {
         path: "selection",
-        element: lazy(() => import("@/pages/student/StudentSelection")),
+        element: lazy(() => import("@/pages/student/Dashboard/StudentSelection")),
       },
       {
         path: "profile",
@@ -254,11 +237,11 @@ const routes = [
   },
   // student
   {
-    path: "/student/login",
+    path: "/student/:slug/login",
     element: lazy(() => import("@/pages/student/auth/Login")),
   },
   {
-    path: "/student/register",
+    path: "/student/:slug/register",
     element: lazy(() => import("@/pages/student/auth/Register")),
   },
   // school

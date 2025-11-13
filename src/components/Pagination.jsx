@@ -28,7 +28,7 @@ export default function Pagination({ pagination, onPageChange, className }) {
       </button>
 
       {/* Info halaman */}
-      <span className="text-sm text-gray-600 dark:text-gray-400">
+      <span className="text-sm text-gray-300 dark:text-gray-400">
         Halaman {current_page} dari {last_page}
       </span>
 

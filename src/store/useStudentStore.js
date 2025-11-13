@@ -12,10 +12,10 @@ const useStudentStore = create((set) => ({
     try {
       const response = await apiClient.post("/api/student/register", form);
       set({ loading: false, errors: null });
-      return response.data;
+      return response.data.data;
     } catch (error) {
       set({ loading: false, errors: error.response?.data?.errors || "Registration failed" });
-      return false;
+      throw error;
     }
   },
 
@@ -24,10 +24,10 @@ const useStudentStore = create((set) => ({
     try {
       const response = await apiClient.post("/api/student/complete-register", form);
       set({ loading: false, errors: null });
-      return response.data;
+      return response.data.data
     } catch (error) {
       set({ loading: false, errors: error.response?.data?.errors || "Registration failed" });
-      return false;
+      throw error;
     }
   },
 

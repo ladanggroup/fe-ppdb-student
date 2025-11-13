@@ -9,16 +9,17 @@ export const useWaveStore = create((set) => ({
 
   // public wave
   fetchPublicWaves: async (
-    province_id,
-    city_id,
-    district_id,
-    education_level,
-    page,
-    search
+    // province_id,
+    // city_id,
+    // district_id,
+    // education_level,
+    // page,
+    // search
+    slug
   ) => {
     set({ loading: true, error: null });
     try {
-      const res = await apiClient.get('/api/waves', { params: { province_id, city_id, district_id, education_level, page, search } });
+      const res = await apiClient.get('/api/waves', { params: { slug } }); // { params: { province_id, city_id, district_id, education_level, page, search } });
       set({ waves: res.data.data, loading: false });
       return res.data.data;
     } catch (err) {
@@ -28,16 +29,17 @@ export const useWaveStore = create((set) => ({
 
   // wave for student
   fetchStudentWaves: async (
-    province_id,
-    city_id,
-    district_id,
-    education_level,
-    page,
-    search
+    // province_id,
+    // city_id,
+    // district_id,
+    // education_level,
+    // page,
+    // search,
+    slug
   ) => {
     set({ loading: true, error: null });
     try {
-      const res = await apiClient.get('/api/student/wave', { params: { province_id, city_id, district_id, education_level, page, search } });
+      const res = await apiClient.get('/api/student/wave', { params: { slug} });
       set({ waves: res.data.data, loading: false });
       return res.data.data;
     } catch (err) {
@@ -45,6 +47,19 @@ export const useWaveStore = create((set) => ({
     }
   },
 
+  showWave: async (waveId) => {
+    set({ loading: true, error: null });
+    try {
+      const res = await apiClient.get(`/api/student/wave/${waveId}`);
+      set({ currentWave: res.data.data, loading: false });
+      return res.data.data;
+    } catch (err) {
+      set({ error: err.response?.data || err.message, loading: false });
+    }
+  },
+
+  //school wave
+  
   // ambil semua wave
   fetchWaves: async (schoolId, page) => {
     set({ loading: true, error: null });

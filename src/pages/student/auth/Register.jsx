@@ -7,8 +7,11 @@ import { useNavigate, Link } from "react-router";
 import ErrorLabel from "@/components/ErrorLabel";
 import PasswordField from "@/components/PasswordField";
 import useStudentStore from "@/store/useStudentStore";
+import { useParams } from "react-router";
 
 const RegisterStudent = () => {
+  const { slug } = useParams();
+  localStorage.setItem("slug", slug);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -34,13 +37,13 @@ const RegisterStudent = () => {
     try {
       const response = await register(form);
       if (response) {
-        navigate("/student/login", { replace: true });
+        navigate("/student/" + slug + "/login", { replace: true });
       }
     } catch (err) {
       if (err.response?.data?.errors) {
         setErrors(err.response.data.errors);
       } else {
-        alert(err.response?.data?.message || "Terjadi kesalahan");
+        setErrors(err.response?.data?.message);
       }
     } finally {
       setIsSubmitting(false);
@@ -73,9 +76,10 @@ const RegisterStudent = () => {
                   name="name"
                   value={form.name}
                   onChange={handleChange}
+                  placeholder="Nama Lengkap"
                   required
                 />
-                {errors.name && <ErrorLabel message={errors.name[0]} />}
+                {errors?.name && <ErrorLabel message={errors?.name[0]} />}
               </div>
 
               {/* Email */}
@@ -89,9 +93,10 @@ const RegisterStudent = () => {
                   name="email"
                   value={form.email}
                   onChange={handleChange}
+                  placeholder="Masukkan Email"
                   required
                 />
-                {errors.email && <ErrorLabel message={errors.email[0]} />}
+                {errors?.email && <ErrorLabel message={errors?.email[0]} />}
               </div>
 
               {/* Password */}
@@ -119,8 +124,9 @@ const RegisterStudent = () => {
                   errors?.password_confirmation &&
                   errors.password_confirmation[0]
                 }
-                required
                 className="bg-blue-50"
+                placeholder="Konfirmasi password"
+                required
               />
 
               {/* NISN */}
@@ -133,9 +139,10 @@ const RegisterStudent = () => {
                   name="nisn"
                   value={form.nisn}
                   onChange={handleChange}
+                  placeholder="Masukkan NISN"
                   required
                 />
-                {errors.nisn && <ErrorLabel message={errors.nisn[0]} />}
+                {errors?.nisn && <ErrorLabel message={errors?.nisn[0]} />}
               </div>
 
               {/* Tipe Pendaftaran */}
@@ -156,8 +163,8 @@ const RegisterStudent = () => {
                   <option value="new">Siswa Baru</option>
                   <option value="transfer">Siswa Pindahan</option>
                 </select>
-                {errors.registration_type && (
-                  <ErrorLabel message={errors.registration_type[0]} />
+                {errors?.registration_type && (
+                  <ErrorLabel message={errors?.registration_type[0]} />
                 )}
               </div>
             </div>
@@ -172,7 +179,7 @@ const RegisterStudent = () => {
             <div className="mt-4 text-center">
               Sudah punya akun?{" "}
               <Link
-                to="/student/login"
+                to={"/student/" + slug + "/login"}
                 className="text-blue-600 hover:underline"
               >
                 Masuk

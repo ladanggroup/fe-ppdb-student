@@ -11,22 +11,22 @@ const useSchoolStudent = create((set) => ({
   store: async (studentData) => {
     set({ loading: true, error: null });
     try {
-      await apiClient.post("/api/student/school-student", studentData);
+      const response = await apiClient.post("/api/student/school-student", studentData);
       set({ loading: false });
-      return true;
+      return response.data.data;
     } catch (error) {
       set({
         error: error.response?.data?.message || "Failed to store student",
         loading: false,
       });
-      return false;
+      throw error;
     }
   },
-  fetchSchoolStudents: async (page, studentId) => {
+  fetchSchoolStudents: async (studentId, slug) => {
     set({ loading: true, error: null });
     try {
       const response = await apiClient.get(`/api/student/school-student`, {
-        params: { page, student_id: studentId },
+        params: { student_id: studentId, slug },
       });
       set({ schoolStudents: response.data.data, loading: false });
       return response.data.data;
@@ -40,17 +40,17 @@ const useSchoolStudent = create((set) => ({
   updateVerify: async (schoolStudentId) => {
     set({ loading: true, error: null });
     try {
-      await apiClient.put(
+      const response = await apiClient.put(
         `/api/student/school-student/${schoolStudentId}/verify`
       );
       set({ loading: false });
-      return true;
+      return response.data.data;
     } catch (error) {
       set({
         error: error.response?.data?.message || "Failed to update status",
         loading: false,
       });
-      return false;
+      throw error;
     }
   },
 

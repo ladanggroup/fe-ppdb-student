@@ -1,58 +1,155 @@
-import PortalDialog from "@/components/PortalDialog";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import LandingPageLayout from "@/layouts/LandingPage/LandingPageLayout";
-import { CircleCheck, Star, ChevronDown } from "lucide-react";
-import { useState } from "react";
-import { Link } from "react-router";
+import { useState, useEffect } from "react";
+import { Link, useSearchParams } from "react-router";
+import useSchoolStore from "@/store/useSchoolStore";
+import useRegionStore from "@/store/regionStore";
+import { Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import SelectModalUrl from "@/components/SelectModalUrl";
+import LoadingOverlay from "@/components/LoadingOverlay";
+import PaginationSlidingWindow from "@/components/PaginationSlidingWindow";
+import { capitalizeWords } from "@/utils/string";
 
 export default function Home() {
-  const [openFAQ, setOpenFAQ] = useState(0);
-  const [openPortal, setOpenPortal] = useState(false);
+  const { schools, fetchSchoolsStudent, loading } = useSchoolStore();
+  const {
+    fetchProvinces,
+    provinces,
+    fetchCities,
+    cities,
+    fetchDistricts,
+    districts,
+  } = useRegionStore();
 
-  const steps = [
-    { id: 1, title: "Daftar & Aktivasi Sekolah" },
-    { id: 2, title: "Atur Jalur & Formulir" },
-    { id: 3, title: "Siswa Daftar Mandiri Atau Sekolah Input" },
-    { id: 4, title: "Verifikasi & Umumkan Hasil" },
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = searchParams.get("page") || 1;
+  const [filters, setFilters] = useState({
+    province_id: searchParams.get("province_id") || null,
+    city_id: searchParams.get("city_id") || null,
+    district_id: searchParams.get("district_id") || null,
+    education_level: searchParams.get("education_level") || "all",
+    search: searchParams.get("search") || "",
+  });
+
+  const optionEducationLevel = [
+    { value: "all", name: "Semua" },
+    { value: "paud", name: "PAUD" },
+    { value: "tk/ra", name: "TK/RA" },
+    { value: "sd/mi", name: "SD/MI" },
+    { value: "smp/mts", name: "SMP/MTs" },
+    { value: "sma/ma/smk/mak", name: "SMA/MA/SMK/MAK" },
   ];
 
-  const testimonials = [
-    {
-      name: "Pepe Kakampang",
-      role: "Kepala Dinas Pendidikan",
-      text: "Sit nec cursus et libero, quis id faucibus quam consectetur cursus quam Vivamus faucibus eget at.",
-    },
-    {
-      name: "Pepe Kakampang",
-      role: "Kepala Dinas Pendidikan",
-      text: "Sit nec cursus et libero, quis id faucibus quam consectetur cursus quam Vivamus faucibus eget at.",
-    },
-    {
-      name: "Pepe Kakampang",
-      role: "Kepala Dinas Pendidikan",
-      text: "Sit nec cursus et libero, quis id faucibus quam consectetur cursus quam Vivamus faucibus eget at.",
-    },
-  ];
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prev) => ({ ...prev, [name]: value }));
+  };
 
-  const faqs = [
-    {
-      q: "Apa itu PPDB Online ?",
-      a: "PPDB Online adalah sistem pendaftaran siswa baru yang dilakukan secara daring untuk mempermudah proses seleksi, administrasi, dan komunikasi.",
-    },
-    {
-      q: "Bagaimana cara mendaftar ?",
-      a: "Sekolah melakukan aktivasi, mengatur jalur pendaftaran, kemudian siswa bisa mendaftar secara mandiri atau melalui sekolah.",
-    },
-    {
-      q: "Apakah verifikasi otomatis ?",
-      a: "Ya, sistem menyediakan verifikasi dan seleksi otomatis dengan monitoring real-time.",
-    },
-  ];
+  const handlePageChange = (newPage) => {
+    setSearchParams((prev) => {
+      const params = Object.fromEntries(prev.entries());
+      return { ...params, page: newPage };
+    });
+  };
+
+  const reset = () => {
+    setFilters({
+      province_id: null,
+      city_id: null,
+      district_id: null,
+      education_level: "all",
+      search: "",
+    });
+  };
+
+  // load provinsi sekali
+  useEffect(() => {
+    fetchProvinces();
+  }, [fetchProvinces]);
+
+  // load kota saat pilih provinsi
+  useEffect(() => {
+    if (filters.province_id) fetchCities(filters.province_id);
+  }, [filters.province_id, fetchCities]);
+
+  // load kecamatan saat pilih kota
+  useEffect(() => {
+    if (filters.city_id) fetchDistricts(filters.city_id);
+  }, [filters.city_id, fetchDistricts]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await fetchSchoolsStudent(
+          page,
+          filters.search,
+          filters.province_id,
+          filters.city_id,
+          filters.district_id,
+          filters.education_level === "all" ? null : filters.education_level
+        );
+      } catch (error) {
+        console.error("Error fetching schools:", error);
+      }
+    };
+
+    const delayDebounce = setTimeout(() => {
+      fetchData();
+    }, 1000);
+
+    return () => clearTimeout(delayDebounce);
+  }, [
+    filters.search,
+    filters.province_id,
+    filters.city_id,
+    filters.district_id,
+    filters.education_level,
+    page,
+    fetchSchoolsStudent,
+  ]);
+
+  // update params url setiap kali filter berubah
+  useEffect(() => {
+    // Cek apakah ada filter yang aktif
+    const hasActiveFilter =
+      (filters.education_level && filters.education_level !== "all") ||
+      filters.province_id ||
+      filters.city_id ||
+      filters.district_id ||
+      filters.search ||
+      page !== 1; // default page 1 juga tidak perlu tampil
+
+    // Jika tidak ada filter aktif → hapus semua query param
+    if (!hasActiveFilter) {
+      setSearchParams({});
+      return;
+    }
+
+    // Jika ada filter aktif → buat query params-nya
+    const params = {};
+
+    if (filters.education_level && filters.education_level !== "all")
+      params.education_level = filters.education_level;
+
+    if (filters.province_id) params.province_id = filters.province_id;
+    if (filters.city_id) params.city_id = filters.city_id;
+    if (filters.district_id) params.district_id = filters.district_id;
+    if (filters.search) params.search = filters.search;
+    if (page && page !== 1) params.page = page;
+
+    setSearchParams(params);
+  }, [filters, page, setSearchParams]);
+
+  if (loading) return <LoadingOverlay />;
 
   return (
     <LandingPageLayout>
@@ -65,182 +162,170 @@ export default function Home() {
             Pendaftaran Sekolah Dalam Genggaman, Langkah Cepat Menuju
           </p>
           <p className="mt-1">Sekolah Impian</p>
-          <div className="mt-6 space-x-4">
-            <button
-              onClick={() => setOpenPortal(true)}
-              className="px-6 py-2 bg-orange-soft hover:bg-white hover:text-orange-soft-700 hover:border-orange-soft-700 text-white rounded-lg cursor-pointer"
-            >
-              Daftar Sekarang
-            </button>
-            <Link
-              to="/kontak"
-              className="px-6 py-2 border border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white rounded-lg"
-            >
-              Hubungi Kami
-            </Link>
-          </div>
         </section>
 
-        <Dialog open={openPortal} onOpenChange={setOpenPortal}>
-          <DialogTrigger asChild></DialogTrigger>
-          <DialogContent className="sm:max-w-md p-0 bg-transparent border-none shadow-none">
-            <DialogTitle className="hidden">Ke Portal PPDB</DialogTitle>
-            <PortalDialog onClose={() => setOpenPortal(false)} />
-          </DialogContent>
-        </Dialog>
-
-        <section className="py-16 max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-800 text-left">
-              <span className="text-ppdb-orange">
-                Mudah, cepat, dan terintegrasi
-              </span>{" "}
-              untuk mendukung
-            </h2>
-            <h2 className="text-2xl font-semibold text-gray-800 text-left">
-              pembangunan pendidikan untuk Indonesia
-            </h2>
-            <p className="mt-6 text-gray-600 text-left">
-              PPDB Online hadir sebagai solusi praktis untuk membantu sekolah
-            </p>
-            <p className="text-gray-600 text-left mb-6">
-              mengelola pendaftaran siswa baru secara efisien dan profesional.
-            </p>
-            <p className="mt-4 text-gray-600 text-left">
-              <CircleCheck className="text-ppdb-orange inline mr-2" />
-              Terintegrasi & Terkontrol
-            </p>
-            <p className="mt-2 text-gray-600 text-left">
-              <CircleCheck className="text-ppdb-orange inline mr-2" />
-              Dukungan Jalur & Gelombang Pendaftaran
-            </p>
-            <p className="mt-2 text-gray-600 text-left">
-              <CircleCheck className="text-ppdb-orange inline mr-2" />
-              Verifikasi & Seleksi Otomatis
-            </p>
-            <p className="mt-2 text-gray-600 text-left">
-              <CircleCheck className="text-ppdb-orange inline mr-2" />
-              Statistik & Monitoring Real-Time
-            </p>
-            <p className="mt-2 text-gray-600 text-left">
-              <CircleCheck className="text-ppdb-orange inline mr-2" />
-              Pengelolaan Dokumen & Pembayaran
-            </p>
-            <p className="mt-2 text-gray-600 text-left">
-              <CircleCheck className="text-ppdb-orange inline mr-2" />
-              Notifikasi Otomatis ke Siswa
-            </p>
-          </div>
-          <div className="flex flex-col space-y-4">
-            <img
-              src="/src/assets/Desain tanpa judul (27) 1.png"
-              alt="PPDB Online"
-              className="w-full"
-            />
-          </div>
-        </section>
-
-        <section className="py-16 bg-gray-50 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-10">
-            Bagaimana Sistem Kami Bekerja ?
-          </h2>
-          <div className="flex flex-col md:flex-row items-center justify-center gap-6">
-            {steps.map((step, idx) => (
-              <div key={step.id} className="flex items-center">
-                <div className="flex flex-col items-center">
-                  <div className="w-12 h-12 flex items-center justify-center rounded-full bg-orange-100 text-orange-600 font-bold text-lg">
-                    {step.id}
-                  </div>
-                  <p className="mt-3 text-gray-700 text-sm font-medium max-w-[150px]">
-                    {step.title}
-                  </p>
-                </div>
-                {idx < steps.length - 1 && (
-                  <span className="mx-4 text-orange-400 text-2xl">→</span>
-                )}
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="py-16 max-w-7xl mx-auto px-4">
-          <h2 className="text-center text-2xl md:text-3xl font-bold mb-4">
-            Sekolah Telah{" "}
-            <span className="text-orange-500">Membuktikannya</span>
-          </h2>
-          <p className="text-center text-gray-600 max-w-2xl mx-auto mb-10">
-            Sistem PPDB Online mempermudah proses seleksi, administrasi, dan
-            komunikasi antara sekolah dan calon peserta didik.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonials.map((t, idx) => (
-              <div key={idx} className="bg-white p-6 rounded-xl shadow-md">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-orange-200 flex items-center justify-center font-bold text-orange-600">
-                    {t.name.charAt(0)}
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-800">{t.name}</p>
-                    <p className="text-sm text-gray-500">{t.role}</p>
-                  </div>
-                </div>
-                <p className="text-gray-600 mb-4">{t.text}</p>
-                <div className="flex">
-                  {Array(5)
-                    .fill(0)
-                    .map((_, i) => (
-                      <Star
-                        key={i}
-                        className="w-5 h-5 text-yellow-400 fill-yellow-400"
-                      />
-                    ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="py-16 bg-gray-50 max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <h3 className="text-2xl font-semibold text-gray-800 mb-2">
-                Pertanyaan Umum
-              </h3>
-              <p className="text-gray-600 mb-6">
-                Masih ragu? Berikut beberapa jawaban yang mungkin Anda butuhkan.
-              </p>
-              <Link
-                to="/faq"
-                className="bg-orange-soft text-white hover:bg-white hover:text-orange-soft-800 px-4 py-2 rounded-xl"
+        <div className="px-10 py-12 text-left">
+          <h1 className="text-3xl font-bold mb-4">Daftar Sekolah</h1>
+          <div className="mb-10 py-4 px-4 w-full border border-gray-200 dark:border-gray-700 rounded-xl">
+            <div className="flex items-center relative mb-4">
+              <Search className="absolute left-2 top-2 dark:text-gray-400 w-5 h-5" />
+              <Input
+                placeholder="Cari sekolah..."
+                value={filters.search}
+                onChange={(e) => handleFilterChange(e)}
+                name="search"
+                className="pl-8"
+              />
+              <Button
+                type="button"
+                onClick={reset}
+                className="ml-4 text-sm bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:text-white"
               >
-                Hubungi Kami
-              </Link>
+                Reset
+              </Button>
             </div>
-            <div>
-              {faqs.map((faq, idx) => (
-                <div
-                  key={idx}
-                  className="mb-3 border rounded-lg bg-white overflow-hidden"
+
+            {/* Filter Row */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              {/* Jenjang */}
+              <div>
+                <Label className="block text-left mb-2">Jenjang</Label>
+                <Select
+                  value={filters.education_level}
+                  onValueChange={(value) =>
+                    handleFilterChange({
+                      target: { name: "education_level", value },
+                    })
+                  }
                 >
-                  <button
-                    onClick={() => setOpenFAQ(openFAQ === idx ? null : idx)}
-                    className="w-full flex justify-between items-center px-4 py-3 text-left font-medium text-gray-700"
-                  >
-                    {faq.q}
-                    <ChevronDown
-                      className={`w-5 h-5 transform transition ${
-                        openFAQ === idx ? "rotate-180" : ""
-                      }`}
-                    />
-                  </button>
-                  {openFAQ === idx && (
-                    <div className="px-4 pb-4 text-gray-600">{faq.a}</div>
-                  )}
-                </div>
-              ))}
+                  <SelectTrigger className="bg-white">
+                    <SelectValue placeholder="Pilih Jenjang" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white">
+                    {optionEducationLevel.map((item) => (
+                      <SelectItem
+                        className="hover:bg-orange-soft-200"
+                        key={item.value}
+                        value={item.value}
+                      >
+                        {item.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Provinsi */}
+              <div>
+                <Label className="block text-left mb-2">Provinsi</Label>
+                <SelectModalUrl
+                  label={
+                    provinces.find((p) => p.id === filters.province_id)?.name ||
+                    "Pilih Provinsi"
+                  }
+                  value={filters.province_id || null}
+                  apiUrl="/api/regions/provinces"
+                  onSelect={(id) =>
+                    handleFilterChange({
+                      target: { name: "province_id", value: id },
+                    })
+                  }
+                />
+              </div>
+
+              {/* Kota */}
+              <div>
+                <Label className="block text-left mb-2">Kota/Kabupaten</Label>
+                <SelectModalUrl
+                  label={
+                    cities.find((c) => c.id === filters.city_id)?.name ||
+                    "Pilih Kota/Kabupaten"
+                  }
+                  value={filters.city_id || null}
+                  apiUrl={`/api/regions/cities?province_id=${filters.province_id}`}
+                  onSelect={(id) =>
+                    handleFilterChange({
+                      target: { name: "city_id", value: id },
+                    })
+                  }
+                  disabled={!filters.province_id}
+                />
+              </div>
+
+              {/* Kecamatan */}
+              <div>
+                <Label className="block text-left mb-2">Kecamatan</Label>
+                <SelectModalUrl
+                  label={
+                    districts.find((d) => d.id === filters.district_id)?.name ||
+                    "Pilih Kecamatan"
+                  }
+                  value={filters.district_id || null}
+                  apiUrl={`/api/regions/districts?city_id=${filters.city_id}`}
+                  onSelect={(id) =>
+                    handleFilterChange({
+                      target: { name: "district_id", value: id },
+                    })
+                  }
+                  disabled={!filters.city_id}
+                />
+              </div>
             </div>
+            {loading ? (
+              <LoadingOverlay />
+            ) : schools?.data?.length === 0 ? (
+              <div className="mt-8">
+                <p className="text-center font-semibold">
+                  Tidak ada sekolah yang cocok
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                  {schools?.data?.map((school) => (
+                    <div
+                      key={school.id}
+                      className="border border-gray-200 dark:border-gray-700 rounded-xl p-4"
+                    >
+                      <div className="flex items-center gap-4">
+                        <img
+                          src={school?.logo_url || "/src/assets/Group 1078.png"}
+                          alt="Logo Sekolah"
+                          className="w-26 h-24 border border-gray-600 object-cover rounded-md"
+                        />
+                        <div>
+                          <h3 className="text-lg font-semibold">
+                            {school.name}
+                          </h3>
+                          <p className="text-sm">
+                            {capitalizeWords(school.provinces?.name)},{" "}
+                            {capitalizeWords(school.cities?.name)},{" "}
+                            {capitalizeWords(school.districts?.name)}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="mt-4 flex justify-end">
+                        <Link
+                          to={`/${school.slug}`}
+                          className="bg-ppdb-orange hover:bg-orange-soft-200 text-white font-semibold py-2 px-4 rounded-md"
+                        >
+                          Lihat Sekolah
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-8">
+                  <PaginationSlidingWindow
+                    currentPage={schools?.current_page || 1}
+                    totalPages={schools?.last_page || 1}
+                    onPageChange={handlePageChange}
+                  />
+                </div>
+              </>
+            )}
           </div>
-        </section>
+        </div>
       </div>
     </LandingPageLayout>
   );

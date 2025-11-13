@@ -11,13 +11,10 @@ const useSchoolStore = create((set) => ({
   errors: null,
   loading: false,
 
-  // Mendapatkan semua sekolah
-  fetchSchools: async (page, search, provinceId, cityId, districtId, educationLevel) => {
+  fetchSchoolsAnnouncement: async (slug) => {
     set({ loading: true });
     try {
-      const response = await apiClient.get(`/api/schools/list`, {
-        params: { page, search, province_id: provinceId, city_id: cityId, district_id: districtId, education_level: educationLevel },
-      });
+      const response = await apiClient.get(`/api/schools/announcement/${slug}`);
       set({ schools: response.data.data, loading: false, errors: null });
       return response.data.data;
     } catch (error) {
@@ -173,6 +170,29 @@ const useSchoolStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const response = await apiClient.get(`/api/admin/school/show/${schoolId}`);
+      set({ currentSchool: response.data.data, loading: false });
+    } catch (error) {
+      set({ error: error.response?.data?.message || "Failed to show school", loading: false });
+    }
+  },
+
+  //student
+  fetchSchoolsStudent: async (page, search, provinceId, cityId, districtId, educationLevel) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await apiClient.get("/api/schools", {
+        params: { page, search, province_id: provinceId, city_id: cityId, district_id: districtId, education_level: educationLevel },
+      });
+      set({ schools: response.data, loading: false });
+    } catch (error) {
+      set({ error: error.response?.data?.message || "Failed to fetch schools", loading: false });
+    }
+  },
+
+  showSchoolStudent: async (slug) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await apiClient.get(`/api/schools/${slug}`);
       set({ currentSchool: response.data.data, loading: false });
     } catch (error) {
       set({ error: error.response?.data?.message || "Failed to show school", loading: false });

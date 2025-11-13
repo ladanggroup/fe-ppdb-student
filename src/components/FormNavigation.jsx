@@ -6,9 +6,9 @@ const FormNavigation = ({
   totalSteps,
   handlePrevStep,
   handleNextStep,
-  isLoading,
   handleSubmit,
-  disabled
+  isLoading,
+  disabled,
 }) => {
   return (
     <div className="grid grid-cols-2 gap-4 border border-gray-600 px-4 py-3 dark:border-gray-500 rounded-md mt-4">
@@ -16,6 +16,7 @@ const FormNavigation = ({
         type="button"
         onClick={handlePrevStep}
         className="flex items-center justify-start px-3 py-1 text-sm font-semibold"
+        variant="secondary"
         disabled={isLoading || currentStep === 1}
       >
         <svg
@@ -38,6 +39,7 @@ const FormNavigation = ({
           type="button"
           onClick={handleNextStep}
           className="flex items-center justify-end px-3 py-1 text-sm font-semibold"
+          variant="secondary"
           disabled={isLoading || disabled}
         >
           <span className="mr-1">Selanjutnya</span>
@@ -57,14 +59,15 @@ const FormNavigation = ({
       )}
 
       {currentStep === totalSteps && (
-          <Button
-            onClick={handleSubmit}
-            className="flex items-center justify-end px-3 py-1 text-sm font-semibold"
-            disabled={isLoading}
-          >
-            {isLoading ? "Memproses..." : "Selesaikan Pendaftaran"}
-          </Button>
-        )}
+        <Button
+          onClick={handleSubmit}
+          className="flex items-center justify-end px-3 py-1 text-sm font-semibold"
+          variant="secondary"
+          disabled={isLoading}
+        >
+          {isLoading ? "Memproses..." : "Selesaikan Pendaftaran"}
+        </Button>
+      )}
     </div>
   );
 };

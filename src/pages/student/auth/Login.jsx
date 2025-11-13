@@ -15,6 +15,7 @@ import LoadingOverlay from "@/components/LoadingOverlay";
 import ErrorLabel from "@/components/ErrorLabel";
 import PasswordField from "@/components/PasswordField";
 import { showError, showSuccess } from "@/components/ui/toastSonner";
+import { useParams } from "react-router";
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -23,12 +24,14 @@ const Login = () => {
   const { loginStudent, errors, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
   const location = useLocation();
+  const { slug } = useParams();
+  localStorage.setItem("slug", slug);
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/student/dashboard", { replace: true });
+      navigate("/" + slug, { replace: true });
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, slug]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -55,9 +58,9 @@ const Login = () => {
             />
             <div className="flex border rounded-full overflow-hidden mb-4 w-full">
               <Link
-                to="/student/login"
+                to={"/student/" + slug + "/login"}
                 className={`w-1/2 py-2 text-center font-semibold text-sm border-r hover:bg-orange-300 ${
-                  location.pathname === "/student/login"
+                  location.pathname === `/student/${slug}/login`
                     ? "bg-orange-400 text-white"
                     : "bg-gray-100 text-gray-500"
                 }`}
@@ -65,9 +68,9 @@ const Login = () => {
                 Masuk
               </Link>
               <Link
-                to="/student/register"
+                to={"/student/" + slug + "/register"}
                 className={`w-1/2 py-2 text-center font-semibold text-sm hover:bg-orange-300 ${
-                  location.pathname === "/student/register"
+                  location.pathname === `/student/${slug}/register`
                     ? "bg-orange-400 text-white"
                     : "bg-gray-100 text-gray-500"
                 }`}
@@ -126,7 +129,7 @@ const Login = () => {
                   Masuk
                 </Button>
                 <Link
-                  to="/"
+                  to={`/${slug}`}
                   className="w-full text-center bg-gray-400 hover:bg-gray-500 text-white py-2 rounded-md font-semibold"
                 >
                   Kembali

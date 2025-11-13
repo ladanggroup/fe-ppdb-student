@@ -218,6 +218,26 @@ const useDocumentStore = create((set) => ({
       throw error;
     }
   },
+
+  deletePathStudentDocument: async (documentId) => {
+    set({ loading: true, error: null });
+    try {
+      await apiClient.delete(`/api/student/document/path/${documentId}`);
+      set((state) => ({
+        documents: (state.documents || []).filter(
+          (doc) => doc.id !== documentId
+        ),
+        loading: false,
+      }));
+      return { success: true };
+    } catch (error) {
+      set({
+        loading: false,
+        error: error.response?.data?.message || "Failed to delete document",
+      });
+      throw error;
+    }
+  },
 }));
 
 export default useDocumentStore;

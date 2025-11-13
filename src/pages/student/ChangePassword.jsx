@@ -87,7 +87,7 @@ export default function ChangePassword() {
           <div className="mt-6 w-full">
             <nav className="space-y-2">
               <Link
-                to="/student/profile"
+                to={"/student/profile"}
                 className="block w-full text-left px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white"
               >
                 <User className="inline mr-2" />

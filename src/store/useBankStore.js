@@ -10,11 +10,11 @@ const useBankStore = create((set) => ({
   error: null,
 
   // Get banks list
-  fetchBanks: async (schoolId) => { // for school to student
+  fetchBanks: async (slug) => { // for school to student
     set({ loading: true, error: null });
     try {
       const response = await apiClient.get('/api/banks/school', {
-        params: { school_id: schoolId }
+        params: { slug: slug },
       });
       set({ banks: response.data.data, loading: false });
       return response.data.data;

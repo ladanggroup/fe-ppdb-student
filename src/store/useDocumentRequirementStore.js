@@ -62,10 +62,10 @@ const useDocumentRequirementStore = create((set) => ({
     },
 
     //student
-    fetchStudentDocumentRequirements: async (schoolId) => {
+    fetchStudentDocumentRequirements: async (slug) => {
         set({ loading: true, error: null });
         try {
-            const response = await apiClient.get('/api/student/document-requirement', { params: { school_id: schoolId } });
+            const response = await apiClient.get('/api/student/document-requirement', { params: { slug } });
             set({ documentRequirements: response.data.data, loading: false });
             return response.data.data;
         } catch (error) {

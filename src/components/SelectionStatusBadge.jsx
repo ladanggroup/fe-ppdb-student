@@ -21,12 +21,16 @@ const statusMap = {
     label: "Gagal Seleksi",
     className: "bg-gray-200 text-gray-700 border border-gray-400",
   },
+  waiting_complete_data: {
+    label: "Menunggu Kelengkapan Data",
+    className: "bg-purple-100 text-purple-700 border border-purple-300",
+  },
 };
 
 const SelectionStatusBadge = ({ status }) => {
   if (!status) {
     return (
-      <span className="px-2 py-1 text-xs rounded bg-gray-100 text-gray-500 border border-gray-300">
+      <span className="px-2 py-1 text-xs rounded-lg bg-gray-100 text-gray-500 border border-gray-300">
         Tidak diketahui
       </span>
     );
