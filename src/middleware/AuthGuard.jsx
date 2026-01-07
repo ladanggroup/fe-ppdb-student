@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import { Navigate, Outlet, useLocation } from "react-router";
 import useAuthStore from "@/store/authStore";
 
-const AuthGuard = ({ allowedRoles = ["admin", "school", "student"] }) => {
+const AuthGuard = ({ allowedRoles = ["student"] }) => {
   const [isLoading, setIsLoading] = useState(true);
-  const { isAuthenticated, restoreAuth, user, role } = useAuthStore();
+  const { isAuthenticated, restoreAuth, role } = useAuthStore();
   const location = useLocation();
 
   useEffect(() => {
@@ -36,34 +36,6 @@ const AuthGuard = ({ allowedRoles = ["admin", "school", "student"] }) => {
 
   if (allowedRoles.length > 0 && !allowedRoles.includes(role)) {
     return <Navigate to="/unauthorized" replace />;
-  }
-
-  // ✅ Cek kondisi spesifik per-role
-  if (role === "admin" && user?.email_verified_at === null) {
-    return <Navigate to="/admin/resend-email" replace />;
-  }
-
-  if (role === "school") {
-    const schoolStatus = user?.status;
-    const subscriptions = user?.school?.subscriptions || [];
-    const latestSub = subscriptions[subscriptions.length - 1]; // ✅ ambil data terakhir
-
-    // Belum aktif
-    if (
-      schoolStatus !== "active" &&
-      location.pathname !== "/school/complete-registration"
-    ) {
-      return <Navigate to="/school/complete-registration" replace />;
-    }
-
-    // Expired
-    if (
-      latestSub && ["expired", "verify", "rejected"].includes(latestSub.status) &&
-        subscriptions.length > 1 &&
-      location.pathname !== "/school/subscription/expired"
-    ) {
-      return <Navigate to="/school/subscription/expired" replace />;
-    }
   }
 
   return <Outlet />;

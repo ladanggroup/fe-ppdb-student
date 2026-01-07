@@ -20,13 +20,12 @@ export default function StudentSelection() {
   const { schoolStudents, fetchSchoolStudents, printSelectionLetter, loading } =
     useSchoolStudent();
   const { user: student } = useAuthStore();
-  const slug = localStorage.getItem("slug");
 
   useEffect(() => {
     if (student?.id) {
-      fetchSchoolStudents(student.id, slug);
+      fetchSchoolStudents(student.id);
     }
-  }, [student, fetchSchoolStudents, slug]);
+  }, [student, fetchSchoolStudents]);
 
   const handlePrint = async (schoolStudent) => {
     try {
@@ -64,7 +63,7 @@ export default function StudentSelection() {
           <div className="overflow-x-auto rounded-xl border border-gray-200">
             <Table className="text-sm">
               <TableHeader>
-                <TableRow className="bg-gray-50 dark:bg-gray-800">
+                <TableRow className="bg-gray-50 [&_th]:text-black">
                   <TableHead>No</TableHead>
                   <TableHead>Nomor Registrasi</TableHead>
                   <TableHead>Sekolah</TableHead>

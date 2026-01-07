@@ -28,8 +28,10 @@ const Login = () => {
   localStorage.setItem("slug", slug);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && slug) {
       navigate("/" + slug, { replace: true });
+    } else if (isAuthenticated && !slug) {
+      navigate("/", { replace: true });
     }
   }, [isAuthenticated, navigate, slug]);
 
@@ -58,25 +60,31 @@ const Login = () => {
             />
             <div className="flex border rounded-full overflow-hidden mb-4 w-full">
               <Link
-                to={"/student/" + slug + "/login"}
-                className={`w-1/2 py-2 text-center font-semibold text-sm border-r hover:bg-orange-300 ${
-                  location.pathname === `/student/${slug}/login`
+                to={slug ? `/student/${slug}/login` : "/student/login"}
+                className={`${
+                  slug ? "w-1/2 border-r" : "w-full"
+                } py-2 text-center font-semibold text-sm hover:bg-orange-300 ${
+                  location.pathname.includes("/login")
                     ? "bg-orange-400 text-white"
                     : "bg-gray-100 text-gray-500"
                 }`}
               >
                 Masuk
               </Link>
-              <Link
-                to={"/student/" + slug + "/register"}
-                className={`w-1/2 py-2 text-center font-semibold text-sm hover:bg-orange-300 ${
-                  location.pathname === `/student/${slug}/register`
-                    ? "bg-orange-400 text-white"
-                    : "bg-gray-100 text-gray-500"
-                }`}
-              >
-                Daftar
-              </Link>
+
+              {/* DAFTAR hanya tampil jika ada slug */}
+              {slug && (
+                <Link
+                  to={`/student/${slug}/register`}
+                  className={`w-1/2 py-2 text-center font-semibold text-sm hover:bg-orange-300 ${
+                    location.pathname === `/student/${slug}/register`
+                      ? "bg-orange-400 text-white"
+                      : "bg-gray-100 text-gray-500"
+                  }`}
+                >
+                  Daftar
+                </Link>
+              )}
             </div>
             <CardTitle className="text-center">Portal Siswa</CardTitle>
             <CardDescription className="text-center">
@@ -123,13 +131,9 @@ const Login = () => {
               </div>
 
               <div className="flex flex-col gap-2 mt-4">
-                <Button
-                  type="submit"
-                >
-                  Masuk
-                </Button>
+                <Button type="submit">Masuk</Button>
                 <Link
-                  to={`/${slug}`}
+                  to={slug ? `/${slug}` : `/`}
                   className="w-full text-center bg-gray-400 hover:bg-gray-500 text-white py-2 rounded-md font-semibold"
                 >
                   Kembali

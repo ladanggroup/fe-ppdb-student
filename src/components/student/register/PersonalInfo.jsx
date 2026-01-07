@@ -61,7 +61,7 @@ export default function PersonalInfo({
   ];
 
   useEffect(() => {
-    fetchProvinces?.();
+    fetchProvinces();
   }, [fetchProvinces]);
 
   useEffect(() => {

@@ -1,7 +1,8 @@
 import LandingPageLayout from "@/layouts/LandingPage/LandingPageLayout";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useSearchParams } from "react-router";
 import useSchoolStore from "@/store/useSchoolStore";
+import useAuthStore from "@/store/authStore";
 import useRegionStore from "@/store/regionStore";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -18,9 +19,21 @@ import SelectModalUrl from "@/components/SelectModalUrl";
 import LoadingOverlay from "@/components/LoadingOverlay";
 import PaginationSlidingWindow from "@/components/PaginationSlidingWindow";
 import { capitalizeWords } from "@/utils/string";
+import { Loader2, Printer } from "lucide-react";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
+import SelectionStatusBadge from "@/components/SelectionStatusBadge";
+import useSchoolStudent from "@/store/useSchoolStudent";
 
 export default function Home() {
   const { schools, fetchSchoolsStudent, loading } = useSchoolStore();
+  const { user } = useAuthStore();
   const {
     fetchProvinces,
     provinces,
@@ -29,7 +42,9 @@ export default function Home() {
     fetchDistricts,
     districts,
   } = useRegionStore();
+  const { printSelectionLetter } = useSchoolStudent();
 
+  localStorage.removeItem("slug");
   const [searchParams, setSearchParams] = useSearchParams();
   const page = searchParams.get("page") || 1;
   const [filters, setFilters] = useState({
@@ -71,20 +86,7 @@ export default function Home() {
     });
   };
 
-  // load provinsi sekali
-  useEffect(() => {
-    fetchProvinces();
-  }, [fetchProvinces]);
-
-  // load kota saat pilih provinsi
-  useEffect(() => {
-    if (filters.province_id) fetchCities(filters.province_id);
-  }, [filters.province_id, fetchCities]);
-
-  // load kecamatan saat pilih kota
-  useEffect(() => {
-    if (filters.city_id) fetchDistricts(filters.city_id);
-  }, [filters.city_id, fetchDistricts]);
+  const fetched = useRef(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -102,11 +104,10 @@ export default function Home() {
       }
     };
 
-    const delayDebounce = setTimeout(() => {
-      fetchData();
-    }, 1000);
-
-    return () => clearTimeout(delayDebounce);
+    if (fetched.current) return;
+    fetched.current = true;
+    fetchData();
+    fetched.current = false;
   }, [
     filters.search,
     filters.province_id,
@@ -116,6 +117,24 @@ export default function Home() {
     page,
     fetchSchoolsStudent,
   ]);
+
+  useEffect(() => {
+    if (fetched.current) return;
+    fetched.current = true;
+    if (schools) {
+      fetchProvinces();
+    }
+  }, [schools, fetchProvinces]);
+
+  // load kota saat pilih provinsi
+  useEffect(() => {
+    if (filters.province_id) fetchCities(filters.province_id);
+  }, [filters.province_id, fetchCities]);
+
+  // load kecamatan saat pilih kota
+  useEffect(() => {
+    if (filters.city_id) fetchDistricts(filters.city_id);
+  }, [filters.city_id, fetchDistricts]);
 
   // update params url setiap kali filter berubah
   useEffect(() => {
@@ -151,6 +170,19 @@ export default function Home() {
 
   if (loading) return <LoadingOverlay />;
 
+  const handlePrint = async (schoolStudent) => {
+    try {
+      const response = await printSelectionLetter(
+        schoolStudent.registration_number
+      );
+      const blob = new Blob([response], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      window.open(url, "_blank");
+    } catch (error) {
+      console.error("Gagal cetak PDF:", error);
+    }
+  };
+
   return (
     <LandingPageLayout>
       <div className="overflow-y-auto">
@@ -163,6 +195,101 @@ export default function Home() {
           </p>
           <p className="mt-1">Sekolah Impian</p>
         </section>
+
+        {user && loading ? (
+          <div className="flex justify-center py-10">
+            <Loader2 className="animate-spin h-6 w-6 text-gray-800" />
+          </div>
+        ) : user?.school_students.length === 0 ? (
+          <p className="text-gray-700 text-center py-10">
+            Belum ada sekolah yang dipilih.
+          </p>
+        ) : (
+          user?.school_students.length > 0 && (
+            <div className="px-10 py-12 text-left">
+              <h1 className="text-3xl font-bold mb-4">Hasil Seleksi</h1>
+              <div className="overflow-x-auto rounded-xl border border-gray-200 mt-10">
+                <Table className="text-sm">
+                  <TableHeader className="bg-gray-50 [&_th]:text-black">
+                    <TableRow>
+                      <TableHead>No</TableHead>
+                      <TableHead>Nomor Registrasi</TableHead>
+                      <TableHead>Sekolah</TableHead>
+                      <TableHead>Nama Peserta</TableHead>
+                      <TableHead>NISN</TableHead>
+                      <TableHead>Status Seleksi</TableHead>
+                      <TableHead className="text-center w-40">Aksi</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {user?.school_students.map((item, index) => (
+                      <TableRow
+                        key={item.id}
+                        className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                      >
+                        <TableCell className="dark:text-gray-800">
+                          {user?.school_students.indexOf(item) + 1}
+                        </TableCell>
+                        <TableCell className="dark:text-gray-800">
+                          {item.registration_number}
+                        </TableCell>
+                        <TableCell className="font-medium dark:text-gray-800">
+                          {item.school.name}
+                        </TableCell>
+                        <TableCell className="dark:text-gray-800">
+                          {user.name}
+                        </TableCell>
+                        <TableCell className="dark:text-gray-800">
+                          {user.nisn}
+                        </TableCell>
+                        <TableCell>
+                          <SelectionStatusBadge
+                            status={item.selection_status}
+                          />
+                        </TableCell>
+
+                        <TableCell className="text-center">
+                          {item.selection_status === "passed_selection" && (
+                            <Button
+                              onClick={() => handlePrint(item)}
+                              className="bg-orange-500 hover:bg-orange-600 text-white flex gap-2 cursor-pointer mx-auto"
+                              size="sm"
+                            >
+                              <Printer size={14} />
+                              Cetak
+                            </Button>
+                          )}
+
+                          {item.selection_status ===
+                            "rejected_data_does_not_match" && (
+                            <Link
+                              to={
+                                "/student/" +
+                                item?.school?.slug +
+                                "/complete-registration"
+                              }
+                              className="bg-sky-500 hover:bg-sky-600 text-white px-3 py-2 rounded-md text-xs"
+                            >
+                              Lengkapi Data
+                            </Link>
+                          )}
+
+                          {item.selection_status !== "passed_selection" &&
+                            item.selection_status !==
+                              "rejected_data_does_not_match" && (
+                              <span className="text-gray-500 text-xs">
+                                Tidak Ada Aksi
+                              </span>
+                            )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+          )
+        )}
 
         <div className="px-10 py-12 text-left">
           <h1 className="text-3xl font-bold mb-4">Daftar Sekolah</h1>

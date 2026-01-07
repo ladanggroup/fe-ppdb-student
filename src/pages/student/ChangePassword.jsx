@@ -64,9 +64,9 @@ export default function ChangePassword() {
 
   return (
     <DashboardLayout>
-      <div className="flex flex-col md:flex-row gap-6 p-6 bg-gray-100 dark:bg-gray-900">
+      <div className="flex flex-col md:flex-row gap-6 p-6 bg-gray-100">
         {/* Sidebar */}
-        <div className="w-full md:w-1/4 bg-white dark:bg-gray-800 rounded-lg shadow p-6 flex flex-col items-center">
+        <div className="w-full md:w-1/4 bg-white rounded-lg shadow p-6 flex flex-col items-center">
           <div className="relative group">
             {user.image ? (
               <img
@@ -78,7 +78,7 @@ export default function ChangePassword() {
                 className="w-40 h-40 rounded-lg object-cover border"
               />
             ) : (
-              <div className="w-40 h-40 rounded-lg border flex items-center justify-center bg-gray-200 dark:bg-gray-700 text-gray-500">
+              <div className="w-40 h-40 rounded-lg border flex items-center justify-center bg-gray-200 text-gray-500">
                 No Image
               </div>
             )}
@@ -88,7 +88,7 @@ export default function ChangePassword() {
             <nav className="space-y-2">
               <Link
                 to={"/student/profile"}
-                className="block w-full text-left px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white"
+                className="block w-full text-left px-4 py-2 rounded-md hover:bg-gray-100"
               >
                 <User className="inline mr-2" />
                 Informasi Pribadi
@@ -103,9 +103,9 @@ export default function ChangePassword() {
 
         <form
           onSubmit={handleSubmit}
-          className="w-full md:w-3/4 bg-white dark:bg-gray-800 dark:text-white rounded-lg shadow p-6"
+          className="w-full md:w-3/4 bg-white rounded-lg shadow p-6"
         >
-          <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">
+          <h2 className="text-xl font-semibold mb-6 text-gray-900">
             Ubah Password
           </h2>
           <PasswordField
