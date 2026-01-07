@@ -17,6 +17,7 @@ import UploadDocuments from "@/components/student/register/UploadDocuments";
 import VerifyReview from "@/components/student/register/VerifyReview";
 import PaymentStep from "@/components/student/register/PaymentStep";
 import SelectionStatusBadge from "@/components/SelectionStatusBadge";
+import ParentsInfoStudent from "@/components/student/register/ParentsInfoStudent";
 
 const DEFAULT_STEPS = [
   "Informasi Pribadi",
@@ -79,12 +80,13 @@ export default function CompleteRegister() {
     district_id: "",
     postal_code: "",
     wave_id: null,
-    uploaded_documents: [], // Array of { doc_name: string, path: string, is_payment: boolean (false for general docs), doc_requirement_id: number|null, school_id: number|null, doc_id: number|null }
-    payments_info: {}, // { payment_date, price, payer_id, bank_id, document_id }
+    uploaded_documents: [],
+    payments_info: {},
   });
 
   useEffect(() => {
     if (waves.length > 0 && !formData.wave_id) {
+      const parents = JSON.parse(student.parents);
       setFormData((prev) => ({
         ...prev,
         student_id: student.id,
@@ -107,6 +109,24 @@ export default function CompleteRegister() {
         district_name: student.districts?.name,
         postal_code: student.postal_code,
         wave_id: waves[0].id,
+        father_name: parents?.father?.name || "",
+        father_phone: parents?.father?.phone || "",
+        father_job: parents?.father?.job || "",
+        father_education: parents?.father?.education || "",
+        father_income: parents?.father?.income || "",
+        father_address: parents?.father?.address || "",
+        mother_name: parents?.mother?.name || "",
+        mother_phone: parents?.mother?.phone || "",
+        mother_job: parents?.mother?.job || "",
+        mother_education: parents?.mother?.education || "",
+        mother_income: parents?.mother?.income || "",
+        mother_address: parents?.mother?.address || "",
+        guardian_name: parents?.guardian?.name || "",
+        guardian_phone: parents?.guardian?.phone || "",
+        guardian_job: parents?.guardian?.job || "",
+        guardian_education: parents?.guardian?.education || "",
+        guardian_income: parents?.guardian?.income || "",
+        guardian_address: parents?.guardian?.address || "",
       }));
     }
   }, [student, waves, formData.wave_id]);
@@ -128,7 +148,7 @@ export default function CompleteRegister() {
       };
       const documentFetch = async () => {
         try {
-          const res = await fetchStudentDocument(student.id, false);
+          const res = await fetchStudentDocument(student.id, false, slug);
           if (res) {
             for (let doc of res.data) {
               setFormData((prev) => ({
@@ -160,6 +180,31 @@ export default function CompleteRegister() {
       documentFetch();
     }
   }, [fetchSchoolStudents, student, slug, fetchStudentDocument]);
+
+  const hasSlug = student?.school_students?.length
+    ? student.school_students.find((ss) => ss.school?.slug === slug)
+    : undefined;
+  const hasNoNote =
+    hasSlug && student?.school_students?.length !== 0
+      ? student.school_students.find((ss) => ss.school?.slug !== slug)?.note
+      : null;
+
+  useEffect(() => {
+    if (!student) return;
+
+    const phoneFilled = student.phone && student.phone !== "";
+    const addressFilled = student.address && student.address !== "";
+
+    if (
+      hasSlug === undefined &&
+      phoneFilled &&
+      addressFilled &&
+      hasNoNote === null &&
+      formData.uploaded_documents.length === 0
+    ) {
+      setCurrentStep(2);
+    }
+  }, [student, hasSlug, formData.uploaded_documents, hasNoNote]);
 
   const validateStep = useCallback(() => {
     const errors = {};
@@ -242,7 +287,9 @@ export default function CompleteRegister() {
         ?.selection_status
     : null;
 
-  const isDisable = schoolStudentStatus === "verify" || schoolStudentStatus === "data_received_awaiting_selection";
+  const isDisable =
+    schoolStudentStatus === "verify" ||
+    schoolStudentStatus === "data_received_awaiting_selection";
 
   const handleNext = async () => {
     if (!validateStep()) {
@@ -333,6 +380,7 @@ export default function CompleteRegister() {
         price: formData.payments_info?.price,
         payer_id: student.id,
         bank_id: formData.payments_info?.bank_id,
+        payment_method_id: formData.payments_info?.payment_method_id,
         document_id: paymentProofDocId,
       };
       if (formData.payments_info?.id) {
@@ -379,7 +427,13 @@ export default function CompleteRegister() {
     switch (currentStep) {
       case 1:
         return (
-          <PersonalInfo {...commonProps} waves={waves} disabled={isDisable} />
+          <>
+            <PersonalInfo {...commonProps} waves={waves} disabled={isDisable} />
+            <ParentsInfoStudent
+              {...commonProps}
+              disabled={isDisable}
+            />
+          </>
         );
       case 2:
         return (
@@ -400,20 +454,18 @@ export default function CompleteRegister() {
 
   return (
     <DashboardLayout>
-      <div className="py-10 px-10">
+      <div className="md:px-28 md:py-14 px-12 py-8">
         <LoadingOverlay isLoading={isLoading} />
         <div className="mb-6">
-          {/* simple stepper header */}
-          <div className="flex items-center justify-between mb-8 w-full">
+          {/* stepper */}
+          <div className="hidden md:flex  items-center justify-between mb-8 w-full">
             {steps.map((step, index) => {
               const isActive = currentStep === index + 1;
               const isCompleted = currentStep > index + 1;
 
               return (
                 <div key={index} className="flex-1 flex items-center">
-                  {/* Step Item */}
                   <div className="flex flex-col items-center relative w-full">
-                    {/* Circle */}
                     <div
                       className={`flex items-center justify-center w-6 h-6 rounded-full border-2 bg-white z-10
               ${
@@ -427,7 +479,6 @@ export default function CompleteRegister() {
                       {index + 1}
                     </div>
 
-                    {/* Label */}
                     <div
                       className={`mt-2 text-sm font-semibold
               ${isActive ? "text-[#0090D4]" : "text-gray-600"}`}
@@ -435,11 +486,10 @@ export default function CompleteRegister() {
                       {step}
                     </div>
 
-                    {/* Connector line (hanya kalau bukan step terakhir) */}
                     {index < steps.length - 1 && (
                       <div
                         className={`absolute top-3 left-1/2 w-full h-0.5 -translate-y-1/2 
-                ${isCompleted ? "bg-[#0090D4]" : "bg-gray-300"}`}
+                ${isCompleted ? "bg-[#0090D4]" : isActive ? "border-[#0090D4] border-2 border-dashed" : "bg-gray-300"}`}
                       ></div>
                     )}
                   </div>
@@ -447,7 +497,39 @@ export default function CompleteRegister() {
               );
             })}
           </div>
-          {student?.school_students?.some((ss) => ss.note) && (
+
+        {/* STEP INDICATOR MOBILE */}
+        <div className="md:hidden mb-8">
+          {/* Progress Bar */}
+          <div className="w-full h-2 bg-gray-200 rounded-full mb-4 overflow-hidden">
+            <div
+              className="h-full bg-sky-500 transition-all duration-500"
+              style={{
+                width: `${(currentStep / steps.length) * 100}%`,
+              }}
+            ></div>
+          </div>
+
+          {/* Current Step Info */}
+          <div className="flex items-center gap-3">
+            <div
+              className={`w-10 h-10 rounded-full border-2 flex items-center justify-center font-semibold transition-all duration-300 ${"border-sky-500 bg-sky-100 text-sky-600"}`}
+            >
+              {currentStep}
+            </div>
+
+            <div>
+              <p className="text-xs text-gray-700 mb-1">
+                Step {currentStep} dari {steps.length}
+              </p>
+              <p className="text-sm font-semibold">
+                {steps[currentStep - 1]}
+              </p>
+            </div>
+          </div>
+        </div>
+
+          {hasSlug && student?.school_students?.some((ss) => ss.note) && (
             <div className="mt-4 mb-8 border border-red-200 rounded-md p-3">
               <h2 className="text-xl font-semibold">Catatan Verifikasi:</h2>
               <ul className="mt-2 space-y-2">
@@ -466,30 +548,42 @@ export default function CompleteRegister() {
               </ul>
             </div>
           )}
-          {student?.school_students?.some((ss) => ss.selection_status === "verify" || ss.selection_status === "waiting_complete_data") && (
-            <div className="mt-4 mb-8 border border-[#0090D4] rounded-md p-3">
-              <h2 className="text-xl font-semibold">Status Seleksi:</h2>
-              <ul className="mt-2 space-y-2">
-                {student.school_students.map((ss) =>
-                  (ss.selection_status === "verify" || ss.selection_status === "waiting_complete_data") ? (
-                    <li
-                      key={ss.id}
-                      className="p-3 rounded-md border bg-[#0090D4] dark:bg-[#0090D4] text-white dark:text-white"
-                    >
-                      <p className="font-medium">
-                        Sekolah {ss.school?.name || "Sekolah"}: <SelectionStatusBadge status={ss.selection_status} />
-                      </p>
-                    </li>
-                  ) : null
-                )}
-              </ul>
-            </div>
-          )}
+
+          {hasSlug &&
+            student?.school_students?.some(
+              (ss) =>
+                ss.selection_status === "verify" ||
+                ss.selection_status === "waiting_complete_data"
+            ) && (
+              <div className="mt-4 mb-8 border border-[#0090D4] rounded-md p-3">
+                <h2 className="text-xl font-semibold">Status Seleksi:</h2>
+                <ul className="mt-2 space-y-2">
+                  {hasSlug &&
+                    student.school_students.map((ss) =>
+                      ss.selection_status === "verify" ||
+                      ss.selection_status === "waiting_complete_data" ||
+                      ss.selection_status ===
+                        "data_received_awaiting_selection" ? (
+                        <li
+                          key={ss.id}
+                          className="p-3 rounded-md border bg-[#0090D4] dark:bg-[#0090D4] text-white dark:text-white"
+                        >
+                          <p className="font-medium">
+                            Sekolah {ss.school?.name || "Sekolah"}:{" "}
+                            <SelectionStatusBadge
+                              status={ss.selection_status}
+                            />
+                          </p>
+                        </li>
+                      ) : null
+                    )}
+                </ul>
+              </div>
+            )}
         </div>
 
         <div className="border rounded-lg p-6 bg-white">{renderStep()}</div>
 
-        {/* Navigation */}
         <FormNavigation
           currentStep={currentStep}
           totalSteps={steps.length}

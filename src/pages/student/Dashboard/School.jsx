@@ -16,6 +16,7 @@ const School = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedWave, setSelectedWave] = useState(null);
   const perPage = 3;
+  localStorage.setItem("slug", slug);
 
   useEffect(() => {
     showSchoolStudent(slug);
@@ -180,13 +181,6 @@ const School = () => {
                   <li>{doc.name}</li>
                 </ul>
               ))}
-              <a
-                href="/lembar-pendaftaran.pdf"
-                download
-                className="bg-[#0090D4] text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition"
-              >
-                Unduh Lembar Pendaftaran
-              </a>
             </div>
           </div>
         </section>

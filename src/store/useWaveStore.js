@@ -6,35 +6,9 @@ export const useWaveStore = create((set) => ({
   currentWave: null,
   loading: false,
   error: null,
-
-  // public wave
-  fetchPublicWaves: async (
-    // province_id,
-    // city_id,
-    // district_id,
-    // education_level,
-    // page,
-    // search
-    slug
-  ) => {
-    set({ loading: true, error: null });
-    try {
-      const res = await apiClient.get('/api/waves', { params: { slug } }); // { params: { province_id, city_id, district_id, education_level, page, search } });
-      set({ waves: res.data.data, loading: false });
-      return res.data.data;
-    } catch (err) {
-      set({ error: err.response?.data || err.message, loading: false, waves: [] });
-    }
-  },
-
+  
   // wave for student
   fetchStudentWaves: async (
-    // province_id,
-    // city_id,
-    // district_id,
-    // education_level,
-    // page,
-    // search,
     slug
   ) => {
     set({ loading: true, error: null });
